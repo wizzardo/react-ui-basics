@@ -1,13 +1,13 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "",
-  "module": "build/index.js",
-  "_main": "build/index.cjs.js",
-  "_module": "build/index.esm.js",
-  "_browser": "build/index.js",
+  "module": "index.js",
+  "_main": "index.cjs.js",
+  "_module": "index.esm.js",
+  "_browser": "index.js",
   "files": [
-    "build"
+    "*"
   ],
   "sideEffects": false,
   "peerDependencies": {
@@ -24,7 +24,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prebuild": "npm run build-css",
     "build": "./build.sh",
-    "postinstall": ""
+    "postinstall": "",
+    "dist": "cd build && npm publish"
   },
   "author": "",
   "license": "MIT",

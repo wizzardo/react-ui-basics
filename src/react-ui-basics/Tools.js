@@ -16,3 +16,8 @@ export const orNoop = f => f || NOOP;
 export const getRandomId = (prefix) => prefix + Math.random();
 
 export const ref = (name, component) => (it) => component[name] = it;
+
+export const setOf = (list = []) => list.reduce((map, key) => {
+    map[key] = true;
+    return map;
+}, {});

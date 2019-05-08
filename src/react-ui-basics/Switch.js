@@ -1,14 +1,15 @@
 import React from 'react';
 import './Switch.css'
+import {getRandomId, ref} from "./Tools";
 
-const getRandomId = () => `sw-${Math.random()}`;
-
-class Switch extends React.Component {
+class Switch extends React.PureComponent {
+    randomId = getRandomId('sw-');
 
     render() {
-        const {id = getRandomId(), label, labelOn, labelOff, onChange, value, onClick} = this.props;
+        const {label, labelOn, labelOff, onChange, value, onClick} = this.props;
+        const id = this.props.id || this.randomId;
         return (
-            <div className="Switch" ref={it => this.el = it} onClick={onClick}>
+            <div className="Switch" ref={ref('el', this)} onClick={onClick}>
                 <input type="checkbox" id={id} className="switch-input" onChange={onChange} checked={value}/>
 
                 <label htmlFor={id} className="switch-label">

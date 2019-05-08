@@ -1,3 +1,5 @@
+@import "./global.scss";
+
 $checkedColor: #4AC263;
 $borderColor: #252525;
 
@@ -17,6 +19,9 @@ $checkMarkSize: $size - 2*$padding;
   }
 
   label {
+    font-family: $font;
+    font-size: $fontSizeInput;
+    color: $colorInput;
     cursor: pointer;
 
     &:before, &:after {

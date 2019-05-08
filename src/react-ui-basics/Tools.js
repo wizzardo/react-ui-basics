@@ -1,4 +1,3 @@
-
 export function classNames() {
     const filtered = [];
     const length = arguments.length;
@@ -8,3 +7,12 @@ export function classNames() {
     }
     return filtered.join(' ');
 }
+
+export const NOOP = () => {
+};
+
+export const orNoop = f => f || NOOP;
+
+export const getRandomId = (prefix) => prefix + Math.random();
+
+export const ref = (name, component) => (it) => component[name] = it;

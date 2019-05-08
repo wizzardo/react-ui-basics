@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import './Button.css'
-import {classNames} from "./Tools";
+import {classNames, ref} from "./Tools";
 
 const rippleClassName = 'rcn';
 
-class Button extends Component {
+class Button extends PureComponent {
     render = () => {
         const {children, type, className, onClick, flat, raised = !flat, round, style, disabled, onFocus} = this.props;
         const rippleClass = (this.state || {})[rippleClassName];
@@ -22,9 +22,9 @@ class Button extends Component {
                     type={type || 'button'}
                     onClick={onClick}
                     onMouseDown={this.onMouseDown}
-                    ref={it => this.el = it}>
+                    ref={ref('el', this)}>
                 {children}
-                <span className={classNames(`ripple`, rippleClass)} ref={it => this.ripple = it}/>
+                <span className={classNames(`ripple`, rippleClass)} ref={ref('ripple', this)}/>
             </button>
         );
     };

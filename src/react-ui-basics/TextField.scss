@@ -1,0 +1,159 @@
+@import "./global.scss";
+
+$focusColor: rgb(0, 188, 212);
+$redColor: rgb(244, 67, 54);
+
+.TextField {
+  position: relative;
+  width: 100%;
+
+  > label {
+    font-family: $font;
+    color: rgba(0, 0, 0, 0.3);
+
+    font-size: 16px;
+    position: absolute;
+    left: 0px;
+    top: 16px;
+    margin-top: -16px;
+    transition: all 0.2s ease;
+    user-select: none;
+    cursor: text;
+  }
+
+  > input {
+    font-family: $font;
+    color: $colorInput;
+
+    height: 19px;
+    font-size: 16px;
+    width: 100%;
+    border: 0px;
+    padding-bottom: 4px;
+    padding-top: 0;
+    outline-color: rgba(0, 0, 0, 0);
+
+    &:focus {
+      outline: none;
+    }
+
+    &:disabled {
+      color: gray;
+      background-color: white;
+    }
+
+    &:disabled + .border {
+      height: 0px;
+      border-bottom: 2px dotted rgb(224, 224, 224);
+    }
+
+    &::placeholder {
+      font-family: $font;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1;
+    }
+  }
+
+  > .border {
+    border-bottom: 1px solid rgb(224, 224, 224);
+    height: 1px;
+    position: relative;
+
+    .line {
+      left: 50%;
+      width: 0;
+      height: 2px;
+      min-height: 2px;
+      background-color: $focusColor;
+      transition: all 0.2s ease;
+      position: absolute;
+    }
+  }
+
+  > .error {
+    text-align: left;
+    font-size: 10px;
+    color: $redColor;
+    margin-top: 2px;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  &.focused, &.withValue {
+    > label {
+      top: 4px;
+      font-size: 12px;
+      line-height: 14px;
+    }
+  }
+
+  &.errored {
+    > .error {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    > .border {
+      border-bottom-color: $redColor;
+    }
+
+    > label {
+      color: $redColor;
+    }
+  }
+
+  &.focused {
+    > label {
+      color: $focusColor;
+    }
+
+    > .border {
+      .line {
+        left: 0;
+        width: 100%;
+      }
+    }
+  }
+
+  &.disabled {
+    label, input {
+      cursor: not-allowed;
+    }
+  }
+
+  &.withLabel {
+    margin-top: 15px;
+  }
+
+  input::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+
+  input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px white;
+  }
+
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    20%, 60% {
+      transform: translateX(-5px);
+    }
+    40%, 80% {
+      transform: translateX(5px);
+    }
+  }
+
+  .shake {
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+    animation-name: shake;
+  }
+}

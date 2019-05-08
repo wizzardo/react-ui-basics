@@ -1,0 +1,64 @@
+$checkedColor: #4AC263;
+$borderColor: #252525;
+
+$size: 20px;
+$padding: 4px;
+
+$checkMarkWidth: 2px;
+$checkMarkColor: #fff;
+$checkMarkSize: $size - 2*$padding;
+
+.Checkbox {
+  position: relative;
+  white-space: pre;
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  label {
+    cursor: pointer;
+
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    &:before {
+      width: $size;
+      height: $size;
+      background: #fff;
+      border: 2px solid $borderColor;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background .3s;
+    }
+  }
+
+  input[type="checkbox"] {
+    outline: 0;
+    margin-right: $size - 10px;
+
+    &:checked {
+      + label:before {
+        background: $checkedColor;
+        border: none;
+      }
+
+      + label:after {
+        transform: rotate(-45deg);
+
+        top: ($size / 2) - ($checkMarkSize / 4) - $size/10;
+        left: $padding;
+        width: $checkMarkSize;
+        height: $checkMarkSize / 2;
+
+        border: $checkMarkWidth solid $checkMarkColor;
+        border-top-style: none;
+        border-right-style: none;
+      }
+    }
+  }
+}

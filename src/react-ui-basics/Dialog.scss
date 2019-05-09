@@ -1,0 +1,42 @@
+.DialogModal {
+  overflow: hidden;
+
+  .content {
+    top: 20vh;
+  }
+}
+
+.Dialog {
+  background-color: white;
+  min-width: 460px;
+  max-width: 40vw;
+  padding: 15px;
+
+  .title {
+    margin-bottom: 15px;
+    padding: 20px 50px 0px 30px;
+    font-size: 1.25rem;
+    line-height: 2rem;
+    font-weight: 400;
+    letter-spacing: .0125em;
+  }
+
+  .description {
+    color: rgba(0, 0, 0, .54);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    letter-spacing: .03125em;
+    margin-top: 20px;
+    padding: 0 24px 24px;
+  }
+
+
+  > div.row {
+    margin-bottom: 15px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

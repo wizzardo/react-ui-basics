@@ -8,6 +8,7 @@ import Button from "../react-ui-basics/Button";
 import TextField from "../react-ui-basics/TextField";
 import Checkbox from "../react-ui-basics/Checkbox";
 import Switch from "../react-ui-basics/Switch";
+import Dialog from "../react-ui-basics/Dialog";
 
 
 storiesOf('Button', module)
@@ -97,4 +98,12 @@ storiesOf('Switch', module)
         <Switch label={'Switch'} labelOn={'On'} labelOff={'Off'}/>
         <br/>
     </React.Fragment>)
+;
+
+storiesOf('Dialog', module)
+    .add('basic', () => <Dialog
+        show={true}
+        title={'Get this party started?'}
+        description={'Turn up the jams and have a good time.'}
+    />)
 ;

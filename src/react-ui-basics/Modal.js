@@ -2,7 +2,7 @@ import React from 'react';
 import './Modal.css'
 import Button from "./Button";
 import Animated from "./Animated";
-import {classNames, orNoop} from "./Tools";
+import {classNames, orNoop, ref} from "./Tools";
 
 class Modal extends React.Component {
     state = {};
@@ -11,17 +11,17 @@ class Modal extends React.Component {
         const {className, top} = this.props;
         const {show, menu} = this.state;
         return (
-            <div className={classNames(`Modal`, className, show && 'show')} ref={it => this.el = it}>
-                <div ref={it => this.overlay = it} className={classNames(`overlay`, show && 'show')} onClick={this.beforeClose}>
+            <div className={classNames(`Modal`, className, show && 'show')} ref={ref('el', this)}>
+                <div ref={ref('overlay', this)} className={classNames(`overlay`, show && 'show')} onClick={this.beforeClose}>
                 </div>
-                <div ref={it => this.content = it}
+                <div ref={ref('content', this)}
                      className={classNames(`content`, show && 'show', top && 'top')}
                      style={top && {top: `${top}px`}}
                 >
                     {React.Children.map(this.props.children, child => React.cloneElement(child, {modalMenuConsumer: this.modalMenuConsumer}))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={this.beforeClose}>
-                        <i className="material-icons" ref={it => this.closeButton = it}>close</i>
+                        <i className="material-icons" ref={ref('closeButton', this)}>close</i>
                     </Button>
                 </div>
             </div>

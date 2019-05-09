@@ -1,6 +1,6 @@
 import React from 'react';
 import './Dropzone.css'
-import {classNames, setOf} from "./Tools";
+import {classNames, setOf, ref} from "./Tools";
 
 const toArray = (o) => {
     if (o instanceof Array)
@@ -35,7 +35,7 @@ class Dropzone extends React.PureComponent {
         const {dragging} = this.state;
 
         return <div className={classNames('Dropzone', className, dragging && 'dragging')}
-                    ref={it => this.el = it}
+                    ref={ref('el', this)}
                     onDragLeave={!disabled && droppable && this.onDragLeave || null}
                     onDragOver={!disabled && droppable && this.onDragOver || null}
                     onDragEnter={!disabled && droppable && this.onDragEnter || null}

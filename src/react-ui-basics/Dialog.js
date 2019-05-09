@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './Dialog.css'
 import Button from "./Button";
 import Modal from "./Modal";
-import {orNoop} from "./Tools";
+import {orNoop, ref} from "./Tools";
 
 
 class DialogWrapper extends Component {
@@ -24,8 +24,8 @@ class DialogWrapper extends Component {
             <Modal
                 top={top}
                 className="DialogModal"
-                open={open => this.openModal = open}
-                close={close => this.closeModal = close}
+                open={ref('openModal', this)}
+                close={ref('closeModal', this)}
                 onClose={this.onCancel}
             >
                 <Dialog title={title} description={description} accept={accept} cancel={cancel} {...other} onAccept={this.onAccept} onCancel={this.onCancel}/>

@@ -1,0 +1,441 @@
+* {
+  font-family: Roboto, sans-serif; }
+
+.sb-show-main {
+  padding: 20px;
+  position: relative; }
+
+.TextField {
+  max-width: 300px; }
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center; }
+  .row.right {
+    justify-content: flex-end; }
+
+.column {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start; }
+
+.line {
+  min-height: 18px; }
+
+a {
+  text-decoration: none;
+  color: lightblue; }
+
+.sb-show-main .FormUploadProgress {
+  -webkit-transition-delay: 0s !important;
+          transition-delay: 0s !important;
+  bottom: unset;
+  right: unset; }
+
+.AutocompleteSelect.menu {
+  min-width: 0; }
+  .AutocompleteSelect.menu .popup {
+    left: 0; }
+    .AutocompleteSelect.menu .popup .DummyChild {
+      font-size: 14px;
+      color: #818181; }
+    .AutocompleteSelect.menu .popup .material-icons {
+      color: #818181;
+      margin-right: 4px; }
+  .AutocompleteSelect.menu.active .popup {
+    top: 33px; }
+  .AutocompleteSelect.menu > .selected {
+    border: none; }
+    .AutocompleteSelect.menu > .selected.nolabel {
+      border: none; }
+    .AutocompleteSelect.menu > .selected .material-icons {
+      color: #A6A6A6;
+      -webkit-transition: color 0.2s ease;
+      transition: color 0.2s ease; }
+    .AutocompleteSelect.menu > .selected .ItemWrapper.selected {
+      padding-left: 15px;
+      margin-left: -5px; }
+  .AutocompleteSelect.menu.active .selected .material-icons {
+    color: #333333; }
+
+.Button {
+  position: relative;
+  min-width: 64px;
+  min-height: 36px;
+  height: 24px;
+  margin: 0px;
+  padding: 0px 16px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  background: #dfdfdf;
+  text-transform: uppercase;
+  font-family: Roboto, sans-serif;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border-radius: 3px;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease; }
+  .Button.green {
+    background-color: #4AC263;
+    color: white; }
+  .Button.blue {
+    background-color: #61a0b2;
+    color: white; }
+  .Button.red {
+    background-color: #F44336;
+    color: white; }
+  .Button.black {
+    background-color: #1e252d;
+    color: white; }
+  .Button.gray {
+    background: #D9D9D9;
+    color: #999999; }
+  .Button.small {
+    padding: 0px 8px;
+    min-height: 16px;
+    min-width: 16px; }
+  .Button > .material-icons {
+    margin-right: 10px; }
+  .Button.round {
+    padding: 0px;
+    min-width: 36px;
+    border-radius: 50%; }
+    .Button.round > .material-icons {
+      margin: 0px; }
+  .Button .ripple {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 100%;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+    pointer-events: none;
+    -webkit-transition: opacity 0.2s ease-out;
+    transition: opacity 0.2s ease-out; }
+  .Button .ripple.show {
+    -webkit-animation: ripple .35s ease-out;
+            animation: ripple .35s ease-out; }
+  .Button:active .ripple.showed {
+    opacity: 1; }
+  .Button .ripple.showed {
+    -webkit-transform: scale(2);
+            transform: scale(2);
+    opacity: 0; }
+
+@-webkit-keyframes ripple {
+  to {
+    -webkit-transform: scale(2);
+            transform: scale(2); } }
+
+@keyframes ripple {
+  to {
+    -webkit-transform: scale(2);
+            transform: scale(2); } }
+  .Button.raised {
+    -webkit-transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
+    .Button.raised:hover {
+      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25); }
+    .Button.raised:active {
+      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.35); }
+  .Button.disabled {
+    box-shadow: none;
+    background: #D9D9D9;
+    color: #999999; }
+  .Button.flat {
+    background-color: transparent; }
+    .Button.flat:hover {
+      background-color: rgba(0, 0, 0, 0.05); }
+  .Button::-moz-focus-inner {
+    border: 0; }
+
+.Snackbar {
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  overflow: hidden;
+  background-color: #323232;
+  padding: 14px 24px 14px 24px;
+  color: #fff;
+  min-width: 288px;
+  max-width: 568px;
+  position: fixed;
+  bottom: -50px;
+  left: 50%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  -webkit-transition: bottom 0.25s ease;
+  transition: bottom 0.25s ease;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); }
+  .Snackbar.shown {
+    bottom: 15px; }
+  .Snackbar .message {
+    overflow: hidden;
+    line-height: 1.2em;
+    min-height: 1.2em;
+    max-height: 2.4em;
+    flex: 1 1; }
+  .Snackbar .action {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: 48px;
+    color: #bf3727; }
+    .Snackbar .action a {
+      text-decoration: none;
+      color: #bf3727; }
+
+.TextField {
+  position: relative;
+  width: 100%; }
+  .TextField > label {
+    font-family: Roboto, sans-serif;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    position: absolute;
+    left: 0px;
+    top: 16px;
+    margin-top: -16px;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: text; }
+  .TextField > input {
+    font-family: Roboto, sans-serif;
+    color: #1e252d;
+    height: 19px;
+    font-size: 16px;
+    width: 100%;
+    border: 0px;
+    padding-bottom: 4px;
+    padding-top: 0;
+    outline-color: rgba(0, 0, 0, 0); }
+    .TextField > input:focus {
+      outline: none; }
+    .TextField > input:disabled {
+      color: gray;
+      background-color: white; }
+    .TextField > input:disabled + .border {
+      height: 0px;
+      border-bottom: 2px dotted #e0e0e0; }
+    .TextField > input::-webkit-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::-moz-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input:-ms-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::-ms-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+  .TextField > .border {
+    border-bottom: 1px solid #e0e0e0;
+    height: 1px;
+    position: relative; }
+    .TextField > .border .line {
+      left: 50%;
+      width: 0;
+      height: 2px;
+      min-height: 2px;
+      background-color: #00bcd4;
+      -webkit-transition: all 0.2s ease;
+      transition: all 0.2s ease;
+      position: absolute; }
+  .TextField > .error {
+    text-align: left;
+    font-size: 10px;
+    color: #f44336;
+    margin-top: 2px;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease; }
+  .TextField.focused > label, .TextField.withValue > label {
+    top: 4px;
+    font-size: 12px;
+    line-height: 14px; }
+  .TextField.errored > .error {
+    visibility: visible;
+    opacity: 1; }
+  .TextField.errored > .border {
+    border-bottom-color: #f44336; }
+  .TextField.errored > label {
+    color: #f44336; }
+  .TextField.focused > label {
+    color: #00bcd4; }
+  .TextField.focused > .border .line {
+    left: 0;
+    width: 100%; }
+  .TextField.disabled label, .TextField.disabled input {
+    cursor: not-allowed; }
+  .TextField.withLabel {
+    margin-top: 15px; }
+  .TextField input::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0; }
+  .TextField input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px white; }
+
+@-webkit-keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
+  20%, 60% {
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
+  40%, 80% {
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
+
+@keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
+  20%, 60% {
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
+  40%, 80% {
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
+  .TextField .shake {
+    -webkit-animation-duration: .5s;
+            animation-duration: .5s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+    -webkit-animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in-out;
+    -webkit-animation-name: shake;
+            animation-name: shake; }
+
+.Checkbox {
+  position: relative;
+  white-space: pre; }
+  .Checkbox *, .Checkbox *:before, .Checkbox *:after {
+    box-sizing: border-box; }
+  .Checkbox label {
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    color: #1e252d;
+    cursor: pointer; }
+    .Checkbox label:before, .Checkbox label:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0; }
+    .Checkbox label:before {
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border: 2px solid #252525;
+      border-radius: 2px;
+      cursor: pointer;
+      -webkit-transition: background .3s;
+      transition: background .3s; }
+  .Checkbox input[type="checkbox"] {
+    outline: 0;
+    margin-right: 10px; }
+    .Checkbox input[type="checkbox"]:checked + label:before {
+      background: #4AC263;
+      border: none; }
+    .Checkbox input[type="checkbox"]:checked + label:after {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg);
+      top: 5px;
+      left: 4px;
+      width: 12px;
+      height: 6px;
+      border: 2px solid #fff;
+      border-top-style: none;
+      border-right-style: none; }
+
+.Switch {
+  display: inline-flex;
+  padding-top: 5px; }
+  .Switch .switch-input {
+    display: none; }
+  .Switch .switch-label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-width: 38px;
+    height: 24px;
+    cursor: pointer;
+    font-weight: 500;
+    text-align: left;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    margin: 0;
+    padding: 0;
+    padding-left: 44px;
+    box-sizing: border-box; }
+    .Switch .switch-label:before, .Switch .switch-label:after {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      margin: 0;
+      outline: 0;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+              transform: translate(0, -50%);
+      -webkit-transition: all 0.3s ease;
+      transition: all 0.3s ease; }
+    .Switch .switch-label:before {
+      left: 1px;
+      width: 34px;
+      height: 14px;
+      background-color: #9E9E9E;
+      border-radius: 8px; }
+    .Switch .switch-label:after {
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background-color: #FAFAFA;
+      border-radius: 50%;
+      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084); }
+    .Switch .switch-label .toggle--on {
+      display: none; }
+    .Switch .switch-label .toggle--off {
+      display: inline-block; }
+    .Switch .switch-label .label {
+      margin-right: 5px; }
+  .Switch .switch-input:checked + .switch-label:before {
+    background-color: #A5D6A7; }
+  .Switch .switch-input:checked + .switch-label:after {
+    background-color: #4CAF50;
+    -webkit-transform: translate(80%, -50%);
+            transform: translate(80%, -50%); }
+  .Switch .switch-input:checked + .switch-label .toggle--on {
+    display: inline-block; }
+  .Switch .switch-input:checked + .switch-label .toggle--off {
+    display: none; }
+
+
+/*# sourceMappingURL=main.css.map*/

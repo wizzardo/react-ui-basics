@@ -19,7 +19,7 @@ const prevent = (e) => {
     return false;
 };
 
-class Dropzone extends React.Component {
+class Dropzone extends React.PureComponent {
 
     static defaultProps = {
         clickable: true,

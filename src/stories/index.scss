@@ -1,0 +1,89 @@
+* {
+  font-family: Roboto, sans-serif;
+}
+
+.sb-show-main{
+  padding: 20px;
+  position: relative;
+}
+
+.TextField {
+  max-width: 300px;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  &.right {
+    justify-content: flex-end;
+  }
+}
+
+.column {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+}
+
+.line {
+  min-height: 18px;
+}
+
+a {
+  text-decoration: none;
+  color: lightblue;
+}
+
+.sb-show-main .FormUploadProgress {
+  transition-delay: 0s !important;
+  bottom: unset;
+  right: unset;
+}
+
+.AutocompleteSelect.menu {
+  min-width: 0;
+
+  .popup {
+    left: 0;
+
+    .DummyChild {
+      font-size: 14px;
+      color: #818181;
+    }
+
+    .material-icons {
+      color: #818181;
+      margin-right: 4px;
+    }
+  }
+
+  &.active .popup {
+    top: 33px;
+  }
+
+  > .selected {
+    border: none;
+
+    &.nolabel {
+      border: none;
+    }
+
+    .material-icons {
+      color: #A6A6A6;
+      transition: color 0.2s ease;
+    }
+
+    .ItemWrapper{
+      &.selected {
+        padding-left: 15px;
+        margin-left: -5px;
+      }
+    }
+  }
+
+  &.active .selected .material-icons {
+    color: #333333;
+  }
+}

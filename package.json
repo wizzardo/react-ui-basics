@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",
@@ -12,7 +12,8 @@
   "sideEffects": false,
   "peerDependencies": {
     "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react-dom": "^16.0.0",
+    "prop-types": "^15.7.2"
   },
   "dependencies": {},
   "scripts": {

@@ -1,0 +1,8 @@
+.animated {
+  transition: opacity 250ms ease;
+  opacity: 0;
+
+  &.mounting, &.mounted {
+    opacity: 1;
+  }
+}

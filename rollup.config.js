@@ -46,7 +46,7 @@ export default {
     //     react: 'React',
     //     'react-dom': 'ReactDOM'
     // },
-    preserveModules:true,
+    preserveModules: true,
     treeshake: isProd,
     inlineDynamicImports: isDev || false, // true = disabling code splitting to chunks
     // experimentalOptimizeChunks: true,

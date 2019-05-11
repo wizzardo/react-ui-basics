@@ -29,3 +29,24 @@ export const allPropsExcept = (obj, except) => {
     }
     return result;
 };
+
+export const continuousIncludes = (value, inc) => {
+    const length = inc.length;
+    let from = 0;
+    for (let i = 0; i < length; i++) {
+        from = value.indexOf(inc[i], from);
+        if (from === -1)
+            return false
+    }
+    return true;
+};
+
+export const isHappenedInside = (e, el) => {
+    let currentElem = e.target;
+    while (currentElem) {
+        if (currentElem === el)
+            return true;
+        currentElem = currentElem.parentElement;
+    }
+    return false;
+};

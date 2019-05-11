@@ -1,0 +1,70 @@
+@import "./global.scss";
+
+.FilteredList {
+  max-height: 250px;
+  position: relative;
+
+  &.popup {
+    padding: 0;
+    visibility: hidden;
+    position: absolute;
+    background: white;
+    z-index: 4;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    transition: all 0.2s ease-out;
+    top: 20px;
+    max-height: 0;
+    opacity: 0;
+    border-radius: 2px;
+
+    &.visible {
+      top: 28px;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  &.inline {
+    max-height: 225px;
+    margin-top: 5px;
+  }
+
+  .child {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    white-space: nowrap;
+
+    font-size: 14px;
+    color: rgb(34, 34, 34);
+    height: 30px;
+    padding: 5px 10px;
+    padding-right: 15px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s cubic-bezier(.4, 0, .2, 1);
+
+    border-left: 5px solid #4AC263;
+    padding-left: 15px;
+    margin-left: -5px;
+
+    &.hidden {
+      height: 0 !important;
+      padding: 0 !important;
+    }
+
+    &.selected {
+      background-color: #F0F0F0;
+      padding-left: 10px;
+      margin-left: 0px;
+    }
+    &.active {
+      background-color: rgb(238, 238, 238);
+    }
+    &:first-child {
+      margin-top: 8px
+    }
+    &:last-child {
+      margin-bottom: 8px
+    }
+  }
+}

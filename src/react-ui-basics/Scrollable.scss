@@ -1,0 +1,80 @@
+.Scrollable {
+  max-height: 250px;
+  padding-right: 5px;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+  overflow: hidden;
+
+  &:hover > .scrollbar.auto {
+    transition-delay: 0s;
+    opacity: 1;
+  }
+
+  .viewport {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 100%;
+
+    //force hide scrollbar for mac-os
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &.with-scroll {
+  }
+
+  &.without-scroll {
+    padding-right: 0;
+
+    > .viewport {
+      overflow: inherit;
+      padding-right: 0;
+      margin-right: 0;
+    }
+
+    > .scrollbar {
+      visibility: hidden;
+    }
+  }
+
+  .scrollbar {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 5px;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.5s;
+    z-index: 1;
+
+    &.auto, &.hidden {
+      opacity: 0;
+    }
+
+    &.visible, &:active {
+      transition-delay: 0s;
+      opacity: 1;
+    }
+
+    .thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 5px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      user-select: none;
+      will-change: top;
+      border-radius: 2px;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+    }
+  }
+}

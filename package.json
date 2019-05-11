@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",
@@ -30,7 +30,8 @@
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -c .storybook -o docs"
   },
-  "author": "",
+  "author": "wizzardo",
+  "homepage": "https://github.com/wizzardo/react-ui-basics",
   "license": "MIT",
   "devDependencies": {
     "core-js": "^3.0.1",

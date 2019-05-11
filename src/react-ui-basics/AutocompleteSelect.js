@@ -15,6 +15,12 @@ export const MODE_MULTIPLE_MINI = 'multiple-mini';
 export const MODE_MINI = 'mini';
 export const MODE_MULTIPLE_MINI_INLINE = 'multiple-mini-inline';
 
+
+const DummyChild = ({id, label, dataConsumer}) => {
+    orNoop(dataConsumer)(label || id);
+    return <div className={`DummyChild`}>{label || id}</div>
+};
+
 class AutocompleteSelect extends React.Component {
 
     static propTypes = {
@@ -295,10 +301,5 @@ class AutocompleteSelect extends React.Component {
         this.setState({filterValue: value});
     }
 }
-
-const DummyChild = ({id, label, dataConsumer}) => {
-    orNoop(dataConsumer)(label || id);
-    return <div className={`DummyChild`}>{label || id}</div>
-};
 
 export default AutocompleteSelect;

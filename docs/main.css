@@ -941,7 +941,7 @@ a {
     stroke-dashoffset: -17px; }
   100% {
     stroke-dasharray: 43, 96;
-    stroke-dashoffset: -60px; } }
+    stroke-dashoffset: -53px; } }
 
 @keyframes dash {
   0% {
@@ -952,7 +952,7 @@ a {
     stroke-dashoffset: -17px; }
   100% {
     stroke-dasharray: 43, 96;
-    stroke-dashoffset: -60px; } }
+    stroke-dashoffset: -53px; } }
 
 .FormUploadProgress {
   position: absolute;

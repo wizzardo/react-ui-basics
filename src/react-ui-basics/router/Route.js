@@ -1,12 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './HistoryTools'
-import {orNoop} from "../Tools";
+import {allPropsExcept, isDifferent, orNoop, setOf} from "../Tools";
 
-const emptyObject = {};
-
-const urlListener = '_ul';
 const processPath = '_pp';
+const historyEvents = ['popstate', 'pushState', 'replaceState'];
+
+const cleanPath = (path) => {
+    if (path.length > 1 && path.lastIndexOf('/') === path.length - 1)
+        return path.substring(0, path.length - 1);
+
+    return path;
+};
+
+const selfProps = setOf([
+    'children',
+    'path',
+    'proxy',
+    'onToggle',
+]);
 
 class Route extends React.PureComponent {
 
@@ -81,48 +93,44 @@ class Route extends React.PureComponent {
 
     matches = () => this.state.render;
 
-    cleanPath = (path) => {
-        if (path.length > 1 && path.lastIndexOf('/') === path.length - 1)
-            return path.substring(0, path.length - 1);
-
-        return path;
-    };
-
     [processPath] = () => {
         let params = {};
-        let render = this.matcher(this.cleanPath(window.location.pathname), params);
-        if (Object.keys(params).length === 0)
-            params = emptyObject;
+        let render = this.matcher(cleanPath(window.location.pathname), params);
+        const nextState = {render};
+        if (isDifferent(this.state.params, params)) {
+            nextState.params = params;
+            nextState.mergedProps = Object.assign(allPropsExcept(this.props, selfProps), params);
+        }
 
-        const toggle = render !== (this.state || {}).render && this.props.onToggle;
-        this.setState({render, params}, () => {
+        const toggle = render !== this.state.render;
+        this.setState(nextState, () => {
             // toggle && console.log('toggle',this.props.path, render);
-            toggle && this.props.onToggle(render);
+            toggle && orNoop(this.props.onToggle)(render);
         })
     };
 
-    componentDidUpdate = (prevProps, prevState) => this.state.render !== prevState.render && orNoop(this.props.onToggle)(this.props.render);
+    componentDidUpdate = (prevProps, prevState) => {
+        if (this.props !== prevProps) {
+            let mergedProps = Object.assign(allPropsExcept(this.props, selfProps), this.state.params);
+            if (isDifferent(mergedProps, this.state.mergedProps))
+                this.setState({mergedProps})
+        }
+    };
 
     render = () => {
-        if (React.Children.count(this.props.children) === 0)
-            return null;
-
-        const {children, path, onToggle, proxy, ...otherProps} = this.props;
-        const {render, params, variables} = this.state;
-        const props = {...otherProps, ...params};
-        return (proxy || SimpleProxy)(render, children, props, variables);
+        const {children, proxy} = this.props;
+        const {render, variables, mergedProps} = this.state;
+        return (proxy || SimpleProxy)(render, children, mergedProps, variables);
     };
 
     componentDidMount = () => {
-        ['popstate', 'pushState', 'replaceState'].forEach(it => window.addEventListener(it, this[urlListener]));
+        historyEvents.forEach(it => window.addEventListener(it, this[processPath]));
         this[processPath]();
     };
 
     componentWillUnmount = () => {
-        ['popstate', 'pushState', 'replaceState'].forEach(it => window.removeEventListener(it, this[urlListener]));
+        historyEvents.forEach(it => window.removeEventListener(it, this[processPath]));
     };
-
-    [urlListener] = (e) => this[processPath]();
 }
 
 const SimpleProxy = (matches, children, props, variables) => {

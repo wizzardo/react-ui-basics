@@ -12,6 +12,9 @@ import Dialog from "../react-ui-basics/Dialog";
 import AutocompleteSelect from "../react-ui-basics/AutocompleteSelect";
 import {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
 import FloatingActionButton from "../react-ui-basics/FloatingActionButton";
+import CircleProgress from "../react-ui-basics/CircleProgress";
+import SpinningProgress from "../react-ui-basics/SpinningProgress";
+import FormUploadProgress from "../react-ui-basics/FormUploadProgress";
 
 class FABContainer extends React.Component {
     state = {hidden: false};
@@ -156,4 +159,26 @@ storiesOf('Select', module)
                                                </div>,
                                            }}
     />)
+;
+
+
+storiesOf('Progress', module)
+    .add('circle', () => <div>
+        <CircleProgress value={0}/>
+        <CircleProgress value={8}/>
+        <CircleProgress value={20}/>
+        <CircleProgress value={30}/>
+        <CircleProgress value={40}/>
+        <CircleProgress value={50}/>
+        <CircleProgress value={60}/>
+        <CircleProgress value={70}/>
+        <CircleProgress value={80}/>
+        <CircleProgress value={90}/>
+        <CircleProgress value={100}/>
+    </div>)
+    .add('spinner', () => <div>
+        <SpinningProgress />
+    </div>)
+    .add('form upload', () => <FormUploadProgress processingLabel={'Processing..'} cancelLabel={'Cancel'} value={75} loaded={74 * 1024 * 1024} total={98 * 1024 * 1024} cancel={() => console.log('canceled')}/>)
+    .add('form upload. processing', () => <FormUploadProgress processingLabel={'Processing..'} cancelLabel={'Cancel'} value={100} cancel={() => console.log('canceled')}/>)
 ;

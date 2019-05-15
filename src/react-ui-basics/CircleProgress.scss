@@ -1,0 +1,13 @@
+.CircleProgress {
+  width: 48px;
+  height: 48px;
+
+  .line {
+    stroke-width: 2px;
+    stroke: black;
+    stroke-linecap: square;
+    fill: none;
+
+    transition: stroke-dashoffset 0.2s ease;
+  }
+}

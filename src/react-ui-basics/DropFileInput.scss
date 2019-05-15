@@ -1,0 +1,28 @@
+.DropFileInput {
+  flex-grow: 1;
+
+  .Dropzone {
+    border: 1px dashed #808080;
+    padding: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    color: gray;
+    cursor: pointer;
+    border-radius: 3px;
+
+    font-weight: normal;
+    line-height: 22px;
+    font-size: 14px;
+
+    color: #7E7E7E;
+    max-width: 100%;
+    word-break: break-all;
+    word-break: break-word;
+
+    .icon.withText {
+      margin-right: 10px;
+    }
+  }
+}

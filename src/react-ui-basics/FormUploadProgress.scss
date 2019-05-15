@@ -1,0 +1,78 @@
+@import "./global.scss";
+
+.FormUploadProgress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 2;
+
+  &.animated {
+    &.mounting, &.mounted {
+      transition-delay: 500ms;
+    }
+  }
+
+  .wrapper {
+    position: sticky;
+    top: 40%;
+    margin-top: 40%;
+    margin-left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+
+    .CircleProgress, .SpinningProgress {
+      position: absolute;
+      width: 107px;
+      height: 107px;
+      top: 0;
+      left: 0;
+
+      .line {
+        stroke: $colorBlue;
+      }
+    }
+
+    > .progress {
+      width: 107px;
+      height: 107px;
+      min-height: 107px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+      border-radius: 50%;
+      background: white;
+      position: relative;
+
+      > .value {
+        display: inline-block;
+        margin-top: 5px;
+
+        font-weight: bold;
+        line-height: 16px;
+        font-size: 13px;
+        text-align: center;
+
+        color: #818181;
+      }
+    }
+
+    .cancel {
+      min-width: 107px;
+      margin-top: 20px;
+      background-color: white;
+      color: #F96B5C;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+}

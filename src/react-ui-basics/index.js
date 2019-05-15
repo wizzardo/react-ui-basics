@@ -5,6 +5,7 @@ import Checkbox from "./Checkbox";
 import Dialog from "./Dialog";
 import Dropzone from "./Dropzone";
 import FilteredList from "./FilteredList";
+import FloatingActionButton from "./FloatingActionButton";
 import Modal from "./Modal";
 import Router from "./router";
 import Scrollable from "./Scrollable";
@@ -20,6 +21,7 @@ export {
     Dialog,
     Dropzone,
     FilteredList,
+    FloatingActionButton,
     Modal,
     Router,
     Scrollable,

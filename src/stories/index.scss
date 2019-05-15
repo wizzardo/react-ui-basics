@@ -2,7 +2,13 @@
   font-family: Roboto, sans-serif;
 }
 
-.sb-show-main{
+#root {
+  min-height: 80vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.sb-show-main {
   padding: 20px;
   position: relative;
 }
@@ -42,6 +48,10 @@ a {
   right: unset;
 }
 
+.FloatingActionButton.fab-right-96 {
+  right: 96px;
+}
+
 .AutocompleteSelect.menu {
   min-width: 0;
 
@@ -75,7 +85,7 @@ a {
       transition: color 0.2s ease;
     }
 
-    .ItemWrapper{
+    .ItemWrapper {
       &.selected {
         padding-left: 15px;
         margin-left: -5px;

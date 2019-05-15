@@ -11,7 +11,21 @@ import Switch from "../react-ui-basics/Switch";
 import Dialog from "../react-ui-basics/Dialog";
 import AutocompleteSelect from "../react-ui-basics/AutocompleteSelect";
 import {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
+import FloatingActionButton from "../react-ui-basics/FloatingActionButton";
 
+class FABContainer extends React.Component {
+    state = {hidden: false};
+
+    render() {
+        const {hidden} = this.state;
+        return <FloatingActionButton {...this.props} onClick={() => this.setState({hidden: !hidden})} hidden={hidden}/>
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.hidden)
+            setTimeout(() => this.setState({hidden: false}), 1000)
+    }
+}
 
 storiesOf('Button', module)
     .add('basic', () => <React.Fragment>
@@ -44,6 +58,10 @@ storiesOf('Button', module)
         <Button raised={false} round={true}>
             <i className="material-icons">favorite</i>
         </Button>
+    </React.Fragment>)
+    .add('floating action button', () => <React.Fragment>
+        <FABContainer/>
+        <FABContainer mini={true} icon={'create'} className={'fab-right-96'}/>
     </React.Fragment>)
 ;
 

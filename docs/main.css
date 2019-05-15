@@ -1,6 +1,11 @@
 * {
   font-family: Roboto, sans-serif; }
 
+#root {
+  min-height: 80vh;
+  position: relative;
+  overflow: hidden; }
+
 .sb-show-main {
   padding: 20px;
   position: relative; }
@@ -33,6 +38,9 @@ a {
   bottom: unset;
   right: unset; }
 
+.FloatingActionButton.fab-right-96 {
+  right: 96px; }
+
 .AutocompleteSelect.menu {
   min-width: 0; }
   .AutocompleteSelect.menu .popup {
@@ -58,6 +66,25 @@ a {
       margin-left: -5px; }
   .AutocompleteSelect.menu.active .selected .material-icons {
     color: #333333; }
+
+.FloatingActionButton {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  padding: 16px;
+  -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .FloatingActionButton.raised {
+    -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .FloatingActionButton.mini {
+    width: 40px;
+    height: 40px;
+    padding: 8px; }
+  .FloatingActionButton.hidden {
+    bottom: -100px; }
 
 .Button {
   position: relative;
@@ -562,6 +589,297 @@ a {
   opacity: 0; }
   .animated.mounting, .animated.mounted {
     opacity: 1; }
+
+.AutocompleteSelect {
+  display: inline-flex;
+  flex-flow: column;
+  justify-content: center;
+  position: relative;
+  min-width: 250px;
+  min-height: 27px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
+  .AutocompleteSelect > .input {
+    width: 100%;
+    position: relative; }
+  .AutocompleteSelect .Scrollable {
+    padding-right: 0;
+    min-width: 100%; }
+  .AutocompleteSelect.inline-multiple > .label {
+    top: -12px; }
+  .AutocompleteSelect.inline-multiple > .selected {
+    flex-flow: row wrap; }
+  .AutocompleteSelect.multiple-mini-inline {
+    height: 42px; }
+    .AutocompleteSelect.multiple-mini-inline > .label {
+      cursor: pointer;
+      width: 100%;
+      margin-left: -10px;
+      padding: 10px;
+      box-sizing: border-box;
+      top: 0; }
+      .AutocompleteSelect.multiple-mini-inline > .label.active {
+        padding: 0 10px; }
+    .AutocompleteSelect.multiple-mini-inline > .selected {
+      width: 250px; }
+    .AutocompleteSelect.multiple-mini-inline > .input {
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+      position: absolute;
+      top: 38px;
+      z-index: 2;
+      background-color: white;
+      min-width: 130%; }
+      .AutocompleteSelect.multiple-mini-inline > .input .TextField {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 100%;
+        box-sizing: border-box; }
+      .AutocompleteSelect.multiple-mini-inline > .input.hidden {
+        opacity: 0;
+        visibility: hidden; }
+    .AutocompleteSelect.multiple-mini-inline .FilteredList .child:first-child {
+      margin-top: 0; }
+  .AutocompleteSelect .TextField {
+    margin-top: 8px; }
+  .AutocompleteSelect > .label {
+    position: absolute;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    cursor: text;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none; }
+    .AutocompleteSelect > .label.active {
+      font-size: 10px;
+      top: 2px; }
+      .AutocompleteSelect > .label.active .arrow {
+        border-width: 4px 4px 0 4px;
+        margin-bottom: 1px; }
+    .AutocompleteSelect > .label .arrow {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 5px 0 5px;
+      border-color: rgba(0, 0, 0, 0.5) transparent transparent transparent;
+      display: inline-block;
+      margin-left: 5px;
+      margin-bottom: 2px;
+      -webkit-transition: all 0.2s ease;
+      transition: all 0.2s ease; }
+  .AutocompleteSelect > .selected {
+    margin-top: 8px;
+    display: flex;
+    cursor: pointer; }
+    .AutocompleteSelect > .selected > .reset {
+      min-width: 36px;
+      max-width: 36px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      background-color: white; }
+      .AutocompleteSelect > .selected > .reset .material-icons {
+        margin: 0;
+        color: #BFBFBF;
+        font-size: 20px; }
+    .AutocompleteSelect > .selected.nolabel {
+      margin-top: 0px;
+      border-bottom: 1px solid #e5e3e3; }
+      .AutocompleteSelect > .selected.nolabel .DummyChild {
+        display: inline-flex;
+        align-items: center;
+        flex-grow: 1;
+        font-size: 16px;
+        margin: 0px 10px;
+        margin-bottom: 5px;
+        height: 19px; }
+      .AutocompleteSelect > .selected.nolabel .arrow {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 5px 0 5px;
+        border-color: rgba(0, 0, 0, 0.5) transparent transparent transparent;
+        display: inline-block;
+        -webkit-transition: all 0.2s ease;
+        transition: all 0.2s ease;
+        margin: 0px 17px 3px 5px; }
+    .AutocompleteSelect > .selected.inline {
+      font-size: 14px;
+      font-family: Roboto, sans-serif;
+      color: #1e252d;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      display: flex;
+      align-items: center; }
+    .AutocompleteSelect > .selected.clickable {
+      overflow: hidden;
+      cursor: pointer;
+      padding: 10px;
+      margin-left: -10px;
+      margin-right: -10px; }
+    .AutocompleteSelect > .selected > .value {
+      cursor: pointer;
+      margin: 5px 10px 5px 0px;
+      display: inline-flex;
+      flex-flow: row wrap;
+      height: 30px;
+      align-items: center;
+      background-color: #f0f0f0;
+      border-radius: 30px;
+      position: relative;
+      font-family: Roboto, sans-serif;
+      font-size: 14px;
+      color: #1e252d; }
+      .AutocompleteSelect > .selected > .value .button {
+        cursor: pointer;
+        min-width: 30px;
+        width: 30px;
+        height: 30px;
+        opacity: 0;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: deepskyblue;
+        color: white;
+        border-radius: 30px;
+        display: flex;
+        flex-flow: row;
+        justify-content: center;
+        align-items: center;
+        -webkit-animation: anticlockwise 0.15s linear;
+                animation: anticlockwise 0.15s linear; }
+        .AutocompleteSelect > .selected > .value .button .material-icons {
+          font-size: 22px; }
+      .AutocompleteSelect > .selected > .value:hover .button {
+        width: 30px;
+        height: 30px;
+        opacity: 1;
+        -webkit-animation: clockwise 0.15s linear;
+                animation: clockwise 0.15s linear;
+        overflow: hidden;
+        position: absolute; }
+
+.FilteredList {
+  max-height: 250px;
+  position: relative; }
+  .FilteredList.popup {
+    padding: 0;
+    visibility: hidden;
+    position: absolute;
+    background: white;
+    z-index: 4;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    -webkit-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+    top: 20px;
+    max-height: 0;
+    opacity: 0;
+    border-radius: 2px; }
+    .FilteredList.popup.visible {
+      top: 28px;
+      opacity: 1;
+      visibility: visible; }
+  .FilteredList.inline {
+    max-height: 225px;
+    margin-top: 5px; }
+  .FilteredList .child {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 14px;
+    color: #222222;
+    height: 30px;
+    padding: 5px 10px;
+    padding-right: 15px;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 5px solid #4AC263;
+    padding-left: 15px;
+    margin-left: -5px; }
+    .FilteredList .child.hidden {
+      height: 0 !important;
+      padding: 0 !important; }
+    .FilteredList .child.selected {
+      background-color: #F0F0F0;
+      padding-left: 10px;
+      margin-left: 0px; }
+    .FilteredList .child.active {
+      background-color: #eeeeee; }
+    .FilteredList .child:first-child {
+      margin-top: 8px; }
+    .FilteredList .child:last-child {
+      margin-bottom: 8px; }
+
+.Scrollable {
+  max-height: 250px;
+  padding-right: 5px;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+  overflow: hidden; }
+  .Scrollable:hover > .scrollbar.auto {
+    -webkit-transition-delay: 0s;
+            transition-delay: 0s;
+    opacity: 1; }
+  .Scrollable .viewport {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 100%; }
+    .Scrollable .viewport::-webkit-scrollbar {
+      display: none; }
+  .Scrollable.without-scroll {
+    padding-right: 0; }
+    .Scrollable.without-scroll > .viewport {
+      overflow: inherit;
+      padding-right: 0;
+      margin-right: 0; }
+    .Scrollable.without-scroll > .scrollbar {
+      visibility: hidden; }
+  .Scrollable .scrollbar {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 5px;
+    -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-transition-delay: 0.5s;
+            transition-delay: 0.5s;
+    z-index: 1; }
+    .Scrollable .scrollbar.auto, .Scrollable .scrollbar.hidden {
+      opacity: 0; }
+    .Scrollable .scrollbar.visible, .Scrollable .scrollbar:active {
+      -webkit-transition-delay: 0s;
+              transition-delay: 0s;
+      opacity: 1; }
+    .Scrollable .scrollbar .thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 5px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+      will-change: top;
+      border-radius: 2px; }
+      .Scrollable .scrollbar .thumb:hover {
+        background-color: rgba(0, 0, 0, 0.5); }
+      .Scrollable .scrollbar .thumb:active {
+        background-color: rgba(0, 0, 0, 0.7); }
 
 
 /*# sourceMappingURL=main.css.map*/

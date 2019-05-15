@@ -1,0 +1,25 @@
+.FloatingActionButton {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+
+  width: 56px;
+  height: 56px;
+  padding: 16px;
+
+  transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.raised {
+    transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1)
+  }
+
+  &.mini {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+  }
+
+  &.hidden {
+    bottom: -100px;
+  }
+}

@@ -134,7 +134,7 @@ class Route extends React.PureComponent {
 }
 
 const SimpleProxy = (matches, children, props, variables) => {
-    if (!matches) return null;
+    if (!matches || !children) return null;
     if (variables.length > 0 || Object.keys(props).length > 0) {
         return React.Children.map(children, child => React.cloneElement(child, props));
     }

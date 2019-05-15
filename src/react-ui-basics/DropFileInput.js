@@ -8,7 +8,7 @@ const DropFileInput = ({icon, label, onDrop, droppable}) => (
     <section className="DropFileInput">
         <Dropzone droppable={droppable} onDrop={onDrop}>
             <i className={classNames(`material-icons icon`, label && 'withText')}>{icon}</i>
-            {label && <div>label</div>}
+            {label && <div>{label}</div>}
         </Dropzone>
     </section>
 );

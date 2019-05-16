@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Scrollable.css'
-import {classNames, ref} from "./Tools";
+import {classNames, preventDefault, ref} from "./Tools";
 
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
 export const SCROLLBAR_MODE_VISIBLE = 'visible';
@@ -90,7 +90,7 @@ class Scrollable extends React.Component {
             window.addEventListener('mouseup', reset);
             window.addEventListener('mousemove', moveListener);
         };
-        thumb.ondragstart = (e) => e.preventDefault();
+        thumb.ondragstart = preventDefault;
         thumb.onmouseup = reset;
         scrollbar.onclick = (e) => {
             if (e.target !== scrollbar) return;

@@ -118,9 +118,9 @@ class Route extends React.PureComponent {
     };
 
     render = () => {
-        const {children, proxy} = this.props;
+        const {children, controller} = this.props;
         const {render, variables, mergedProps} = this.state;
-        return (proxy || SimpleProxy)(render, children, mergedProps, variables);
+        return (controller || DefaultController)(render, children, mergedProps, variables);
     };
 
     componentDidMount = () => {
@@ -133,7 +133,7 @@ class Route extends React.PureComponent {
     };
 }
 
-const SimpleProxy = (matches, children, props, variables) => {
+const DefaultController = (matches, children, props, variables) => {
     if (!matches || !children) return null;
     if (variables.length > 0 || Object.keys(props).length > 0) {
         return React.Children.map(children, child => React.cloneElement(child, props));

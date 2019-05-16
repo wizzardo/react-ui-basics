@@ -90,3 +90,5 @@ export const isDifferent = (a, b) => {
 
     return a !== b;
 };
+
+export const preventDefault = e => e && e.preventDefault();

@@ -6,6 +6,7 @@ import CircleProgress from "./CircleProgress";
 import SpinningProgress from "./SpinningProgress";
 import {formatAbbreviation, formatNumberWithMaxLength} from "./Size";
 import PropTypes from "prop-types";
+import {preventDefault} from "./Tools";
 
 const FormUploadProgress = ({
                                 value,
@@ -34,7 +35,7 @@ const FormUploadProgress = ({
                         </div>}
                     </div>
                     {cancel && <Button className={"cancel"} disabled={loaded === total} onClick={e => {
-                        e.preventDefault();
+                        preventDefault(e);
                         cancel();
                     }}>
                         {loaded === total && processingLabel}

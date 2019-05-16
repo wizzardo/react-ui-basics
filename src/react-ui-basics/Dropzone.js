@@ -1,6 +1,6 @@
 import React from 'react';
 import './Dropzone.css'
-import {classNames, setOf, ref} from "./Tools";
+import {classNames, setOf, ref, preventDefault} from "./Tools";
 
 const toArray = (o) => {
     if (o instanceof Array)
@@ -14,7 +14,7 @@ const toArray = (o) => {
 };
 
 const prevent = (e) => {
-    e.preventDefault();
+    preventDefault(e);
     e.stopPropagation();
     return false;
 };

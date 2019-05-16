@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './Dialog.css'
 import Button from "./Button";
 import Modal from "./Modal";
-import {orNoop, ref} from "./Tools";
+import {orNoop, preventDefault, ref} from "./Tools";
 
 
 class DialogWrapper extends Component {
@@ -34,13 +34,13 @@ class DialogWrapper extends Component {
     };
 
     onCancel = (e) => {
-        e && e.preventDefault();
+        preventDefault(e);
         orNoop(this.props.onCancel || this.state.onCancel)();
         this.closeModal();
     };
 
     onAccept = (e) => {
-        e && e.preventDefault();
+        preventDefault(e);
         orNoop(this.props.onAccept || this.state.onAccept)();
         this.closeModal();
     };

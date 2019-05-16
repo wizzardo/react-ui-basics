@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './AutocompleteSelect.css'
 import TextField from "./TextField";
 import FilteredList from "./FilteredList";
-import {classNames, continuousIncludes, isHappenedInside, getRandomId, ref, orNoop} from "./Tools";
+import {classNames, continuousIncludes, isHappenedInside, getRandomId, ref, orNoop, preventDefault} from "./Tools";
 import Button from "./Button";
 
 export const MODE_DEFAULT = 'default';
@@ -202,13 +202,13 @@ class AutocompleteSelect extends React.Component {
                                                   onKeyDown={e => {
                                                       const keyCode = e.keyCode;
                                                       if (keyCode === 38/*up*/) {
-                                                          e.preventDefault();
+                                                          preventDefault(e);
                                                           this.prev();
                                                       } else if (keyCode === 40/*down*/) {
-                                                          e.preventDefault();
+                                                          preventDefault(e);
                                                           this.next();
                                                       } else if (keyCode === 13/*enter*/) {
-                                                          e.preventDefault();
+                                                          preventDefault(e);
                                                           this.onSelect(this.getSelected())
                                                       } else if (keyCode === 8/*backspace*/ || keyCode === 46/*delete*/) {
                                                           this.reset()
@@ -270,7 +270,7 @@ class AutocompleteSelect extends React.Component {
 
     clean = (e) => {
         if (e) {
-            e.preventDefault();
+            preventDefault(e);
             e.stopPropagation();
         }
 

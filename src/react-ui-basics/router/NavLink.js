@@ -5,20 +5,13 @@ import Route from "./Route";
 import Link from "./Link";
 import {classNames} from "../Tools";
 
-class NavLink extends PureComponent {
+const NavLink = ({children, href, highlightPath, className, activeClassName}) =>
+    <Route path={highlightPath || href}
+           controller={matches => <Link href={href} className={classNames(className, matches && activeClassName)}>
+               {children}
+           </Link>}
+    />;
 
-    static propTypes = {
-        href: PropTypes.string.isRequired,
-    };
-
-    render = () => {
-        const {children, href, highlightPath, className, activeClassName} = this.props;
-        const {match} = this.state || {};
-        return <Link href={href} className={classNames(className, match && activeClassName)}>
-            <Route onToggle={match => this.setState({match})} path={highlightPath || href}/>
-            {children}
-        </Link>;
-    };
-}
+NavLink.propTypes = Link.propTypes;
 
 export default NavLink;

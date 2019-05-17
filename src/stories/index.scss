@@ -97,3 +97,7 @@ a {
     color: #333333;
   }
 }
+
+.AnimatedHolder .animated {
+  transition: all 1s ease;
+}

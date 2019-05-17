@@ -42,7 +42,7 @@ class Animated extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            enabled: false,
+            enabled: !!props.value,
             mounting: false,
             unmounting: false,
             mounted: false,
@@ -50,15 +50,9 @@ class Animated extends React.PureComponent {
     }
 
     render() {
-        const {children, className, mountingDelay, styles} = this.props;
+        const {children, className, styles} = this.props;
         const {enabled, mounting, mounted, unmounting} = this.state;
         if (!enabled) return null;
-
-        if (!mounting && !mounted && !unmounting) {
-            this.clearTimeout();
-            this.timeout = setTimeout(() =>
-                this.mounting(this.props.mounting, mountingDelay), 1);
-        }
 
         let childStyles = styles.default;
         if (mounting) childStyles = styles.mounting;
@@ -87,87 +81,98 @@ class Animated extends React.PureComponent {
             this.mounting(mounting, mountingDelay)
     }
 
-    componentWillUnmount() {
-        this.clearTimeout();
-    }
-
     clearTimeout = () => this.timeout && clearTimeout(this.timeout);
+
+    componentWillUnmount = this.clearTimeout;
+
+    doMounting = (duration) => {
+        this.setState({
+            mounting: true,
+            mounted: false,
+            unmounting: false,
+        });
+
+        this.timeout = setTimeout(() => {
+            this.setState({
+                mounting: false,
+                mounted: true,
+                unmounting: false
+            })
+        }, duration)
+    };
 
     mounting = (duration, mountingDelay) => {
         if (this.state.mounting || this.state.mounted) return;
         this.clearTimeout();
 
-        const doMounting = () => {
-            this.setState({
-                mounting: true,
-                mounted: false,
-                unmounting: false,
-            });
+        if (this.state.unmounting)
+            return this.doMounting(duration);
 
+        if (mountingDelay) {
             this.timeout = setTimeout(() => {
-                this.setState({
-                    mounting: false,
-                    mounted: true,
-                    unmounting: false
-                })
-            }, duration)
-        };
+                if (this.state.mounted) return;
+                this.doMounting(duration)
+            }, mountingDelay);
+        } else {
+            this.doMounting(duration);
+        }
+    };
 
-        if (this.state.unmounting) return doMounting();
-
+    doUnmounting = (duration) => {
+        this.setState({
+            enabled: true,
+            mounting: false,
+            unmounting: true,
+            mounted: false
+        });
         this.timeout = setTimeout(() => {
-            if (this.state.mounted) return;
-
-            this.setState({enabled: true});
-            if (this.state.enabled)
-                this.timeout = setTimeout(doMounting, 1);
-            else
-                doMounting()
-        }, mountingDelay);
+            this.setState({
+                enabled: false,
+                mounting: false,
+                unmounting: false,
+                mounted: false
+            })
+        }, duration);
     };
 
     unmounting = (duration, unmountingDelay) => {
         if (this.state.unmounting) return;
         this.clearTimeout();
 
-        const doUnmounting = () => {
-            this.setState({
-                enabled: true,
-                mounting: false,
-                unmounting: true,
-                mounted: false
-            });
+        if (this.state.mounting)
+            return this.doUnmounting(duration);
+
+        if (unmountingDelay) {
             this.timeout = setTimeout(() => {
-                this.setState({
-                    enabled: false,
-                    mounting: false,
-                    unmounting: false,
-                    mounted: false
-                })
-            }, duration);
-        };
-
-        if (this.state.mounting) return doUnmounting();
-
-        this.timeout = setTimeout(() => {
-            if (this.props.value)
-                return;
-            doUnmounting();
-        }, unmountingDelay);
+                if (this.props.value) return;
+                this.doUnmounting(duration);
+            }, unmountingDelay);
+        } else {
+            this.doUnmounting(duration);
+        }
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.state.unmounting && this.props.value)
-            return this.mounting(this.props.mounting, this.props.mountingDelay);
-        if (this.state.mounting && !this.props.value)
-            return this.unmounting(this.props.unmounting, this.props.unmountingDelay);
+        const {mountingDelay, unmountingDelay, value, mounting: mountingDuration, unmounting: unmountingDuration} = this.props;
+        const {enabled, mounting, mounted, unmounting} = this.state;
 
-        let toggled = (this.state.enabled && !this.props.value) || (!this.state.enabled && !!this.props.value);
+        if (unmounting && value)
+            return this.mounting(mountingDuration, mountingDelay);
+        if (mounting && !value)
+            return this.unmounting(unmountingDuration, unmountingDelay);
+
+        let toggled = (enabled && !value) || (!enabled && !!value);
         if (toggled) {
-            if (!!this.props.value)
-                this.mounting(this.props.mounting, this.props.mountingDelay);
-            else
-                this.unmounting(this.props.unmounting, this.props.unmountingDelay);
+            if (!!value) {
+                // just set enable to true and wait until react will mount children
+                this.setState({enabled: true})
+            } else
+                this.unmounting(unmountingDuration, unmountingDelay);
+        } else {
+            if (enabled && !mounting && !mounted && !unmounting) {
+                // react requires a delay to mount children, one requestAnimationFrame is not enough
+                requestAnimationFrame(() => requestAnimationFrame(() => this.mounting(mountingDuration, mountingDelay)))
+            }
         }
     }
 }

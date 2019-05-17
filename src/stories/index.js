@@ -15,6 +15,7 @@ import FloatingActionButton from "../react-ui-basics/FloatingActionButton";
 import CircleProgress from "../react-ui-basics/CircleProgress";
 import SpinningProgress from "../react-ui-basics/SpinningProgress";
 import FormUploadProgress from "../react-ui-basics/FormUploadProgress";
+import Animated from "../react-ui-basics/Animated";
 
 class FABContainer extends React.Component {
     state = {hidden: false};
@@ -177,8 +178,37 @@ storiesOf('Progress', module)
         <CircleProgress value={100}/>
     </div>)
     .add('spinner', () => <div>
-        <SpinningProgress />
+        <SpinningProgress/>
     </div>)
-    .add('form upload', () => <FormUploadProgress processingLabel={'Processing..'} cancelLabel={'Cancel'} value={75} loaded={74 * 1024 * 1024} total={98 * 1024 * 1024} cancel={() => console.log('canceled')}/>)
+    .add('form upload', () => <FormUploadProgress processingLabel={'Processing..'}
+                                                  cancelLabel={'Cancel'}
+                                                  value={75} loaded={74 * 1024 * 1024}
+                                                  total={98 * 1024 * 1024}
+                                                  cancel={() => console.log('canceled')}
+    />)
     .add('form upload. processing', () => <FormUploadProgress processingLabel={'Processing..'} cancelLabel={'Cancel'} value={100} cancel={() => console.log('canceled')}/>)
+;
+
+class AnimatedHolder extends React.Component {
+    state = {
+        show: false
+    };
+
+    render() {
+        const {show} = this.state;
+        return <div className={"AnimatedHolder"}>
+            <Button style={{minWidth: '100px', marginRight: '20px'}} onClick={e => this.setState({show: !show})}>
+                {show ? 'hide' : 'show'}
+            </Button>
+            <Animated mounting={1000} unmounting={1000} value={show}>
+                <span>Animated</span>
+            </Animated>
+        </div>
+    }
+}
+
+storiesOf('Animated', module)
+    .add('basic', () => <div>
+        <AnimatedHolder/>
+    </div>)
 ;

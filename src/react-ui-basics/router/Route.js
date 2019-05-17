@@ -16,7 +16,7 @@ const cleanPath = (path) => {
 const selfProps = setOf([
     'children',
     'path',
-    'proxy',
+    'controller',
     'onToggle',
 ]);
 
@@ -24,6 +24,8 @@ class Route extends React.PureComponent {
 
     static propTypes = {
         path: PropTypes.string.isRequired,
+        controller: PropTypes.func,
+        onToggle: PropTypes.func,
     };
 
     componentWillMount = () => {

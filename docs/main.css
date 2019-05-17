@@ -67,6 +67,10 @@ a {
   .AutocompleteSelect.menu.active .selected .material-icons {
     color: #333333; }
 
+.AnimatedHolder .animated {
+  -webkit-transition: all 1s ease;
+  transition: all 1s ease; }
+
 .FloatingActionButton {
   position: absolute;
   right: 16px;

@@ -5,71 +5,62 @@
   min-height: 80vh;
   position: relative;
   overflow: hidden; }
+  #root .TextField {
+    max-width: 300px; }
+  #root .row {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center; }
+    #root .row.right {
+      justify-content: flex-end; }
+  #root .column {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start; }
+  #root .line {
+    min-height: 18px; }
+  #root a {
+    text-decoration: none;
+    color: lightblue; }
+  #root .sb-show-main .FormUploadProgress {
+    -webkit-transition-delay: 0s !important;
+            transition-delay: 0s !important;
+    bottom: unset;
+    right: unset; }
+  #root .FloatingActionButton.fab-right-96 {
+    right: 96px; }
+  #root .AutocompleteSelect.menu {
+    min-width: 0; }
+    #root .AutocompleteSelect.menu .popup {
+      left: 0; }
+      #root .AutocompleteSelect.menu .popup .DummyChild {
+        font-size: 14px;
+        color: #818181; }
+      #root .AutocompleteSelect.menu .popup .material-icons {
+        color: #818181;
+        margin-right: 4px; }
+    #root .AutocompleteSelect.menu.active .popup {
+      top: 33px; }
+    #root .AutocompleteSelect.menu > .selected {
+      border: none; }
+      #root .AutocompleteSelect.menu > .selected.nolabel {
+        border: none; }
+      #root .AutocompleteSelect.menu > .selected .material-icons {
+        color: #A6A6A6;
+        -webkit-transition: color 0.2s ease;
+        transition: color 0.2s ease; }
+      #root .AutocompleteSelect.menu > .selected .ItemWrapper.selected {
+        padding-left: 15px;
+        margin-left: -5px; }
+    #root .AutocompleteSelect.menu.active .selected .material-icons {
+      color: #333333; }
+  #root .AnimatedHolder .animated {
+    -webkit-transition: all 1s ease;
+    transition: all 1s ease; }
 
 .sb-show-main {
   padding: 20px;
   position: relative; }
-
-.TextField {
-  max-width: 300px; }
-
-.row {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center; }
-  .row.right {
-    justify-content: flex-end; }
-
-.column {
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: flex-start; }
-
-.line {
-  min-height: 18px; }
-
-a {
-  text-decoration: none;
-  color: lightblue; }
-
-.sb-show-main .FormUploadProgress {
-  -webkit-transition-delay: 0s !important;
-          transition-delay: 0s !important;
-  bottom: unset;
-  right: unset; }
-
-.FloatingActionButton.fab-right-96 {
-  right: 96px; }
-
-.AutocompleteSelect.menu {
-  min-width: 0; }
-  .AutocompleteSelect.menu .popup {
-    left: 0; }
-    .AutocompleteSelect.menu .popup .DummyChild {
-      font-size: 14px;
-      color: #818181; }
-    .AutocompleteSelect.menu .popup .material-icons {
-      color: #818181;
-      margin-right: 4px; }
-  .AutocompleteSelect.menu.active .popup {
-    top: 33px; }
-  .AutocompleteSelect.menu > .selected {
-    border: none; }
-    .AutocompleteSelect.menu > .selected.nolabel {
-      border: none; }
-    .AutocompleteSelect.menu > .selected .material-icons {
-      color: #A6A6A6;
-      -webkit-transition: color 0.2s ease;
-      transition: color 0.2s ease; }
-    .AutocompleteSelect.menu > .selected .ItemWrapper.selected {
-      padding-left: 15px;
-      margin-left: -5px; }
-  .AutocompleteSelect.menu.active .selected .material-icons {
-    color: #333333; }
-
-.AnimatedHolder .animated {
-  -webkit-transition: all 1s ease;
-  transition: all 1s ease; }
 
 .FloatingActionButton {
   position: absolute;

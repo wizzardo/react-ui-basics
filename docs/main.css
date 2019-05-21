@@ -605,12 +605,39 @@ a {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
+
+@-webkit-keyframes clockwise {
+  0% {
+    -webkit-transform: rotate(-90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
+
+@keyframes clockwise {
+  0% {
+    -webkit-transform: rotate(-90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
+
+@-webkit-keyframes anticlockwise {
+  0% {
+    -webkit-transform: rotate(90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
+
+@keyframes anticlockwise {
+  0% {
+    -webkit-transform: rotate(90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
   .AutocompleteSelect > .input {
     width: 100%;
     position: relative; }
   .AutocompleteSelect .Scrollable {
     padding-right: 0;
     min-width: 100%; }
+  .AutocompleteSelect .selected.full .DummyChild {
+    padding-left: 35px;
+    padding-right: 10px; }
   .AutocompleteSelect.inline-multiple > .label {
     top: -12px; }
   .AutocompleteSelect.inline-multiple > .selected {
@@ -789,7 +816,7 @@ a {
     opacity: 0;
     border-radius: 2px; }
     .FilteredList.popup.visible {
-      top: 28px;
+      top: 36px;
       opacity: 1;
       visibility: visible; }
   .FilteredList.inline {

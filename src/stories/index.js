@@ -9,7 +9,7 @@ import TextField from "../react-ui-basics/TextField";
 import Checkbox from "../react-ui-basics/Checkbox";
 import Switch from "../react-ui-basics/Switch";
 import Dialog from "../react-ui-basics/Dialog";
-import AutocompleteSelect from "../react-ui-basics/AutocompleteSelect";
+import AutocompleteSelect, {MODE_MULTIPLE_AUTO} from "../react-ui-basics/AutocompleteSelect";
 import {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
 import FloatingActionButton from "../react-ui-basics/FloatingActionButton";
 import CircleProgress from "../react-ui-basics/CircleProgress";
@@ -138,8 +138,13 @@ const MenuIcon = () => <Button flat={true} round={true}>
 </Button>;
 
 storiesOf('Select', module)
-// .add('basic autocomplete', () => <AutocompleteSelect data={['one', 'two', 'three']}/>)
-// .add('basic', () => <AutocompleteSelect data={['one', 'two', 'three']}/>)
+    .add('basic autocomplete', () =>
+        <AutocompleteSelect
+            mode={MODE_MULTIPLE_AUTO}
+            withArrow={false}
+            label={"Select value"}
+            data={[...Array(100)].map((_, i) => `value #${i}`)}
+        />)
     .add('menu', () => <AutocompleteSelect className="menu"
                                            scroll={SCROLLBAR_MODE_HIDDEN}
                                            value={true}

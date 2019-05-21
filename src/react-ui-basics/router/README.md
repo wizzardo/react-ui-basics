@@ -1,8 +1,6 @@
 
 # Router
 
-=========
-
 #### Basic usage:
 
 ```javascript
@@ -51,7 +49,7 @@ const A = (a)=> <div>{a}</div>;
 const Nested = ()=> <Route path="/*/:a"> <A/> </Route>;
 
 <div>
-    <Route path="/nested"> <Nested/> </Route>
+    <Route path="/nested/*"> <Nested/> </Route>
 </div>
 ```
 

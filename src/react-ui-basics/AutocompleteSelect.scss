@@ -9,6 +9,24 @@
   min-height: 27px;
   user-select: none;
 
+  @keyframes clockwise {
+    0% {
+      -webkit-transform: rotate(-90deg);
+    }
+    100% {
+      -webkit-transform: translateX(0px);
+    }
+  }
+
+  @keyframes anticlockwise {
+    0% {
+      -webkit-transform: rotate(90deg);
+    }
+    100% {
+      -webkit-transform: translateX(0px);
+    }
+  }
+
   > .input {
     width: 100%;
     position: relative;
@@ -17,6 +35,13 @@
   .Scrollable {
     padding-right: 0;
     min-width: 100%;
+  }
+
+  .selected.full {
+    .DummyChild {
+      padding-left: 35px;
+      padding-right: 10px;
+    }
   }
 
   &.inline-multiple {

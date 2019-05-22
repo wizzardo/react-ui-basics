@@ -57,6 +57,41 @@
   #root .AnimatedHolder .animated {
     -webkit-transition: all 1s ease;
     transition: all 1s ease; }
+  #root .DNDExample {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding-top: 20px; }
+    #root .DNDExample .Draggable {
+      display: inline-block; }
+      #root .DNDExample .Draggable .item {
+        display: inline-block;
+        background-color: #00bcd4;
+        padding: 10px;
+        border-radius: 4px;
+        -webkit-transition: -webkit-transform 200ms ease;
+        transition: -webkit-transform 200ms ease;
+        transition: transform 200ms ease;
+        transition: transform 200ms ease, -webkit-transform 200ms ease; }
+      #root .DNDExample .Draggable.dragged .item {
+        -webkit-transform: rotate(10deg);
+                transform: rotate(10deg); }
+    #root .DNDExample .Droppable {
+      background-color: #4ac263;
+      display: inline-block;
+      border-radius: 4px;
+      padding: 50px;
+      position: absolute;
+      left: 300px;
+      top: 20px; }
+      #root .DNDExample .Droppable.second {
+        top: 300px; }
+      #root .DNDExample .Droppable.allow {
+        background-color: #5bd073; }
+      #root .DNDExample .Droppable.hover {
+        background-color: #4CAF50; }
 
 .sb-show-main {
   padding: 20px;
@@ -1032,6 +1067,27 @@
       background-color: white;
       color: #F96B5C;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); }
+
+.DNDContainer {
+  position: relative; }
+  .DNDContainer .Draggable[draggable=true], .DNDContainer .Draggable [draggable=true] {
+    cursor: pointer; }
+  .DNDContainer .Draggable.placeholder {
+    opacity: 0.2; }
+  .DNDContainer .Draggable.copy {
+    position: absolute;
+    box-sizing: border-box;
+    will-change: transform;
+    opacity: 0; }
+  .DNDContainer .Draggable.dragged {
+    z-index: 10; }
+  .DNDContainer .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none; }
 
 
 /*# sourceMappingURL=main.css.map*/

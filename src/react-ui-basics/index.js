@@ -4,6 +4,9 @@ import Button from "./Button";
 import Checkbox from "./Checkbox";
 import CircleProgress from "./CircleProgress";
 import Dialog from "./Dialog";
+import DNDContainer from "./DNDContainer";
+import DNDDraggable from "./DNDDraggable";
+import DNDDroppable from "./DNDDroppable";
 import DropFileInput from "./DropFileInput";
 import Dropzone from "./Dropzone";
 import FilteredList from "./FilteredList";
@@ -25,6 +28,9 @@ export {
     Checkbox,
     CircleProgress,
     Dialog,
+    DNDContainer,
+    DNDDraggable,
+    DNDDroppable,
     DropFileInput,
     Dropzone,
     FilteredList,

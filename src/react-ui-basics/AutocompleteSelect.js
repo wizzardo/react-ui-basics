@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './AutocompleteSelect.css'
 import TextField from "./TextField";
 import FilteredList from "./FilteredList";
-import {classNames, continuousIncludes, isHappenedInside, getRandomId, ref, orNoop, preventDefault} from "./Tools";
+import {classNames, continuousIncludes, isHappenedInside, getRandomId, ref, orNoop, preventDefault, stopPropagation} from "./Tools";
 import Button from "./Button";
 
 export const MODE_DEFAULT = 'default';
@@ -171,7 +171,7 @@ class AutocompleteSelect extends React.Component {
                             <div className="value" key={id}>
                                 {React.createElement(selectedComponent, {...childProps, id, label: labels[id], onClick: setActive})}
                                 <div className="button remove" onClick={e => {
-                                    e.stopPropagation();
+                                    stopPropagation(e);
                                     this.remove(id);
                                 }}>
                                     <i className="material-icons">close</i>
@@ -269,10 +269,8 @@ class AutocompleteSelect extends React.Component {
     };
 
     clean = (e) => {
-        if (e) {
-            preventDefault(e);
-            e.stopPropagation();
-        }
+        preventDefault(e);
+        stopPropagation(e);
 
         this.setState({
             isActive: false,

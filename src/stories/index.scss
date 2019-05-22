@@ -95,6 +95,55 @@
   .AnimatedHolder .animated {
     transition: all 1s ease;
   }
+
+
+  .DNDExample {
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding-top: 20px;
+
+    .Draggable {
+      display: inline-block;
+
+      .item {
+        display: inline-block;
+        background-color: #00bcd4;
+        padding: 10px;
+        border-radius: 4px;
+        transition: transform 200ms ease;
+      }
+
+      &.dragged .item {
+        transform: rotate(10deg);
+      }
+    }
+
+    .Droppable {
+      background-color: #4ac263;
+      display: inline-block;
+      border-radius: 4px;
+      padding: 50px;
+      position: absolute;
+      left: 300px;
+      top: 20px;
+
+      &.second {
+        top: 300px;
+      }
+
+      &.allow {
+        background-color: #5bd073;
+      }
+
+      &.hover {
+        background-color: #4CAF50;
+      }
+    }
+  }
 }
 
 .sb-show-main {

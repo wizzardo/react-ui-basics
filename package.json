@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",
@@ -20,7 +20,7 @@
     "preinstall": "",
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "start-js": "react-scripts start",
+    "start-js": "SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
     "test": "SKIP_PREFLIGHT_CHECK=true CI=true react-scripts test --env=jsdom",
     "test:watch": "SKIP_PREFLIGHT_CHECK=true react-scripts test --env=jsdom",

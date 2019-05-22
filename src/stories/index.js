@@ -16,6 +16,9 @@ import CircleProgress from "../react-ui-basics/CircleProgress";
 import SpinningProgress from "../react-ui-basics/SpinningProgress";
 import FormUploadProgress from "../react-ui-basics/FormUploadProgress";
 import Animated from "../react-ui-basics/Animated";
+import DNDContainer from "../react-ui-basics/DNDContainer";
+import DNDDraggable from "../react-ui-basics/DNDDraggable";
+import DNDDroppable from "../react-ui-basics/DNDDroppable";
 
 class FABContainer extends React.Component {
     state = {hidden: false};
@@ -215,5 +218,56 @@ class AnimatedHolder extends React.Component {
 storiesOf('Animated', module)
     .add('basic', () => <div>
         <AnimatedHolder/>
+    </div>)
+;
+
+class DNDExample extends React.Component {
+    render() {
+        const {
+            draggableInitializer,
+            droppableInitializer,
+            basket1,
+            basket2,
+        } = this.state || {};
+        return (<DNDContainer className="DNDExample"
+                              provideDraggableInitializer={draggableInitializer => this.setState({draggableInitializer})}
+                              provideDroppableInitializer={droppableInitializer => this.setState({droppableInitializer})}
+            >
+                {createDraggable('Draggable 1', draggableInitializer, {id: 1})}
+                <br/>
+                <br/>
+                {createDraggable('Draggable 2', draggableInitializer, {id: 2})}
+                <br/>
+                <br/>
+                {createDraggable('Draggable 3', draggableInitializer, {id: 3})}
+                <br/>
+                <br/>
+                {createDraggable('Draggable 4', draggableInitializer, {id: 4})}
+                <br/>
+                <br/>
+                {createDraggable('Draggable 5', draggableInitializer, {id: 5})}
+
+                <DNDDroppable initializer={droppableInitializer} onDrop={data => this.setState({basket1: data})}>
+                    Droppable, dropped: {JSON.stringify(basket1) || 'nothing'}
+                </DNDDroppable>
+
+                <DNDDroppable className={'second'} initializer={droppableInitializer} onDrop={data => this.setState({basket2: data})}>
+                    Droppable, dropped: {JSON.stringify(basket2) || 'nothing'}
+                </DNDDroppable>
+            </DNDContainer>
+        );
+    }
+}
+
+const createDraggable = (label, initializer, data, className, key) => {
+    return <DNDDraggable id={key} key={key} className={className} data={data} initializer={initializer}
+                         copy={(initializer, className) => createDraggable(label, initializer, null, className)}>
+        <div className="item">{label}</div>
+    </DNDDraggable>;
+};
+
+storiesOf('Drag&Drop', module)
+    .add('basic', () => <div>
+        <DNDExample/>
     </div>)
 ;

@@ -111,7 +111,11 @@ export default Modal;
 
 
 export class ModalMenu extends React.PureComponent {
-    state = {open: false};
+
+    constructor(props) {
+        super(props);
+        this.state = {open: false};
+    }
 
     render = () => {
         const {items} = this.props;

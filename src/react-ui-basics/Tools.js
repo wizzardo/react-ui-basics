@@ -1,3 +1,5 @@
+const w = window;
+
 export function classNames() {
     const filtered = [];
     const length = arguments.length;
@@ -93,6 +95,10 @@ export const isDifferent = (a, b) => {
 
 export const preventDefault = e => e && e.preventDefault();
 export const stopPropagation = e => e && e.stopPropagation();
+
+export const setTimeout = (cb, timeout) => w.setTimeout(cb, timeout);
+export const clearTimeout = (timeout) => w.clearTimeout(timeout);
+export const requestAnimationFrame = (cb) => w.requestAnimationFrame(cb);
 
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;

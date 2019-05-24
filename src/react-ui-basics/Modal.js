@@ -5,7 +5,11 @@ import Animated from "./Animated";
 import {classNames, orNoop, ref} from "./Tools";
 
 class Modal extends React.Component {
-    state = {};
+
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
 
     render = () => {
         const {className, top} = this.props;

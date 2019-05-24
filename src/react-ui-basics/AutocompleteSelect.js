@@ -27,11 +27,14 @@ class AutocompleteSelect extends React.Component {
         mode: PropTypes.oneOf([MODE_DEFAULT, MODE_INLINE, MODE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI, MODE_MULTIPLE_MINI_INLINE, MODE_INLINE_MULTIPLE, MODE_MINI])
     };
 
-    state = {
-        selected: {},
-        isActive: false,
-    };
-    randomId = getRandomId('acs-');
+    constructor(props) {
+        super(props);
+        this.state = {
+            selected: {},
+            isActive: false,
+        };
+        this.randomId = getRandomId('acs-');
+    }
 
     componentWillMount() {
         if (this.props.focused)

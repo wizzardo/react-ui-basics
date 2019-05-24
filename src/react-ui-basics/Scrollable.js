@@ -18,7 +18,10 @@ class Scrollable extends React.Component {
         scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE])
     };
 
-    state = {};
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
 
     render = () => {
         const {className, scrollBarMode, children, style} = this.props;

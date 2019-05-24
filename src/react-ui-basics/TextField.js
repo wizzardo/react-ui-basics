@@ -1,16 +1,16 @@
 import React from 'react';
 import './TextField.css'
-import {classNames, getRandomId, orNoop, ref} from "./Tools";
+import {classNames, getRandomId, isUndefined, orNoop, ref} from "./Tools";
 
 class TextField extends React.PureComponent {
-    randomId = getRandomId('tf-');
 
     constructor(props) {
         super(props);
         this.state = {
             focused: false,
             withValue: !!props.value,
-        }
+        };
+        this.randomId = getRandomId('tf-');
     }
 
     render = () => {
@@ -21,7 +21,7 @@ class TextField extends React.PureComponent {
             <div
                 className={classNames('TextField',
                     focused && 'focused',
-                    (value || placeholder || (withValue && value === undefined)) && 'withValue',
+                    (value || placeholder || (withValue && isUndefined(value))) && 'withValue',
                     errored && (required || check) && 'errored',
                     disabled && 'disabled',
                     label && 'withLabel',

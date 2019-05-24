@@ -3,7 +3,11 @@ import './Switch.css'
 import {getRandomId, ref} from "./Tools";
 
 class Switch extends React.PureComponent {
-    randomId = getRandomId('sw-');
+
+    constructor(props) {
+        super(props);
+        this.randomId = getRandomId('sw-');
+    }
 
     render() {
         const {label, labelOn, labelOff, onChange, value, onClick} = this.props;

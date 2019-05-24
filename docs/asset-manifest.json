@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/wizzardo/react-ui-basics/main.css",
-    "main.js": "/wizzardo/react-ui-basics/main.5a215d7539078ed40ea7.bundle.js",
+    "main.js": "/wizzardo/react-ui-basics/main.14277a441615e89ab4d3.bundle.js",
     "main.css.map": "/wizzardo/react-ui-basics/main.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.5a215d7539078ed40ea7.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.5a215d7539078ed40ea7.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.5a215d7539078ed40ea7.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.5a215d7539078ed40ea7.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.5a215d7539078ed40ea7.bundle.js.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.14277a441615e89ab4d3.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.14277a441615e89ab4d3.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.14277a441615e89ab4d3.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.14277a441615e89ab4d3.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.14277a441615e89ab4d3.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "precache-manifest.f9e700fdde91acdd42fd388935e72073.js": "/wizzardo/react-ui-basics/precache-manifest.f9e700fdde91acdd42fd388935e72073.js",
+    "precache-manifest.14420846bd7b03684fcbc0d9019fc577.js": "/wizzardo/react-ui-basics/precache-manifest.14420846bd7b03684fcbc0d9019fc577.js",
     "service-worker.js": "/wizzardo/react-ui-basics/service-worker.js"
   }
 }

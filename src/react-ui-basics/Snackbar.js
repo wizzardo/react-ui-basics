@@ -4,10 +4,13 @@ import {classNames} from "./Tools";
 
 class Snackbar extends React.PureComponent {
 
-    state = {
-        shown: false,
-        text: '',
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            shown: false,
+            text: '',
+        };
+    }
 
     render() {
         const {className, text = this.state.text} = this.props;

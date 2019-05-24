@@ -3,7 +3,11 @@ import './Checkbox.css'
 import {classNames, getRandomId, ref} from "./Tools";
 
 class Checkbox extends React.PureComponent {
-    randomId = getRandomId('cb-');
+
+    constructor(props) {
+        super(props);
+        this.randomId = getRandomId('cb-');
+    }
 
     render() {
         const {label, onChange, value, className} = this.props;

@@ -89,9 +89,10 @@ class Route extends React.PureComponent {
         onToggle: PropTypes.func,
     };
 
-    state = {
-        render: false,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {render: false,};
+    }
 
     process = () => {
         let params = {};

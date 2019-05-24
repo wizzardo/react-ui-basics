@@ -27,8 +27,11 @@ class Dropzone extends React.PureComponent {
         droppable: true,
     };
 
-    state = {dragging: false};
-    entries = [];
+    constructor(props) {
+        super(props);
+        this.state = {dragging: false};
+        this.entries = [];
+    }
 
     render = () => {
         const {children, className, disabled, clickable, multiple, droppable, overlayLabel} = this.props;

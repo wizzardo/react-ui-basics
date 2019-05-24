@@ -13,9 +13,10 @@ class FilteredList extends React.Component {
         filter: () => true,
     };
 
-    state = {
-        selected: -1
-    };
+    constructor(props) {
+        super(props);
+        this.state = {selected: -1};
+    }
 
     componentWillMount() {
         this.hidden = {};

@@ -1,13 +1,19 @@
 import React from 'react';
+import {isUndefined} from "./Tools";
 
 const Size = ({value}) => (
     <span className="Size">
-        {formatNumber(value)}&nbsp;{formatAbbreviation(value)}
+        {formatNumber(value, 1)}&nbsp;{formatAbbreviation(value)}
     </span>
 );
 
-export const formatNumberWithMaxLength = (size, fractionalLength = 1, toAbbreviation = null, maxLength = -1) => {
+export const formatNumberWithMaxLength = (size, fractionalLength, toAbbreviation, maxLength) => {
     let result;
+    if (isUndefined(fractionalLength))
+        fractionalLength = 1;
+    if (isUndefined(maxLength))
+        maxLength = -1;
+
     do {
         result = formatNumber(size, fractionalLength, toAbbreviation);
         fractionalLength--;
@@ -15,7 +21,7 @@ export const formatNumberWithMaxLength = (size, fractionalLength = 1, toAbbrevia
     return result;
 };
 
-const formatNumber = (size, fractionalLength = 1, toAbbreviation = null) => {
+function formatNumber(size, fractionalLength, toAbbreviation) {
     if (size < 1000 && !toAbbreviation || toAbbreviation === 'B')
         return size + '';
     size /= 1024;

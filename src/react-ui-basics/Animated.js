@@ -4,46 +4,57 @@ import './Animated.css'
 import {allPropsExcept, classNames, setOf, setTimeout, requestAnimationFrame, clearTimeout} from "./Tools";
 import {props, state, setState} from "./ReactConstants";
 
+let mounting = 'mounting',
+    unmounting = 'unmounting',
+    mounted = 'mounted',
+    enabled = 'enabled',
+    mountingDelay = 'mountingDelay',
+    unmountingDelay = 'unmountingDelay',
+    timeout = 'timeout',
+    value = 'value'
+;
+
 const selfProps = setOf([
     'children',
     'className',
     'styles',
-    'mountingDelay',
-    'unmountingDelay',
-    'mounting',
-    'unmounting',
-    'value',
+    mountingDelay,
+    unmountingDelay,
+    mounting,
+    unmounting,
+    value,
 ]);
 
-const clearTimer = that => that.timeout && clearTimeout(that.timeout);
+const clearTimer = that => clearTimeout(that[timeout]);
+
+const animatedState = (isEnabled, isMounting, isMounted, isUnMounting) => {
+    const r = {};
+    r[enabled] = isEnabled;
+    r[mounting] = isMounting;
+    r[mounted] = isMounted;
+    r[unmounting] = isUnMounting;
+    return r;
+};
 
 const doMounting = (that, duration) => {
-    setState(that, {
-        mounting: true,
-        mounted: false,
-        unmounting: false,
-    });
+    setState(that, animatedState(true, true, false, false));
 
-    that.timeout = setTimeout(() => {
-        setState(that, {
-            mounting: false,
-            mounted: true,
-            unmounting: false
-        })
+    that[timeout] = setTimeout(() => {
+        setState(that, animatedState(true, false, true, false))
     }, duration)
 };
 
 const processMounting = (that, duration, mountingDelay) => {
     const _state = state(that);
-    if (_state.mounting || _state.mounted) return;
+    if (_state[mounting] || _state[mounted]) return;
     clearTimer(that);
 
-    if (_state.unmounting)
+    if (_state[unmounting])
         return doMounting(that, duration);
 
     if (mountingDelay) {
-        that.timeout = setTimeout(() => {
-            if (state(that).mounted) return;
+        that[timeout] = setTimeout(() => {
+            if (state(that)[mounted]) return;
             doMounting(that, duration)
         }, mountingDelay);
     } else {
@@ -52,33 +63,23 @@ const processMounting = (that, duration, mountingDelay) => {
 };
 
 const doUnmounting = (that, duration) => {
-    setState(that, {
-        enabled: true,
-        mounting: false,
-        unmounting: true,
-        mounted: false
-    });
-    that.timeout = setTimeout(() => {
-        setState(that, {
-            enabled: false,
-            mounting: false,
-            unmounting: false,
-            mounted: false
-        })
+    setState(that, animatedState(true, false, false, true));
+    that[timeout] = setTimeout(() => {
+        setState(that, animatedState(false, false, false, false))
     }, duration);
 };
 
 const processUnmounting = (that, duration, unmountingDelay) => {
     const _state = state(that);
-    if (_state.unmounting) return;
+    if (_state[unmounting]) return;
     clearTimer(that);
 
-    if (_state.mounting)
+    if (_state[mounting])
         return doUnmounting(that, duration);
 
     if (unmountingDelay) {
-        that.timeout = setTimeout(() => {
-            if (props(that).value) return;
+        that[timeout] = setTimeout(() => {
+            if (props(that)[value]) return;
             doUnmounting(that, duration);
         }, unmountingDelay);
     } else {
@@ -88,70 +89,53 @@ const processUnmounting = (that, duration, unmountingDelay) => {
 
 class Animated extends React.PureComponent {
 
-    static propTypes = {
-        value: PropTypes.bool,
-        className: PropTypes.string,
-        styles: PropTypes.shape({
-            mounting: PropTypes.object,
-            mounted: PropTypes.object,
-            unmounting: PropTypes.object,
-        }),
-        mountingDelay: PropTypes.number,
-        unmountingDelay: PropTypes.number,
-        mounting: PropTypes.number,
-        unmounting: PropTypes.number,
-    };
-
-    static defaultProps = {
-        className: 'animated',
-        mounting: 250,
-        unmounting: 250,
-        styles: {},
-        mountingDelay: 0,
-        unmountingDelay: 0,
-    };
-
     constructor(props) {
         super(props);
-        this.state = {
-            enabled: !!props.value,
-            mounting: false,
-            unmounting: false,
-            mounted: false,
-        };
+        this.state = animatedState(!!props[value]);
     }
 
     render() {
-        const _props = props(this);
-        const {children, className, styles} = _props;
-        const {enabled, mounting, mounted, unmounting} = state(this);
-        if (!enabled) return null;
+        const that = this,
+            _state = state(that);
+        if (!_state[enabled]) return null;
+
+        const _props = props(that),
+            {children, className, styles} = _props,
+            {
+                [mounting]: isMounting,
+                [unmounting]: isUnMounting,
+                [mounted]: isMounted,
+            } = _state;
 
         let childStyles = styles.default;
-        if (mounting) childStyles = styles.mounting;
-        else if (unmounting) childStyles = styles.unmounting;
-        else if (mounted) childStyles = styles.mounted || styles.mounting;
+        if (isMounting)
+            childStyles = styles[mounting];
+        else if (isUnMounting)
+            childStyles = styles[unmounting];
+        else if (isMounted)
+            childStyles = styles[mounted] || styles[mounting];
 
         const otherProps = allPropsExcept(_props, selfProps);
         return React.Children.map(children, child =>
             child && React.cloneElement(child, {
                 className: classNames(
-                    child.props.className,
+                    props(child).className,
                     className,
-                    mounting && 'mounting',
-                    mounted && 'mounted',
-                    unmounting && 'unmounting'
+                    isMounting && mounting,
+                    isMounted && mounted,
+                    isUnMounting && unmounting
                 ),
-                style: {...child.props.style, ...childStyles},
+                style: {...props(child).style, ...childStyles},
                 ...otherProps,
             }));
     }
 
     componentDidMount() {
-        const {value, mounting, mountingDelay} = props(this);
+        const that = this,
+            _props = props(that);
 
-        if (!!value)
-            processMounting(this, mounting, mountingDelay)
+        if (!!_props[value])
+            processMounting(that, _props[mounting], _props[mountingDelay])
     }
 
     componentWillUnmount() {
@@ -159,28 +143,73 @@ class Animated extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {mountingDelay, unmountingDelay, value, mounting: mountingDuration, unmounting: unmountingDuration} = props(this);
-        const {enabled, mounting, mounted, unmounting} = state(this);
+        const that = this,
+            _props = props(that),
+            _state = state(that),
+            {
+                [value]: v,
+                [mounting]: mountingDuration,
+                [unmounting]: unmountingDuration,
+            } = _props,
+            {
+                [mounting]: isMounting,
+                [unmounting]: isUnMounting,
+                [mounted]: isMounted,
+                [enabled]: isEnabled,
+            } = _state;
 
-        if (unmounting && value)
-            return processMounting(this, mountingDuration, mountingDelay);
-        if (mounting && !value)
-            return processUnmounting(this, unmountingDuration, unmountingDelay);
+        if (isUnMounting && v)
+            return processMounting(that, mountingDuration, _props[mountingDelay]);
+        if (isMounting && !v)
+            return processUnmounting(that, unmountingDuration, _props[unmountingDelay]);
 
-        let toggled = (enabled && !value) || (!enabled && !!value);
+        let toggled = (isEnabled && !v) || (!isEnabled && !!v);
         if (toggled) {
-            if (!!value) {
+            if (!!v) {
                 // just set enable to true and wait until react will mount children
-                setState(this, {enabled: true})
+                setState(that, animatedState(true))
             } else
-                processUnmounting(this, unmountingDuration, unmountingDelay);
+                processUnmounting(that, unmountingDuration, _props[unmountingDelay]);
         } else {
-            if (enabled && !mounting && !mounted && !unmounting) {
+            if (isEnabled && !isMounting && !isMounted && !isUnMounting) {
                 // react requires a delay to mount children, one requestAnimationFrame is not enough
-                requestAnimationFrame(() => requestAnimationFrame(() => processMounting(this, mountingDuration, mountingDelay)))
+                requestAnimationFrame(() => requestAnimationFrame(() => processMounting(that, mountingDuration, _props[mountingDelay])))
             }
         }
     }
 }
+
+Animated.propTypes = {
+    [value]: PropTypes.bool,
+    className: PropTypes.string,
+    styles: PropTypes.shape({
+        [mounting]: PropTypes.object,
+        [mounted]: PropTypes.object,
+        [unmounting]: PropTypes.object,
+    }),
+    [mountingDelay]: PropTypes.number,
+    [unmountingDelay]: PropTypes.number,
+    [mounting]: PropTypes.number,
+    [unmounting]: PropTypes.number,
+};
+
+Animated.defaultProps = {
+    className: 'animated',
+    [mounting]: 250,
+    [unmounting]: 250,
+    styles: {},
+    [mountingDelay]: 0,
+    [unmountingDelay]: 0,
+};
+
+// forcing webpack to NOT inline constant fields
+mounting = mounting || 1;
+mounted = mounted || 1;
+unmounting = unmounting || 1;
+enabled = enabled || 1;
+mountingDelay = mountingDelay || 1;
+unmountingDelay = unmountingDelay || 1;
+value = value || 1;
+timeout = timeout || 1;
 
 export default Animated

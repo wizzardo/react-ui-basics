@@ -1,6 +1,7 @@
 import React from 'react';
 import './Button.css'
 import {classNames, ref} from "./Tools";
+import PropTypes from "prop-types";
 
 const rippleClassName = 'rcn';
 
@@ -44,5 +45,18 @@ class Button extends React.PureComponent {
         });
     };
 }
+
+Button.propTypes = {
+    flat: PropTypes.bool,
+    raised: PropTypes.bool,
+    round: PropTypes.bool,
+    disabled: PropTypes.bool,
+    type: PropTypes.oneOf(['button', 'submit', 'reset']),
+    className: PropTypes.string,
+};
+
+Button.defaultProps = {
+    type: 'button',
+};
 
 export default Button;

@@ -19,6 +19,7 @@ import Animated from "../react-ui-basics/Animated";
 import DNDContainer from "../react-ui-basics/DNDContainer";
 import DNDDraggable from "../react-ui-basics/DNDDraggable";
 import DNDDroppable from "../react-ui-basics/DNDDroppable";
+import {ReadyListener} from "../react-ui-basics";
 
 class FABContainer extends React.Component {
     state = {hidden: false};
@@ -270,4 +271,58 @@ storiesOf('Drag&Drop', module)
     .add('basic', () => <div>
         <DNDExample/>
     </div>)
+;
+
+class LoadableItem extends React.PureComponent {
+
+    render() {
+        const {NotReady} = this.props;
+        const {loaded} = this.state || {};
+        return <div>
+            {!loaded && <NotReady/>}
+            {!loaded && <Button onClick={() => this.setState({loaded: true})}>Load it!</Button>}
+            {loaded && 'loaded!'}
+        </div>
+    }
+
+}
+
+class ReadyListenerExample extends React.PureComponent {
+    constructor(props) {
+        super(props);
+        const [NotReadyIndicator, NotReady] = ReadyListener.createReadyListener()
+        this.state = {
+            NotReadyIndicator,
+            NotReady,
+        }
+    }
+
+    render() {
+        const {
+            NotReadyIndicator,
+            NotReady,
+        } = this.state;
+        const {count, render} = this.props;
+        return <div>
+            <NotReadyIndicator render={render}>loading...</NotReadyIndicator>
+            {/*<Indicator onChange={ready => console.log('ready', ready)}/>*/}
+            {[...Array(count)].map((_, i) => <LoadableItem key={i} NotReady={NotReady}/>)}
+        </div>
+    }
+}
+
+storiesOf('ReadyListener', module)
+    .add('basic', () => <>
+        <ReadyListenerExample count={3}/>
+
+        <br/>
+        <br/>
+        and an another
+        <ReadyListenerExample count={2} render={ready => `is ready: ${ready}`}/>
+
+        <br/>
+        <br/>
+        and a ready one
+        <ReadyListenerExample count={0} render={ready => `is ready: ${ready}`}/>
+    </>)
 ;

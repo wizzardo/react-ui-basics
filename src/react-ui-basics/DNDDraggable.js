@@ -1,42 +1,47 @@
 import React from 'react';
 import {classNames, orNoop, ref} from "./Tools";
+import {componentDidUpdate, props, state, render, children, className, componentDidMount, componentWillUnmount} from "./ReactConstants";
 
-const init = that => orNoop(that.props.initializer)(that);
+const hover = 'hover',
+    dragged = 'dragged',
+    placeholder = 'placeholder',
+    initializer = 'initializer',
+    handle = 'handle'
+;
+
+const init = that => orNoop(props(that)[initializer])(that);
 
 class Draggable extends React.PureComponent {
 
-    constructor(props){
-        super(props);
-        this.state = {};
-    }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.handle !== this.props.handle || prevProps.initializer !== this.props.initializer)
-            init(this)
-    };
-
-    render() {
-        const {children, className, onClick, handle} = this.props;
-        const {dragged, placeholder, hover} = this.state;
-        return <div className={classNames('Draggable', className,
-            dragged && 'dragged',
-            placeholder && 'placeholder',
-            hover && 'hover',
-        )}
-                    onClick={onClick}
-                    ref={ref('element', this)}
-        >
-            {handle}
-            {children}
-        </div>;
-    };
-
-    componentDidMount() {
-        init(this)
-    };
-
-    componentWillUnmount() {
-        orNoop(this.onUnmount)();
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {};
+        that[componentDidUpdate] = (prevProps) => {
+            if (prevProps[handle] !== props(that)[handle] || prevProps[initializer] !== props(that)[initializer])
+                init(that)
+        };
+        that[componentDidMount] = () => {
+            init(that)
+        };
+        that[componentWillUnmount] = () => {
+            orNoop(that.onUnmount)();
+        };
+        that[render] = () => {
+            const _state = state(that),
+                _props = props(that);
+            return <div className={classNames('Draggable', _props[className],
+                _state[dragged] && dragged,
+                _state[placeholder] && placeholder,
+                _state[hover] && hover,
+            )}
+                        onClick={_props.onClick}
+                        ref={ref('element', that)}
+            >
+                {_props[handle]}
+                {_props[children]}
+            </div>;
+        }
     }
 }
 

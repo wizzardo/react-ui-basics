@@ -1,47 +1,52 @@
 import React from 'react';
 import {classNames, orNoop, ref, preventDefault, stopPropagation} from "./Tools";
+import {componentDidMount, componentDidUpdate, render, props, state, componentWillUnmount, children, className} from "./ReactConstants";
 
-const init = that => orNoop(that.props.initializer)(that);
+const hover = 'hover',
+    allow = 'allow',
+    initializer = 'initializer'
+;
+
+const init = that => orNoop(props(that)[initializer])(that);
 
 class Droppable extends React.PureComponent {
 
-    constructor(props) {
-        super(props);
-        this.state = {};
+    constructor(properties) {
+        super(properties);
+        const that = this;
+
+        that[componentDidUpdate] = (prevProps) => {
+            if (prevProps[initializer] !== props(that)[initializer])
+                init(that)
+        };
+
+        that[componentDidMount] = () => {
+            init(that)
+        };
+
+        that[componentWillUnmount] = () => {
+            orNoop(that.onUnmount)();
+        };
+
+        that[render] = () => {
+            const _props = props(that),
+                _state = state(that);
+            return <div className={
+                classNames(
+                    'Droppable',
+                    _props[className],
+                    _state[hover] && hover,
+                    _state[allow] && allow,
+                )}
+                        onDragOver={e => {
+                            preventDefault(e);
+                            stopPropagation(e);
+                        }}
+                        ref={ref('element', that)}>
+                {_props[children]}
+            </div>;
+        };
     }
-
-    componentDidUpdate(prevProps) {
-        if (prevProps.initializer !== this.props.initializer)
-            init(this)
-    };
-
-    render() {
-        const {children, className} = this.props;
-        const {hover, allow} = this.state;
-        return <div className={
-            classNames(
-                'Droppable',
-                className,
-                hover && 'hover',
-                allow && 'allow',
-            )}
-                    onDragOver={e => {
-                        preventDefault(e);
-                        stopPropagation(e)
-                    }}
-                    ref={ref('element', this)}>
-            {children}
-        </div>;
-    };
-
-    componentDidMount() {
-        init(this)
-    }
-
-    componentWillUnmount() {
-        orNoop(this.onUnmount)();
-    };
 }
-
 
 export default Droppable;

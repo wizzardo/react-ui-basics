@@ -1,41 +1,43 @@
 import React from 'react';
 import './Snackbar.css'
-import {classNames} from "./Tools";
+import {classNames, setTimeout, clearTimeout} from "./Tools";
+import {componentWillUnmount, render, state, props, className, setState} from "./ReactConstants";
+
+const shown = 'shown';
 
 class Snackbar extends React.PureComponent {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            shown: false,
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {
+            [shown]: false,
             text: '',
         };
-    }
+        let timeout;
+        that[componentWillUnmount] = () => {
+            clearTimeout(timeout);
+        };
+        that[render] = () => {
+            const _state = state(that),
+                _props = props(that);
 
-    render() {
-        const {className, text = this.state.text} = this.props;
-        const {shown} = this.state;
+            return (
+                <div className={classNames(`Snackbar`, _props[className], _state[shown] && shown)}>
+                    <div className="message">{_state.text}</div>
+                </div>
+            )
+        };
 
-        return (
-            <div className={classNames(`Snackbar`, className, shown && 'shown')}>
-                <div className="message">{text}</div>
-                {/*<div className="action"><a>Undo</a></div>*/}
-            </div>
-        )
-    }
-
-    componentWillUnmount() {
-        this.timeout && clearTimeout(this.timeout);
-    }
-
-    show = (text) => {
-        if (this.state.shown) {
-            clearTimeout(this.timeout);
-            this.setState({shown: false});
-            this.timeout = setTimeout(() => this.show(text), 260);
-        } else {
-            this.setState({shown: true, text});
-            this.timeout = setTimeout(() => this.setState({shown: false}), 3000);
+        that.show = (text) => {
+            if (state(that)[shown]) {
+                clearTimeout(timeout);
+                setState(that, {[shown]: false});
+                timeout = setTimeout(() => that.show(text), 260);
+            } else {
+                setState(that, {[shown]: true, text});
+                timeout = setTimeout(() => setState(that, {[shown]: false}), 3000);
+            }
         }
     }
 }

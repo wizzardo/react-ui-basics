@@ -10,11 +10,11 @@ class Checkbox extends React.PureComponent {
     }
 
     render() {
-        const {label, onChange, value, className} = this.props;
+        const {label, name, onChange, value, className} = this.props;
         const id = this.props.id || this.randomId;
         return (
             <div className={classNames("Checkbox", className)} ref={ref('el', this)}>
-                <input id={id} type="checkbox" onChange={onChange} checked={value}/>
+                <input name={name} id={id} type="checkbox" onChange={onChange} checked={value}/>
                 <label htmlFor={id}>{label}</label>
             </div>
         )

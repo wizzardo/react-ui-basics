@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import {classNames, orNoop, ref, preventDefault, stopPropagation} from "./Tools";
 import {componentDidMount, componentDidUpdate, render, props, state, componentWillUnmount, children, className, PureComponent} from "./ReactConstants";
 

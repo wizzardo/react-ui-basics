@@ -1,11 +1,12 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Snackbar.css'
 import {classNames, setTimeout, clearTimeout} from "./Tools";
-import {componentWillUnmount, render, state, props, className, setState} from "./ReactConstants";
+import {componentWillUnmount, render, state, props, className, setState, PureComponent} from "./ReactConstants";
 
 const shown = 'shown';
 
-class Snackbar extends React.PureComponent {
+class Snackbar extends PureComponent {
 
     constructor(properties) {
         super(properties);

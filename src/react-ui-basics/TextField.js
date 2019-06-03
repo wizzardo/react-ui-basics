@@ -1,8 +1,10 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
 import {classNames, getRandomId, isUndefined, orNoop, ref} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
-class TextField extends React.PureComponent {
+class TextField extends PureComponent {
 
     constructor(props) {
         super(props);

@@ -82,7 +82,7 @@ export default {
             babelrc: false,
             presets: [
                 ["@babel/env", {"modules": false}],
-                "@babel/react"
+                ["@babel/react", {"pragma": "ReactCreateElement"}],
             ],
             plugins: [
                 "@babel/external-helpers",

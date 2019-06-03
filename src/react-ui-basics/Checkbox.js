@@ -1,8 +1,10 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Checkbox.css'
 import {classNames, getRandomId, ref} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
-class Checkbox extends React.PureComponent {
+class Checkbox extends PureComponent {
 
     constructor(props) {
         super(props);

@@ -1,8 +1,9 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './Animated.css'
 import {allPropsExcept, classNames, setOf, setTimeout, requestAnimationFrame, clearTimeout} from "./Tools";
-import {props, state, setState, componentWillUnmount, componentDidMount, render, componentDidUpdate, className, children} from "./ReactConstants";
+import {props, state, setState, componentWillUnmount, componentDidMount, render, componentDidUpdate, className, children, PureComponent} from "./ReactConstants";
 
 let mounting = 'mounting',
     unmounting = 'unmounting',
@@ -87,7 +88,7 @@ const processUnmounting = (that, duration, unmountingDelay) => {
     }
 };
 
-class Animated extends React.PureComponent {
+class Animated extends PureComponent {
 
     constructor(properties) {
         super(properties);

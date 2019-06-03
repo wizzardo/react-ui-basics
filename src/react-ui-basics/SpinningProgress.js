@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './SpinningProgress.css'
 
 const SpinningProgress = () => (

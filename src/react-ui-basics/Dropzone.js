@@ -1,6 +1,8 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Dropzone.css'
 import {classNames, setOf, ref, preventDefault, stopPropagation} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
 const toArray = (o) => {
     if (o instanceof Array)
@@ -19,7 +21,7 @@ const prevent = (e) => {
     return false;
 };
 
-class Dropzone extends React.PureComponent {
+class Dropzone extends PureComponent {
 
     static defaultProps = {
         clickable: true,

@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import {isUndefined} from "./Tools";
 
 const Size = ({value}) => (

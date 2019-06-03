@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './DNDContainer.css'
 import {classNames, NOOP, orNoop, preventDefault, ref} from "./Tools";
 

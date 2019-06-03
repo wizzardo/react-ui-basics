@@ -1,7 +1,9 @@
 import React from 'react';
+import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
 import {allPropsExcept, isDifferent, orNoop, setOf} from "../Tools";
+import {PureComponent} from "../ReactConstants";
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
 
@@ -81,7 +83,7 @@ const selfProps = setOf([
     'onToggle',
 ]);
 
-class Route extends React.PureComponent {
+class Route extends PureComponent {
 
     static propTypes = {
         path: PropTypes.string.isRequired,

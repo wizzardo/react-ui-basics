@@ -1,8 +1,10 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Switch.css'
 import {getRandomId, ref} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
-class Switch extends React.PureComponent {
+class Switch extends PureComponent {
 
     constructor(props) {
         super(props);

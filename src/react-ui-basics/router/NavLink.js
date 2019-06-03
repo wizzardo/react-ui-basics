@@ -1,4 +1,5 @@
-import React, {PureComponent} from 'react';
+import React from 'react';
+import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
 import Route from "./Route";

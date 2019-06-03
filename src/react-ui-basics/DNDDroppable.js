@@ -1,6 +1,6 @@
 import React from 'react';
 import {classNames, orNoop, ref, preventDefault, stopPropagation} from "./Tools";
-import {componentDidMount, componentDidUpdate, render, props, state, componentWillUnmount, children, className} from "./ReactConstants";
+import {componentDidMount, componentDidUpdate, render, props, state, componentWillUnmount, children, className, PureComponent} from "./ReactConstants";
 
 const hover = 'hover',
     allow = 'allow',
@@ -9,7 +9,7 @@ const hover = 'hover',
 
 const init = that => orNoop(props(that)[initializer])(that);
 
-class Droppable extends React.PureComponent {
+class Droppable extends PureComponent {
 
     constructor(properties) {
         super(properties);

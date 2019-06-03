@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './DropFileInput.css'
 import Dropzone from "./Dropzone";
 import PropTypes from "prop-types";

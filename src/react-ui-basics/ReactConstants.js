@@ -1,3 +1,4 @@
+import React from 'react';
 const EMPTY = {};
 export const props = that => that.props;
 export const state = that => that.state || EMPTY;
@@ -9,3 +10,4 @@ export const componentDidUpdate = 'componentDidUpdate';
 export const render = 'render';
 export const children = 'children';
 export const className = 'className';
+export const PureComponent = React.PureComponent;

@@ -1,6 +1,7 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import {classNames, orNoop, ref} from "./Tools";
-import {componentDidUpdate, props, state, render, children, className, componentDidMount, componentWillUnmount} from "./ReactConstants";
+import {componentDidUpdate, props, state, render, children, className, componentDidMount, componentWillUnmount, PureComponent} from "./ReactConstants";
 
 const hover = 'hover',
     dragged = 'dragged',
@@ -11,7 +12,7 @@ const hover = 'hover',
 
 const init = that => orNoop(props(that)[initializer])(that);
 
-class Draggable extends React.PureComponent {
+class Draggable extends PureComponent {
 
     constructor(properties) {
         super(properties);

@@ -1,12 +1,13 @@
 import React from 'react';
-import {componentDidMount, render, componentWillUnmount, setState, props, state, componentDidUpdate, children} from "./ReactConstants";
+import ReactCreateElement from './ReactCreateElement';
+import {componentDidMount, render, componentWillUnmount, setState, props, state, componentDidUpdate, children, PureComponent} from "./ReactConstants";
 import {orNoop} from "./Tools";
 
 export const createReadyListener = () => {
     let indicator,
         count = 0;
 
-    class NotReadyIndicator extends React.PureComponent {
+    class NotReadyIndicator extends PureComponent {
         constructor(properties) {
             super(properties);
             const that = this;
@@ -26,7 +27,7 @@ export const createReadyListener = () => {
         }
     }
 
-    class NotReady extends React.PureComponent {
+    class NotReady extends PureComponent {
         constructor(props) {
             super(props);
             const that = this;

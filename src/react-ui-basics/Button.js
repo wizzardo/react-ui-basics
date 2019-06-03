@@ -1,11 +1,13 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
 import {classNames, ref} from "./Tools";
 import PropTypes from "prop-types";
+import {PureComponent} from "./ReactConstants";
 
 const rippleClassName = 'rcn';
 
-class Button extends React.PureComponent {
+class Button extends PureComponent {
     render = () => {
         const {children, type, className, onClick, flat, raised = !flat, round, style, disabled, onFocus} = this.props;
         const rippleClass = (this.state || {})[rippleClassName];

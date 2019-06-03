@@ -1,10 +1,12 @@
 import React from 'react';
+import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
 import Animated from "./Animated";
 import {classNames, orNoop, ref} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
-class Modal extends React.Component {
+class Modal extends PureComponent {
 
     constructor(props) {
         super(props);
@@ -110,7 +112,7 @@ Modal.addListener = (modal, listener) => {
 export default Modal;
 
 
-export class ModalMenu extends React.PureComponent {
+export class ModalMenu extends PureComponent {
 
     constructor(props) {
         super(props);

@@ -1,26 +1,21 @@
-const {history} = window;
-const pushState = history.pushState;
+const w = window;
+const history = w.history;
 
-history.pushState = function () {
-    pushState.apply(history, arguments);
-    fireEvent('pushState');
-};
+const events = ['pushState', 'replaceState'];
+events.forEach(e => {
+    var original = history[e];
+    history[e] = function () {
+        original.apply(history, arguments);
+        fireEvent(e);
+    }
+});
 
-const replaceState = history.replaceState;
-history.replaceState = function () {
-    replaceState.apply(history, arguments);
-    fireEvent('replaceState');
-};
-
-const fireEvent = (name,) => {
+const fireEvent = (name) => {
     const event = document.createEvent('Event');
     event.initEvent(name, true, true);
-    window.dispatchEvent(event);
+    w.dispatchEvent(event);
 };
 
-export const pushLocation = (path) => {
-    if (path === window.location.pathname) return;
-    return history.pushState(null, null, path);
-};
+export const pushLocation = (path) => path !== w.location.pathname && history[events[0]](null, null, path);
 
-export const replaceLocation = (path) => history.replaceState(null, null, path);
+export const replaceLocation = (path) => history[events[1]](null, null, path);

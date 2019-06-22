@@ -3,7 +3,7 @@ import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
 import {allPropsExcept, isDifferent, orNoop, setOf} from "../Tools";
-import {PureComponent} from "../ReactConstants";
+import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, props, state, setState} from "../ReactConstants";
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
 
@@ -85,59 +85,65 @@ const selfProps = setOf([
 
 class Route extends PureComponent {
 
-    static propTypes = {
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {
+            render: false,
+        };
+        const WINDOW = window;
+        let matcher;
+
+        const process = () => {
+            let params = {};
+            let render = matcher(cleanPath(WINDOW.location.pathname), params);
+            const nextState = {render};
+            if (isDifferent(state(that).params, params)) {
+                nextState.params = params;
+                nextState.mergedProps = Object.assign(allPropsExcept(props(that), selfProps), params);
+            }
+
+            const toggle = render !== state(that).render;
+            setState(that, nextState, () => {
+                toggle && orNoop(props(that).onToggle)(render);
+            })
+        };
+
+        that[componentDidUpdate] = (prevProps, prevState) => {
+            if (props(that) !== prevProps) {
+                let mergedProps = Object.assign(allPropsExcept(props(that), selfProps), state(that).params);
+                if (isDifferent(mergedProps, state(that).mergedProps))
+                    setState(that, {mergedProps})
+            }
+        };
+
+        that[render] = () => {
+            const {children, controller} = props(that);
+            const {render, variables, mergedProps} = state(that);
+            return (controller || DefaultController)(render, children, mergedProps, variables);
+        };
+
+        that[componentDidMount] = () => {
+            const urlMatcher = createUrlMatcher(props(that).path);
+            matcher = urlMatcher[0];
+            setState(that, {variables: urlMatcher[1]});
+
+            historyEvents.forEach(it => WINDOW.addEventListener(it, process));
+            process();
+        };
+
+        that[componentWillUnmount] = () => {
+            historyEvents.forEach(it => WINDOW.removeEventListener(it, process));
+        };
+    }
+}
+
+if (process.env.NODE_ENV !== 'production')
+    Route.propTypes = {
         path: PropTypes.string.isRequired,
         controller: PropTypes.func,
         onToggle: PropTypes.func,
     };
-
-    constructor(props) {
-        super(props);
-        this.state = {render: false,};
-    }
-
-    process = () => {
-        let params = {};
-        let render = this.matcher(cleanPath(window.location.pathname), params);
-        const nextState = {render};
-        if (isDifferent(this.state.params, params)) {
-            nextState.params = params;
-            nextState.mergedProps = Object.assign(allPropsExcept(this.props, selfProps), params);
-        }
-
-        const toggle = render !== this.state.render;
-        this.setState(nextState, () => {
-            toggle && orNoop(this.props.onToggle)(render);
-        })
-    };
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props !== prevProps) {
-            let mergedProps = Object.assign(allPropsExcept(this.props, selfProps), this.state.params);
-            if (isDifferent(mergedProps, this.state.mergedProps))
-                this.setState({mergedProps})
-        }
-    };
-
-    render() {
-        const {children, controller} = this.props;
-        const {render, variables, mergedProps} = this.state;
-        return (controller || DefaultController)(render, children, mergedProps, variables);
-    };
-
-    componentDidMount() {
-        const [matcher, variables] = createUrlMatcher(this.props.path);
-        this.matcher = matcher;
-        this.setState({variables});
-
-        historyEvents.forEach(it => window.addEventListener(it, this.process));
-        this.process();
-    };
-
-    componentWillUnmount() {
-        historyEvents.forEach(it => window.removeEventListener(it, this.process));
-    };
-}
 
 const DefaultController = (matches, children, props, variables) => {
     if (!matches || !children) return null;

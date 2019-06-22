@@ -7,11 +7,10 @@ import {preventDefault} from "../Tools";
 
 const Link = ({children, href, className}) =>
     <a href={href} className={className} onClick={(e) => {
-        if (e.ctrlKey)
-            return;
-
-        preventDefault(e);
-        pushLocation(href)
+        if (!e.ctrlKey) {
+            preventDefault(e);
+            pushLocation(href);
+        }
     }}>{children}</a>;
 
 Link.propTypes = {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './AutocompleteSelect.css'
 import TextField from "./TextField";
 import FilteredList from "./FilteredList";
-import {classNames, continuousIncludes, isHappenedInside, getRandomId, ref, orNoop, preventDefault, stopPropagation} from "./Tools";
+import {classNames, continuousIncludes, getRandomId, ref, orNoop, preventDefault, stopPropagation} from "./Tools";
 import Button from "./Button";
 
 export const MODE_DEFAULT = 'default';
@@ -74,8 +74,7 @@ class AutocompleteSelect extends React.Component {
         orNoop(this.props.getSelected)(() => Object.values(this.state.selected));
 
         document.addEventListener('mousedown', this.listener = (e) => {
-            const el = this.el;
-            if (this.state.isActive && !isHappenedInside(e, el)) {
+            if (this.state.isActive && !this.el.contains(e.target)) {
                 this.setState({isActive: false});
                 this.onCancel();
             }

@@ -43,16 +43,6 @@ export const continuousIncludes = (value, inc) => {
     return true;
 };
 
-export const isHappenedInside = (e, el) => {
-    let currentElem = e.target;
-    while (currentElem) {
-        if (currentElem === el)
-            return true;
-        currentElem = currentElem.parentElement;
-    }
-    return false;
-};
-
 export const isDifferent = (a, b) => {
     if (a == null && b == null) return false;
     if (a == null || b == null) return true;

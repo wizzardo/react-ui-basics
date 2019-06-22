@@ -18,12 +18,17 @@ DropFileInput.defaultProps = {
     icon: 'cloud_upload',
     droppable: false,
 };
-DropFileInput.propTypes = {
-    icon: PropTypes.string,
-    label: PropTypes.string,
-    droppable: PropTypes.bool,
-    onDrop: PropTypes.func,
-};
+
+if (process.env.NODE_ENV !== 'production')
+    DropFileInput.propTypes = {
+        icon: PropTypes.string,
+        label: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        droppable: PropTypes.bool,
+        onDrop: PropTypes.func,
+    };
 
 
 export default DropFileInput;

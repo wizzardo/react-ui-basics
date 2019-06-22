@@ -51,14 +51,22 @@ const FormUploadProgress = ({
 FormUploadProgress.defaultProps = {
     value: 0,
 };
-FormUploadProgress.propTypes = {
-    value: PropTypes.number,
-    loaded: PropTypes.number,
-    total: PropTypes.number,
-    processingLabel: PropTypes.string,
-    cancelLabel: PropTypes.string,
-    cancel: PropTypes.func,
-};
+
+if (process.env.NODE_ENV !== 'production')
+    FormUploadProgress.propTypes = {
+        value: PropTypes.number,
+        loaded: PropTypes.number,
+        total: PropTypes.number,
+        processingLabel: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        cancelLabel: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        cancel: PropTypes.func,
+    };
 
 
 export default FormUploadProgress;

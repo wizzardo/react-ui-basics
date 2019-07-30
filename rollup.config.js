@@ -37,7 +37,7 @@ export default {
             // file: pkg.module,
             dir: 'build',
             format: 'es',
-            sourcemap: isProd,
+            sourcemap: true,
         },
 
     ],
@@ -47,8 +47,8 @@ export default {
     //     'react-dom': 'ReactDOM'
     // },
     preserveModules: true,
-    treeshake: isProd,
-    inlineDynamicImports: isDev || false, // true = disabling code splitting to chunks
+    treeshake: true,
+    inlineDynamicImports: false, // true = disabling code splitting to chunks
     // experimentalOptimizeChunks: true,
     // chunkGroupingSize: 10240,
     perf: false,

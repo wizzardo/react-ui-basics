@@ -13,6 +13,7 @@ import FilteredList from "./FilteredList";
 import FloatingActionButton from "./FloatingActionButton";
 import FormUploadProgress from "./FormUploadProgress";
 import Modal from "./Modal";
+import ModalMenu from "./ModalMenu";
 import Router from "./router";
 import Scrollable from "./Scrollable";
 import Size from "./Size";
@@ -39,6 +40,7 @@ export {
     FloatingActionButton,
     FormUploadProgress,
     Modal,
+    ModalMenu,
     Router,
     Scrollable,
     Size,

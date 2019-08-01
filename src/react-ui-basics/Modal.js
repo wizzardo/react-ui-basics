@@ -1,156 +1,110 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import Animated from "./Animated";
-import {classNames, orNoop, ref} from "./Tools";
-import {PureComponent} from "./ReactConstants";
+import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
+import {PureComponent, componentDidMount, render, props, state} from "./ReactConstants";
+
+let listenerRef;
+
+const EVENT_TYPE = 'keydown';
+const pollListener = (modal) => {
+    removeEventListener(DOCUMENT, EVENT_TYPE, listenerRef);
+    const listener = modal._pl;
+    listener && addEventListener(DOCUMENT, EVENT_TYPE, listener);
+    listenerRef = listener;
+};
+
+const addListener = (modal, listener) => {
+    const prev = listenerRef;
+    prev && removeEventListener(DOCUMENT, EVENT_TYPE, prev);
+    modal._pl = prev;
+    addEventListener(DOCUMENT, EVENT_TYPE, listenerRef = listener);
+};
 
 class Modal extends PureComponent {
 
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+    static defaultContainer = undefined;
 
-    render = () => {
-        const {className, top} = this.props;
-        const {show, menu} = this.state;
-        return (
-            <div className={classNames(`Modal`, className, show && 'show')} ref={ref('el', this)}>
-                <div ref={ref('overlay', this)} className={classNames(`overlay`, show && 'show')} onClick={this.beforeClose}>
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {};
+
+
+        const modalMenuConsumer = (menu) => that.setState({menu});
+        const beforeClose = (e) => {
+            if (props(that).beforeClose)
+                props(that).beforeClose(that.close) && that.close(e);
+            else
+                that.close(e);
+        };
+        const addTransitionListener = () => {
+            const transitionend = "transitionend";
+            let listener = () => {
+                that.overlay && removeEventListener(that.overlay, transitionend, listener);
+                orNoop(state(that).show ? props(that).onOpen : orNoop(props(that).onClose))();
+                that.el.style.paddingBottom = state(that).show ? '1px' : '0px'; // force invalidate scroll
+            };
+            that.overlay && addEventListener(that.overlay, transitionend, listener);
+        };
+        that[render] = () => {
+            const {className, top, container = Modal.defaultContainer, children} = props(that);
+            const {show, menu} = state(that);
+            const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={ref('el', that)}>
+                <div ref={ref('overlay', that)} className={classNames(`overlay`, show && 'show')} onClick={beforeClose}>
                 </div>
-                <div ref={ref('content', this)}
+                <div ref={ref('content', that)}
                      className={classNames(`content`, show && 'show', top && 'top')}
-                     style={top && {top: `${top}px`}}
+                     style={top && {top: top + 'px'}}
                 >
-                    {React.Children.map(this.props.children, child => React.cloneElement(child, {modalMenuConsumer: this.modalMenuConsumer}))}
+                    {React.Children.map(children, child => React.cloneElement(child, {modalMenuConsumer}))}
                     {menu}
-                    <Button className="close" flat={true} round={true} onClick={this.beforeClose}>
-                        <i className="material-icons" ref={ref('closeButton', this)}>close</i>
+                    <Button className="close" flat={true} round={true} onClick={beforeClose}>
+                        <i className="material-icons" ref={ref('closeButton', that)}>close</i>
                     </Button>
                 </div>
-            </div>
-        );
-    };
+            </div>;
 
-    modalMenuConsumer = (menu) => this.setState({menu});
-
-    componentDidMount = () => {
-        orNoop(this.props.open)(() => setTimeout(this.open, 0));
-        orNoop(this.props.close)(() => setTimeout(this.close, 0));
-        this.props.show && setTimeout(this.open, 0)
-    };
-
-    beforeClose = (e) => {
-        if (this.props.beforeClose)
-            this.props.beforeClose(this.close) && this.close(e);
-        else
-            this.close(e);
-    };
-
-    close = (e) => {
-        if (e && e.target && !(e.target === this.overlay || e.target === this.closeButton || e.target.classList.contains('close')))
-            return true;
-
-        if (!this.state.show)
-            return;
-
-        this.addTransitionListener();
-        this.setState({show: false});
-
-        Modal.pollListener(this);
-    };
-
-    open = () => {
-        if (this.state.show)
-            return;
-
-        this.addTransitionListener();
-        this.setState({show: true});
-
-        let listener = event => {
-            if (!event.defaultPrevented && event.keyCode === 27/*escape*/)
-                this.beforeClose();
-            return true;
+            return container ? ReactDOM.createPortal(modal, container) : modal;
         };
 
-        Modal.addListener(this, listener)
-    };
-
-    addTransitionListener = () => {
-        let listener = () => {
-            this.overlay && this.overlay.removeEventListener("transitionend", listener);
-            this.state.show ? this.onOpen() : this.onClose();
-            this.el.style.paddingBottom = this.state.show ? '1px' : '0px'; // force invalidate scroll
+        that[componentDidMount] = () => {
+            const _props = props(that);
+            orNoop(_props.open)(() => setTimeout(that.open, 0));
+            orNoop(_props.close)(() => setTimeout(that.close, 0));
+            _props.show && setTimeout(that.open, 0)
         };
-        this.overlay && this.overlay.addEventListener("transitionend", listener);
-    };
+        that.close = (e) => {
+            const target = e && e.target;
+            if (target && !(target === that.overlay || target === that.closeButton || target.classList.contains('close')))
+                return true;
 
-    onOpen = () => {
-        orNoop(this.props.onOpen)();
-    };
-    onClose = () => {
-        orNoop(this.props.onClose)();
-    };
+            if (!state(that).show)
+                return;
+
+            addTransitionListener();
+            that.setState({show: false});
+
+            pollListener(that);
+        };
+        that.open = () => {
+            if (state(that).show)
+                return;
+
+            addTransitionListener();
+            that.setState({show: true});
+
+            let listener = event => {
+                if (!event.defaultPrevented && event.keyCode === 27/*escape*/)
+                    beforeClose();
+                return true;
+            };
+
+            addListener(that, listener)
+        };
+    }
 }
-
-Modal.pollListener = (modal) => {
-    document.removeEventListener('keydown', Modal.listenerRef);
-    const listener = modal.previousListener;
-    listener && document.addEventListener('keydown', listener);
-    Modal.listenerRef = listener;
-};
-
-Modal.addListener = (modal, listener) => {
-    const prev = Modal.listenerRef;
-    prev && document.removeEventListener('keydown', prev);
-    modal.previousListener = prev;
-    document.addEventListener('keydown', Modal.listenerRef = listener);
-};
 
 export default Modal;
-
-
-export class ModalMenu extends PureComponent {
-
-    constructor(props) {
-        super(props);
-        this.state = {open: false};
-    }
-
-    render = () => {
-        const {items} = this.props;
-        const filtered = (items || []).filter(it => !!it);
-        if (filtered.length === 0) return null;
-
-        const {open} = this.state;
-
-        return <div className={classNames("ModalMenu", 'row', open && 'open')}>
-            {filtered.map((it, i) => <Animated value={open}
-                                               key={i}
-                                               mounting={200}
-                                               unmounting={200}
-                                               mountingDelay={i * 50}
-                                               unmountingDelay={(filtered.length - i - 1) * 50}
-                                               styles={{
-                                                   mounting: {right: `${(filtered.length - i) * 36 + 5 + (filtered.length - i) * 5}px`},
-                                               }}
-            >
-                <Button flat={true} round={true} onClick={it.action}>
-                    <i className="material-icons">{it.icon}</i>
-                </Button>
-            </Animated>)}
-
-            <Button className={classNames("more", open && 'active')} flat={true} round={true} onClick={this.toggle}>
-                <i className="material-icons">more_vert</i>
-            </Button>
-
-            <div className="separator"/>
-        </div>
-    };
-
-    toggle = () => {
-        this.setState({open: !this.state.open})
-    };
-}

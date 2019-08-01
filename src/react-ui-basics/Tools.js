@@ -1,4 +1,5 @@
-const w = window;
+export const WINDOW = window;
+export const DOCUMENT = document;
 
 export function classNames() {
     const filtered = [];
@@ -86,9 +87,11 @@ export const isDifferent = (a, b) => {
 export const preventDefault = e => e && e.preventDefault();
 export const stopPropagation = e => e && e.stopPropagation();
 
-export const setTimeout = (cb, timeout) => w.setTimeout(cb, timeout);
-export const clearTimeout = (timeout) => w.clearTimeout(timeout);
-export const requestAnimationFrame = (cb) => w.requestAnimationFrame(cb);
+export const setTimeout = (cb, timeout) => WINDOW.setTimeout(cb, timeout);
+export const clearTimeout = (timeout) => WINDOW.clearTimeout(timeout);
+export const requestAnimationFrame = (cb) => WINDOW.requestAnimationFrame(cb);
+export const addEventListener = (el, type, listener, options) => el.addEventListener(type, listener, options);
+export const removeEventListener = (el, type, listener, options) => el.removeEventListener(type, listener, options);
 
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;

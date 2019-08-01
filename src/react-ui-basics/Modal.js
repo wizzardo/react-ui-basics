@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
-import {PureComponent, componentDidMount, render, props, stateGS} from "./ReactConstants";
+import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener, UNDEFINED} from "./Tools";
+import {PureComponent, componentDidMount, render, props, stateGS, componentDidUpdate} from "./ReactConstants";
 
 let listenerRef;
 
@@ -32,9 +32,9 @@ class Modal extends PureComponent {
         const that = this;
         that.state = {};
 
-        const [isShow, setShow] = stateGS(that, 'show', false);
-        const [getMenu, setMenu] = stateGS(that, 'menu');
-        const [getBeforeClose, setBeforeClose] = stateGS(that, 'beforeClose');
+        const [isShow, setShow] = stateGS(that);
+        const [getMenu, setMenu] = stateGS(that);
+        const [getBeforeClose, setBeforeClose] = stateGS(that);
 
         const beforeClose = (e) => {
             const bc = getBeforeClose() || props(that).beforeClose;
@@ -75,13 +75,7 @@ class Modal extends PureComponent {
             return container ? ReactDOM.createPortal(modal, container) : modal;
         };
 
-        that[componentDidMount] = () => {
-            const _props = props(that);
-            orNoop(_props.open)(() => setTimeout(that.open, 0));
-            orNoop(_props.close)(() => setTimeout(that.close, 0));
-            _props.show && setTimeout(that.open, 0)
-        };
-        that.close = (e) => {
+        const close = that.close = (e) => {
             const target = e && e.target;
             if (target && !(target === that.overlay || target === that.closeButton || target.classList.contains('close')))
                 return true;
@@ -94,7 +88,7 @@ class Modal extends PureComponent {
 
             pollListener(that);
         };
-        that.open = () => {
+        const open = that.open = () => {
             if (isShow())
                 return;
 
@@ -108,6 +102,19 @@ class Modal extends PureComponent {
             };
 
             addListener(that, listener)
+        };
+
+        that[componentDidMount] = () => {
+            const _props = props(that);
+            orNoop(_props.open)(() => setTimeout(open, 0));
+            orNoop(_props.close)(() => setTimeout(close, 0));
+            _props.show && setTimeout(open, 0)
+        };
+        that[componentDidUpdate] = (prevProps) => {
+            const show = props(that).show;
+            if (show !== prevProps.show) {
+                show ? open() : close();
+            }
         };
     }
 }

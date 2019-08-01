@@ -4,7 +4,7 @@ import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
 import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
-import {PureComponent, componentDidMount, render, props, state} from "./ReactConstants";
+import {PureComponent, componentDidMount, render, props, stateGS} from "./ReactConstants";
 
 let listenerRef;
 
@@ -32,26 +32,28 @@ class Modal extends PureComponent {
         const that = this;
         that.state = {};
 
+        const [isShow, setShow] = stateGS(that, 'show', false);
+        const [getMenu, setMenu] = stateGS(that, 'menu');
+        const [getBeforeClose, setBeforeClose] = stateGS(that, 'beforeClose');
 
-        const modalMenuConsumer = (menu) => that.setState({menu});
         const beforeClose = (e) => {
-            if (props(that).beforeClose)
-                props(that).beforeClose(that.close) && that.close(e);
-            else
+            const bc = getBeforeClose() || props(that).beforeClose;
+            if (!bc || bc(that.close))
                 that.close(e);
         };
         const addTransitionListener = () => {
             const transitionend = "transitionend";
             let listener = () => {
                 that.overlay && removeEventListener(that.overlay, transitionend, listener);
-                orNoop(state(that).show ? props(that).onOpen : orNoop(props(that).onClose))();
-                that.el.style.paddingBottom = state(that).show ? '1px' : '0px'; // force invalidate scroll
+                orNoop(isShow() ? props(that).onOpen : orNoop(props(that).onClose))();
+                that.el.style.paddingBottom = isShow() ? '1px' : '0px'; // force invalidate scroll
             };
             that.overlay && addEventListener(that.overlay, transitionend, listener);
         };
         that[render] = () => {
             const {className, top, container = Modal.defaultContainer, children} = props(that);
-            const {show, menu} = state(that);
+            const menu = getMenu();
+            const show = isShow();
             const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={ref('el', that)}>
                 <div ref={ref('overlay', that)} className={classNames(`overlay`, show && 'show')} onClick={beforeClose}>
                 </div>
@@ -59,7 +61,10 @@ class Modal extends PureComponent {
                      className={classNames(`content`, show && 'show', top && 'top')}
                      style={top && {top: top + 'px'}}
                 >
-                    {React.Children.map(children, child => React.cloneElement(child, {modalMenuConsumer}))}
+                    {React.Children.map(children, child => React.cloneElement(child, {
+                        modalMenuConsumer: setMenu,
+                        modalBeforeCloseConsumer: setBeforeClose
+                    }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
                         <i className="material-icons" ref={ref('closeButton', that)}>close</i>
@@ -81,20 +86,20 @@ class Modal extends PureComponent {
             if (target && !(target === that.overlay || target === that.closeButton || target.classList.contains('close')))
                 return true;
 
-            if (!state(that).show)
+            if (!isShow())
                 return;
 
             addTransitionListener();
-            that.setState({show: false});
+            setShow(false);
 
             pollListener(that);
         };
         that.open = () => {
-            if (state(that).show)
+            if (isShow())
                 return;
 
             addTransitionListener();
-            that.setState({show: true});
+            setShow(true);
 
             let listener = event => {
                 if (!event.defaultPrevented && event.keyCode === 27/*escape*/)

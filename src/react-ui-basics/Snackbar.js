@@ -25,7 +25,7 @@ class Snackbar extends PureComponent {
 
             return (
                 <div className={classNames(`Snackbar`, _props[className], _state[shown] && shown)}>
-                    <div className="message">{_state.text}</div>
+                    <div className="message">{_state.text || _props.text}</div>
                 </div>
             )
         };

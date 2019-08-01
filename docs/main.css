@@ -17,8 +17,6 @@
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start; }
-  #root .line {
-    min-height: 18px; }
   #root a {
     text-decoration: none;
     color: lightblue; }

@@ -32,26 +32,33 @@ class AutocompleteSelect extends React.Component {
         super(props);
         this.state = {
             selected: {},
-            isActive: false,
+            isActive: !!props.focused,
+
         };
         this.randomId = getRandomId('acs-');
     }
 
-    componentWillMount() {
-        if (this.props.focused)
-            this.setState({isActive: true});
-
+    componentDidMount() {
         this.initSelected(this.props);
 
         const data = this.props.data;
         if (data && typeof data === "function") {
             data(data => this.setState({data}));
         }
+
+        orNoop(this.props.getSelected)(() => Object.values(this.state.selected));
+
+        document.addEventListener('mousedown', this.listener = (e) => {
+            if (this.state.isActive && !this.el.contains(e.target)) {
+                this.setState({isActive: false});
+                this.onCancel();
+            }
+        })
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.value !== nextProps.value)
-            this.initSelected(nextProps)
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.value !== prevProps.value)
+            this.initSelected(this.props)
     }
 
     initSelected = ({value}) => {
@@ -69,17 +76,6 @@ class AutocompleteSelect extends React.Component {
                 this.setState({selected: {[value]: value}});
         }
     };
-
-    componentDidMount() {
-        orNoop(this.props.getSelected)(() => Object.values(this.state.selected));
-
-        document.addEventListener('mousedown', this.listener = (e) => {
-            if (this.state.isActive && !this.el.contains(e.target)) {
-                this.setState({isActive: false});
-                this.onCancel();
-            }
-        })
-    }
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.listener)

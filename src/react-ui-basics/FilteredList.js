@@ -17,12 +17,11 @@ class FilteredList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {selected: -1};
-    }
-
-    componentWillMount() {
         this.hidden = {};
         this.elements = {};
+    }
 
+    componentDidMount() {
         orNoop(this.props.nextProvider)(this.next);
         orNoop(this.props.prevProvider)(this.prev);
         orNoop(this.props.selectedProvider)(this.selected);
@@ -31,12 +30,11 @@ class FilteredList extends React.Component {
         this.updateList(this.props)
     }
 
-    componentWillReceiveProps(nextProps) {
-        const data = nextProps.data || [];
-        if (this.props.data === data)
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.data === prevProps.data)
             return;
 
-        this.updateList(nextProps)
+        this.updateList(this.props)
     }
 
     updateList = (props) => {

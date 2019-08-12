@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener, UNDEFINED} from "./Tools";
+import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
 import {PureComponent, componentDidMount, render, props, stateGS, componentDidUpdate} from "./ReactConstants";
 
 let listenerRef;
@@ -46,7 +46,7 @@ class Modal extends PureComponent {
             let listener = () => {
                 that.overlay && removeEventListener(that.overlay, transitionend, listener);
                 orNoop(isShow() ? props(that).onOpen : orNoop(props(that).onClose))();
-                that.el.style.paddingBottom = isShow() ? '1px' : '0px'; // force invalidate scroll
+                that.el && (that.el.style.paddingBottom = isShow() ? '1px' : '0px'); // force invalidate scroll
             };
             that.overlay && addEventListener(that.overlay, transitionend, listener);
         };

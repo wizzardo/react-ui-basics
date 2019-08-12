@@ -1,87 +1,97 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
-import {classNames, getRandomId, isUndefined, orNoop, ref} from "./Tools";
-import {PureComponent} from "./ReactConstants";
+import {classNames, getRandomId, isUndefined, orNoop, ref, addEventListener} from "./Tools";
+import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
 
 class TextField extends PureComponent {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            focused: false,
-            withValue: !!props.value,
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {};
+
+        const randomId = getRandomId('tf-');
+        const [isFocused, setFocused] = stateGS(that);
+        const [isErrored, setErrored] = stateGS(that);
+        const [isWithValue, setWithValue] = stateGS(that);
+        const props = propsGetter(that);
+
+        const getInput = () => that.input;
+        const check = () => {
+            const {required, check} = props();
+            const value = getInput().value;
+            const errored = (required && value === '') || (check && !check(value));
+            setErrored(errored);
+            return !errored;
         };
-        this.randomId = getRandomId('tf-');
-    }
 
-    render = () => {
-        const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, autoComplete, error, placeholder, className} = this.props;
-        const id = this.props.id || this.randomId;
-        const {focused, errored, withValue} = this.state;
-        return (
-            <div
-                className={classNames('TextField',
-                    focused && 'focused',
-                    (value || placeholder || (withValue && isUndefined(value))) && 'withValue',
-                    errored && (required || check) && 'errored',
-                    disabled && 'disabled',
-                    label && 'withLabel',
-                    className)}
-                onClick={() => this.input.focus()}
-                ref={ref('el', this)}>
-                {label && (<label className={`${errored && !focused && 'shake'}`} htmlFor={id}>{label}{required && '*'}</label>)}
-                <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
-                       min={min}
-                       max={max}
-                       ref={ref('input', this)}
-                       onChange={this.onChange}
-                       onFocus={this.onFocus}
-                       onBlur={this.onBlur}
-                       onClick={onClick}
-                       onKeyDown={onKeyDown}
-                       autoComplete={autoComplete || 'on'}
-                       placeholder={placeholder}
-                />
-                <div className="border">
-                    <div className="line"/>
+        const onChange = (e) => {
+            orNoop(props().onChange)(e);
+            setWithValue(!!getInput().value);
+            check()
+        };
+
+        const onFocus = () => {
+            setFocused(true);
+            orNoop(props().onFocus)();
+        };
+        const onBlur = () => {
+            setFocused(false);
+            check();
+            orNoop(props().onBlur)();
+        };
+
+        that[render] = () => {
+            const _props = props();
+            const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, autoComplete, error, placeholder, className} = _props;
+            const id = _props.id || randomId;
+            return (
+                <div
+                    className={classNames('TextField',
+                        isFocused() && 'focused',
+                        (value || placeholder || (isWithValue() && isUndefined(value))) && 'withValue',
+                        isErrored() && (required || check) && 'errored',
+                        disabled && 'disabled',
+                        label && 'withLabel',
+                        className)}
+                    onClick={() => getInput().focus()}
+                    ref={ref('el', that)}>
+                    {label && (<label className={classNames(isErrored() && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
+                    <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
+                           min={min}
+                           max={max}
+                           ref={ref('input', that)}
+                           onChange={onChange}
+                           onFocus={onFocus}
+                           onBlur={onBlur}
+                           onClick={onClick}
+                           onKeyDown={onKeyDown}
+                           autoComplete={autoComplete || 'on'}
+                           placeholder={placeholder}
+                    />
+                    <div className="border">
+                        <div className="line"/>
+                    </div>
+                    {error && <div className="error">{error}</div>}
                 </div>
-                {error && <div className="error">{error}</div>}
-            </div>
-        )
-    };
+            )
+        };
 
-    onChange = (e) => {
-        orNoop(this.props.onChange)(e);
-        this.setState({withValue: !!this.input.value});
-        this.check()
-    };
-    onFocus = () => {
-        this.setState({focused: true});
-        orNoop(this.props.onFocus)();
-    };
-    onBlur = () => {
-        this.setState({focused: false});
-        this.check();
-        orNoop(this.props.onBlur)();
-    };
-    check = () => {
-        const {required, check} = this.props;
-        const errored = (required && this.input.value === '') || (check && !check(this.input.value));
-        this.setState({errored});
-        return !errored;
-    };
-    getInput = () => this.input;
+        that[componentDidMount] = () => {
+            const {focused, input} = props(),
+                i = getInput();
+            setWithValue(!!i.value);
+            focused && i.focus();
+            orNoop(input)(i);
+        };
+        that.check = check;
+        that.getInput = getInput;
 
-    withAutofillAnimationCallback = () => {
-        this.input.addEventListener('animationstart', () => this.setState({withValue: true}), false);
-    };
-
-    componentDidMount = () => {
-        const {focused, input} = this.props;
-        focused && this.input.focus();
-        orNoop(input)(this.input);
-    };
+        that.withAutofillAnimationCallback = () => {
+            addEventListener(getInput(), 'animationstart', () => setWithValue(true), false);
+        };
+    }
 }
 
 export default TextField

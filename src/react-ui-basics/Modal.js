@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import {classNames, orNoop, ref, setTimeout, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
-import {PureComponent, componentDidMount, render, props, stateGS, componentDidUpdate} from "./ReactConstants";
+import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef} from "./Tools";
+import {PureComponent, componentDidMount, render, propsGetter, stateGS, componentDidUpdate} from "./ReactConstants";
 
 let listenerRef;
 
@@ -35,30 +35,33 @@ class Modal extends PureComponent {
         const [isShow, setShow] = stateGS(that);
         const [getMenu, setMenu] = stateGS(that);
         const [getBeforeClose, setBeforeClose] = stateGS(that);
+        const overlay = createRef();
+        const closeButton = createRef();
+        const el = createRef();
+        const props = propsGetter(that);
 
         const beforeClose = (e) => {
-            const bc = getBeforeClose() || props(that).beforeClose;
+            const bc = getBeforeClose() || props().beforeClose;
             if (!bc || bc(that.close))
                 that.close(e);
         };
         const addTransitionListener = () => {
             const transitionend = "transitionend";
             let listener = () => {
-                that.overlay && removeEventListener(that.overlay, transitionend, listener);
-                orNoop(isShow() ? props(that).onOpen : orNoop(props(that).onClose))();
-                that.el && (that.el.style.paddingBottom = isShow() ? '1px' : '0px'); // force invalidate scroll
+                removeEventListener(overlay(), transitionend, listener);
+                orNoop(isShow() ? props().onOpen : orNoop(props().onClose))();
+                el() && (el().style.paddingBottom = isShow() ? '1px' : '0px'); // force invalidate scroll
             };
-            that.overlay && addEventListener(that.overlay, transitionend, listener);
+            addEventListener(overlay(), transitionend, listener);
         };
         that[render] = () => {
-            const {className, top, container = Modal.defaultContainer, children} = props(that);
+            const {className, top, container = Modal.defaultContainer, children} = props();
             const menu = getMenu();
             const show = isShow();
-            const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={ref('el', that)}>
-                <div ref={ref('overlay', that)} className={classNames(`overlay`, show && 'show')} onClick={beforeClose}>
+            const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={el}>
+                <div ref={overlay} className={classNames(`overlay`, show && 'show')} onClick={beforeClose}>
                 </div>
-                <div ref={ref('content', that)}
-                     className={classNames(`content`, show && 'show', top && 'top')}
+                <div className={classNames(`content`, show && 'show', top && 'top')}
                      style={top && {top: top + 'px'}}
                 >
                     {React.Children.map(children, child => React.cloneElement(child, {
@@ -67,7 +70,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <i className="material-icons" ref={ref('closeButton', that)}>close</i>
+                        <i className="material-icons" ref={closeButton}>close</i>
                     </Button>
                 </div>
             </div>;
@@ -77,7 +80,7 @@ class Modal extends PureComponent {
 
         const close = that.close = (e) => {
             const target = e && e.target;
-            if (target && !(target === that.overlay || target === that.closeButton || target.classList.contains('close')))
+            if (target && !(target === overlay() || target === closeButton() || target.classList.contains('close')))
                 return true;
 
             if (!isShow())
@@ -105,13 +108,13 @@ class Modal extends PureComponent {
         };
 
         that[componentDidMount] = () => {
-            const _props = props(that);
+            const _props = props();
             orNoop(_props.open)(() => setTimeout(open, 0));
             orNoop(_props.close)(() => setTimeout(close, 0));
             _props.show && setTimeout(open, 0)
         };
         that[componentDidUpdate] = (prevProps) => {
-            const show = props(that).show;
+            const show = props().show;
             if (show !== prevProps.show) {
                 show ? open() : close();
             }

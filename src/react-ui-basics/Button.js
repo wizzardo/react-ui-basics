@@ -1,52 +1,62 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
-import {classNames, ref, DOCUMENT, addEventListener} from "./Tools";
+import {classNames, DOCUMENT, addEventListener, createRef} from "./Tools";
 import PropTypes from "prop-types";
-import {PureComponent} from "./ReactConstants";
-
-const rippleClassName = 'rcn';
+import {PureComponent, render, stateGS, props} from "./ReactConstants";
 
 class Button extends PureComponent {
-    render = () => {
-        const {children, type, className, onClick, flat, raised = !flat, round, style, disabled, onFocus} = this.props;
-        const rippleClass = (this.state || {})[rippleClassName];
-        return (
-            <button className={classNames('Button',
-                className,
-                disabled && 'disabled',
-                raised && 'raised',
-                flat && 'flat',
-                round && 'round')
-            }
-                    onFocus={onFocus}
-                    disabled={disabled}
-                    style={style}
-                    type={type || 'button'}
-                    onClick={onClick}
-                    onMouseDown={this.onMouseDown}
-                    ref={ref('el', this)}>
-                {children}
-                <span className={classNames(`ripple`, rippleClass)} ref={ref('ripple', this)}/>
-            </button>
-        );
-    };
+    constructor(properties) {
+        super(properties);
 
-    onMouseDown = (e) => {
-        const {el, ripple} = this;
-        const rect = el.getBoundingClientRect();
-        const style = ripple.style;
+        const that = this;
+        that.state = {};
 
-        style.height = style.width = Math.max(rect.width, rect.height) + 'px';
-        style.top = (e.pageY - rect.top - ripple.offsetHeight / 2 - DOCUMENT.body.scrollTop) + 'px';
-        style.left = (e.pageX - rect.left - ripple.offsetWidth / 2 - DOCUMENT.body.scrollLeft) + 'px';
+        const el = createRef();
+        const ripple = createRef();
 
-        this.setState({[rippleClassName]: 'show'});
+        const [getRippleClassName, setRippleClassName] = stateGS(that);
 
-        addEventListener(ripple, 'animationend', () => {
-            this.setState({[rippleClassName]: 'showed'});
-        });
-    };
+        const onMouseDown = (e) => {
+            const rect = el().getBoundingClientRect();
+            const rippleElement = ripple();
+            const style = rippleElement.style;
+            const body = DOCUMENT.body;
+
+            style.height = style.width = Math.max(rect.width, rect.height) + 'px';
+            style.top = (e.pageY - rect.top - rippleElement.offsetHeight / 2 - body.scrollTop) + 'px';
+            style.left = (e.pageX - rect.left - rippleElement.offsetWidth / 2 - body.scrollLeft) + 'px';
+
+            setRippleClassName('show');
+
+            addEventListener(rippleElement, 'animationend', () => {
+                setRippleClassName('showed');
+            });
+        };
+
+        that[render] = () => {
+            const {children, type, className, onClick, flat, raised = !flat, round, style, disabled, onFocus} = props(that);
+            return (
+                <button className={classNames('Button',
+                    className,
+                    disabled && 'disabled',
+                    raised && 'raised',
+                    flat && 'flat',
+                    round && 'round')
+                }
+                        onFocus={onFocus}
+                        disabled={disabled}
+                        style={style}
+                        type={type || 'button'}
+                        onClick={onClick}
+                        onMouseDown={onMouseDown}
+                        ref={el}>
+                    {children}
+                    <span className={classNames(`ripple`, getRippleClassName())} ref={ripple}/>
+                </button>
+            );
+        }
+    }
 }
 
 Button.propTypes = {

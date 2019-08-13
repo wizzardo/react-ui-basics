@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
-import {classNames, getRandomId, isUndefined, orNoop, ref, addEventListener} from "./Tools";
+import {classNames, getRandomId, isUndefined, orNoop, ref, addEventListener, createRef} from "./Tools";
 import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
 
 class TextField extends PureComponent {
@@ -17,10 +17,10 @@ class TextField extends PureComponent {
         const [isWithValue, setWithValue] = stateGS(that);
         const props = propsGetter(that);
 
-        const getInput = () => that.input;
+        const inputRef = createRef();
         const check = () => {
             const {required, check} = props();
-            const value = getInput().value;
+            const value = inputRef().value;
             const errored = (required && value === '') || (check && !check(value));
             setErrored(errored);
             return !errored;
@@ -28,7 +28,7 @@ class TextField extends PureComponent {
 
         const onChange = (e) => {
             orNoop(props().onChange)(e);
-            setWithValue(!!getInput().value);
+            setWithValue(!!inputRef().value);
             check()
         };
 
@@ -55,13 +55,13 @@ class TextField extends PureComponent {
                         disabled && 'disabled',
                         label && 'withLabel',
                         className)}
-                    onClick={() => getInput().focus()}
-                    ref={ref('el', that)}>
+                    onClick={() => inputRef().focus()}
+                >
                     {label && (<label className={classNames(isErrored() && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
                     <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
                            min={min}
                            max={max}
-                           ref={ref('input', that)}
+                           ref={inputRef}
                            onChange={onChange}
                            onFocus={onFocus}
                            onBlur={onBlur}
@@ -80,16 +80,16 @@ class TextField extends PureComponent {
 
         that[componentDidMount] = () => {
             const {focused, input} = props(),
-                i = getInput();
+                i = inputRef();
             setWithValue(!!i.value);
             focused && i.focus();
             orNoop(input)(i);
         };
         that.check = check;
-        that.getInput = getInput;
+        that.getInput = inputRef;
 
         that.withAutofillAnimationCallback = () => {
-            addEventListener(getInput(), 'animationstart', () => setWithValue(true), false);
+            addEventListener(inputRef(), 'animationstart', () => setWithValue(true), false);
         };
     }
 }

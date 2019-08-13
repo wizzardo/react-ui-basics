@@ -20,6 +20,14 @@ export const getRandomId = (prefix) => prefix + Math.random();
 
 export const ref = (name, component) => (it) => component[name] = it;
 
+export const createRef = () => {
+    const ref = function () {
+        arguments.length > 0 && (ref.v = arguments[0]);
+        return ref.v;
+    };
+    return ref;
+};
+
 export const setOf = (list) => (list || []).reduce((map, key) => {
     map[key] = true;
     return map;
@@ -92,8 +100,8 @@ export const clearTimeout = (id) => WINDOW.clearTimeout(id);
 export const setInterval = (cb, timeout) => WINDOW.setInterval(cb, timeout);
 export const clearInterval = (id) => WINDOW.clearInterval(id);
 export const requestAnimationFrame = (cb) => WINDOW.requestAnimationFrame(cb);
-export const addEventListener = (el, type, listener, options) => el.addEventListener(type, listener, options);
-export const removeEventListener = (el, type, listener, options) => el.removeEventListener(type, listener, options);
+export const addEventListener = (el, type, listener, options) => el && el.addEventListener(type, listener, options);
+export const removeEventListener = (el, type, listener, options) => el && el.removeEventListener(type, listener, options);
 
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
-import {allPropsExcept, isDifferent, orNoop, setOf} from "../Tools";
+import {allPropsExcept, isDifferent, orNoop, setOf, WINDOW, addEventListener, removeEventListener} from "../Tools";
 import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, props, state, setState} from "../ReactConstants";
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
@@ -91,7 +91,6 @@ class Route extends PureComponent {
         that.state = {
             render: false,
         };
-        const WINDOW = window;
         let matcher;
 
         const process = () => {
@@ -128,12 +127,12 @@ class Route extends PureComponent {
             matcher = urlMatcher[0];
             setState(that, {variables: urlMatcher[1]});
 
-            historyEvents.forEach(it => WINDOW.addEventListener(it, process));
+            historyEvents.forEach(it => addEventListener(WINDOW, it, process));
             process();
         };
 
         that[componentWillUnmount] = () => {
-            historyEvents.forEach(it => WINDOW.removeEventListener(it, process));
+            historyEvents.forEach(it => removeEventListener(WINDOW, it, process));
         };
     }
 }

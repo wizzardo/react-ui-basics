@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './AutocompleteSelect.css'
 import TextField from "./TextField";
 import FilteredList from "./FilteredList";
-import {classNames, continuousIncludes, getRandomId, ref, orNoop, preventDefault, stopPropagation} from "./Tools";
+import {classNames, continuousIncludes, getRandomId, ref, orNoop, preventDefault, stopPropagation, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
 import Button from "./Button";
 
 export const MODE_DEFAULT = 'default';
@@ -48,8 +48,8 @@ class AutocompleteSelect extends React.Component {
 
         orNoop(this.props.getSelected)(() => Object.values(this.state.selected));
 
-        document.addEventListener('mousedown', this.listener = (e) => {
-            if (this.state.isActive && !this.el.contains(e.target)) {
+        addEventListener(DOCUMENT, 'mousedown', this.listener = (e) => {
+            if (this.state.isActive && this.el && !this.el.contains(e.target)) {
                 this.setState({isActive: false});
                 this.onCancel();
             }
@@ -78,7 +78,7 @@ class AutocompleteSelect extends React.Component {
     };
 
     componentWillUnmount() {
-        document.removeEventListener('mousedown', this.listener)
+        removeEventListener(DOCUMENT, 'mousedown', this.listener)
     }
 
     static defaultProps = {

@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './DNDContainer.css'
-import {classNames, NOOP, orNoop, preventDefault, ref} from "./Tools";
+import {classNames, NOOP, orNoop, preventDefault, ref, DOCUMENT, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, requestAnimationFrame} from "./Tools";
 
 const clearSelection = () => {
-    const getSelection = window.getSelection;
+    const getSelection = WINDOW.getSelection;
     if (getSelection) {
         if (getSelection().empty) {  // Chrome
             getSelection().empty();
         } else if (getSelection().removeAllRanges) {  // Firefox
             getSelection().removeAllRanges();
         }
-    } else if (document.selection) {  // IE?
-        document.selection.empty();
+    } else if (DOCUMENT.selection) {  // IE?
+        DOCUMENT.selection.empty();
     }
 };
 
@@ -49,7 +49,7 @@ class DNDContainer extends Component {
 
         orNoop(provideDraggableInitializer)(this.draggableInitializer);
         orNoop(provideDroppableInitializer)(this.droppableInitializer);
-        this.container.addEventListener('dragover', this.onDrag)
+        addEventListener(this.container, 'dragover', this.onDrag)
     };
 
     draggableInitializer = (item) => {
@@ -172,7 +172,7 @@ class DNDContainer extends Component {
     droppableInitializer = (item) => {
         this[droppables].push(item);
 
-        item.element.addEventListener('drop', (e) => {
+        addEventListener(item.element, 'drop', (e) => {
             preventDefault(e);
             this.data && orNoop(item.props.onDrop)(this.data);
         }, false);
@@ -241,17 +241,17 @@ class DNDContainer extends Component {
     };
 }
 
-export const removeListener = (el, item, type) => item[type] && el.removeEventListener(type, item[type]);
+export const removeListener = (el, item, type) => item[type] && removeEventListener(el, type, item[type]);
 export const addListener = (el, item, type, listener) => {
     removeListener(el, item, type);
-    el.addEventListener(type, item[type] = listener);
+    addEventListener(el, type, item[type] = listener);
 };
 
 const totalOffsetTop = (el) => {
-    return el.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop);
+    return el.getBoundingClientRect().top + (WINDOW.pageYOffset || DOCUMENT.documentElement.scrollTop);
 };
 const totalOffsetLeft = (el) => {
-    return el.getBoundingClientRect().left + (window.pageXOffset || document.documentElement.scrollLeft);
+    return el.getBoundingClientRect().left + (WINDOW.pageXOffset || DOCUMENT.documentElement.scrollLeft);
 };
 
 export default DNDContainer;

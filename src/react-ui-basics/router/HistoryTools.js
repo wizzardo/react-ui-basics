@@ -1,5 +1,6 @@
-const w = window;
-const history = w.history;
+import {DOCUMENT, WINDOW} from "../Tools";
+
+const history = WINDOW.history;
 
 const events = ['pushState', 'replaceState'];
 events.forEach(e => {
@@ -11,11 +12,11 @@ events.forEach(e => {
 });
 
 const fireEvent = (name) => {
-    const event = document.createEvent('Event');
+    const event = DOCUMENT.createEvent('Event');
     event.initEvent(name, true, true);
-    w.dispatchEvent(event);
+    WINDOW.dispatchEvent(event);
 };
 
-export const pushLocation = (path) => path !== w.location.pathname && history[events[0]](null, null, path);
+export const pushLocation = (path) => path !== WINDOW.location.pathname && history[events[0]](null, null, path);
 
 export const replaceLocation = (path) => history[events[1]](null, null, path);

@@ -88,7 +88,9 @@ export const preventDefault = e => e && e.preventDefault();
 export const stopPropagation = e => e && e.stopPropagation();
 
 export const setTimeout = (cb, timeout) => WINDOW.setTimeout(cb, timeout);
-export const clearTimeout = (timeout) => WINDOW.clearTimeout(timeout);
+export const clearTimeout = (id) => WINDOW.clearTimeout(id);
+export const setInterval = (cb, timeout) => WINDOW.setInterval(cb, timeout);
+export const clearInterval = (id) => WINDOW.clearInterval(id);
 export const requestAnimationFrame = (cb) => WINDOW.requestAnimationFrame(cb);
 export const addEventListener = (el, type, listener, options) => el.addEventListener(type, listener, options);
 export const removeEventListener = (el, type, listener, options) => el.removeEventListener(type, listener, options);

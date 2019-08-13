@@ -2,7 +2,7 @@ import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './Scrollable.css'
-import {classNames, preventDefault, ref} from "./Tools";
+import {classNames, preventDefault, ref, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, setInterval, clearInterval} from "./Tools";
 
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
 export const SCROLLBAR_MODE_VISIBLE = 'visible';
@@ -71,8 +71,8 @@ class Scrollable extends React.Component {
             }
         };
         const reset = () => {
-            window.removeEventListener('mouseup', reset);
-            window.removeEventListener('mousemove', moveListener);
+            removeEventListener(WINDOW,'mouseup', reset);
+            removeEventListener(WINDOW,'mousemove', moveListener);
             state.scrolling = false;
         };
         const moveListener = (e) => {
@@ -91,8 +91,8 @@ class Scrollable extends React.Component {
             state.scrolling = true;
             state.ratio = viewport.scrollHeight / viewport.offsetHeight;
 
-            window.addEventListener('mouseup', reset);
-            window.addEventListener('mousemove', moveListener);
+            addEventListener(WINDOW, 'mouseup', reset);
+            addEventListener(WINDOW, 'mousemove', moveListener);
         };
         thumb.ondragstart = preventDefault;
         thumb.onmouseup = reset;

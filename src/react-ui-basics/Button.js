@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
-import {classNames, ref} from "./Tools";
+import {classNames, ref, DOCUMENT, addEventListener} from "./Tools";
 import PropTypes from "prop-types";
 import {PureComponent} from "./ReactConstants";
 
@@ -35,14 +35,15 @@ class Button extends PureComponent {
     onMouseDown = (e) => {
         const {el, ripple} = this;
         const rect = el.getBoundingClientRect();
+        const style = ripple.style;
 
-        ripple.style.height = ripple.style.width = Math.max(rect.width, rect.height) + 'px';
-        ripple.style.top = (e.pageY - rect.top - ripple.offsetHeight / 2 - document.body.scrollTop) + 'px';
-        ripple.style.left = (e.pageX - rect.left - ripple.offsetWidth / 2 - document.body.scrollLeft) + 'px';
+        style.height = style.width = Math.max(rect.width, rect.height) + 'px';
+        style.top = (e.pageY - rect.top - ripple.offsetHeight / 2 - DOCUMENT.body.scrollTop) + 'px';
+        style.left = (e.pageX - rect.left - ripple.offsetWidth / 2 - DOCUMENT.body.scrollLeft) + 'px';
 
         this.setState({[rippleClassName]: 'show'});
 
-        ripple.addEventListener('animationend', () => {
+        addEventListener(ripple, 'animationend', () => {
             this.setState({[rippleClassName]: 'showed'});
         });
     };

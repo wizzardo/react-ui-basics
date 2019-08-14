@@ -122,4 +122,7 @@ class Modal extends PureComponent {
     }
 }
 
+Modal.pollListener = pollListener;
+Modal.addListener = addListener;
+
 export default Modal;

@@ -177,19 +177,21 @@ class Animated extends PureComponent {
     }
 }
 
-Animated.propTypes = {
-    [value]: PropTypes.bool,
-    [className]: PropTypes.string,
-    styles: PropTypes.shape({
-        [mounting]: PropTypes.object,
-        [mounted]: PropTypes.object,
-        [unmounting]: PropTypes.object,
-    }),
-    [mountingDelay]: PropTypes.number,
-    [unmountingDelay]: PropTypes.number,
-    [mounting]: PropTypes.number,
-    [unmounting]: PropTypes.number,
-};
+if (window.isNotProductionEnvironment) {
+    Animated.propTypes = {
+        [value]: PropTypes.bool,
+        [className]: PropTypes.string,
+        styles: PropTypes.shape({
+            [mounting]: PropTypes.object,
+            [mounted]: PropTypes.object,
+            [unmounting]: PropTypes.object,
+        }),
+        [mountingDelay]: PropTypes.number,
+        [unmountingDelay]: PropTypes.number,
+        [mounting]: PropTypes.number,
+        [unmounting]: PropTypes.number,
+    };
+}
 
 Animated.defaultProps = {
     [className]: 'animated',

@@ -137,12 +137,13 @@ class Route extends PureComponent {
     }
 }
 
-if (process.env.NODE_ENV !== 'production')
+if (window.isNotProductionEnvironment) {
     Route.propTypes = {
         path: PropTypes.string.isRequired,
         controller: PropTypes.func,
         onToggle: PropTypes.func,
     };
+}
 
 const DefaultController = (matches, children, props, variables) => {
     if (!matches || !children) return null;

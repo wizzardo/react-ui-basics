@@ -59,14 +59,16 @@ class Button extends PureComponent {
     }
 }
 
-Button.propTypes = {
-    flat: PropTypes.bool,
-    raised: PropTypes.bool,
-    round: PropTypes.bool,
-    disabled: PropTypes.bool,
-    type: PropTypes.oneOf(['button', 'submit', 'reset']),
-    className: PropTypes.string,
-};
+if(window.isNotProductionEnvironment) {
+    Button.propTypes = {
+        flat: PropTypes.bool,
+        raised: PropTypes.bool,
+        round: PropTypes.bool,
+        disabled: PropTypes.bool,
+        type: PropTypes.oneOf(['button', 'submit', 'reset']),
+        className: PropTypes.string,
+    };
+}
 
 Button.defaultProps = {
     type: 'button',

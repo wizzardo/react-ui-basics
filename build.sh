@@ -15,3 +15,7 @@ fi
 
 cp helpers.js build/_virtual/_rollupPluginBabelHelpers.js
 # md5sum build/_virtual/_rollupPluginBabelHelpers.js > helpers.md5
+
+
+sed -i "s/window.isNotProductionEnvironment/process.env.NODE_ENV !== 'production'/g" build/*.js
+sed -i "s/window.isNotProductionEnvironment/process.env.NODE_ENV !== 'production'/g" build/router/*.js

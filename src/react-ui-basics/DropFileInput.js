@@ -19,7 +19,7 @@ DropFileInput.defaultProps = {
     droppable: false,
 };
 
-if (process.env.NODE_ENV !== 'production')
+if (window.isNotProductionEnvironment) {
     DropFileInput.propTypes = {
         icon: PropTypes.string,
         label: PropTypes.oneOfType([
@@ -29,6 +29,7 @@ if (process.env.NODE_ENV !== 'production')
         droppable: PropTypes.bool,
         onDrop: PropTypes.func,
     };
+}
 
 
 export default DropFileInput;

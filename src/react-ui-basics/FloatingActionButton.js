@@ -11,11 +11,13 @@ const FloatingActionButton = ({icon, onClick, mini, className, hidden}) => {
     </Button>;
 };
 
-FloatingActionButton.propTypes = {
-    icon: PropTypes.string,
-    mini: PropTypes.bool,
-    hidden: PropTypes.bool,
-};
+if (window.isNotProductionEnvironment) {
+    FloatingActionButton.propTypes = {
+        icon: PropTypes.string,
+        mini: PropTypes.bool,
+        hidden: PropTypes.bool,
+    };
+}
 
 FloatingActionButton.defaultProps = {
     icon: 'add',

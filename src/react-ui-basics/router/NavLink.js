@@ -13,6 +13,8 @@ const NavLink = ({children, href, highlightPath, className, activeClassName}) =>
            </Link>}
     />;
 
-NavLink.propTypes = Link.propTypes;
+if(window.isNotProductionEnvironment) {
+    NavLink.propTypes = Link.propTypes;
+}
 
 export default NavLink;

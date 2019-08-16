@@ -20,8 +20,10 @@ const CircleProgress = ({value}) => (
 CircleProgress.defaultProps = {
     value: 0,
 };
-CircleProgress.propTypes = {
-    value: PropTypes.number,
-};
+if (window.isNotProductionEnvironment) {
+    CircleProgress.propTypes = {
+        value: PropTypes.number,
+    };
+}
 
 export default CircleProgress;

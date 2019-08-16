@@ -13,8 +13,10 @@ const Link = ({children, href, className}) =>
         }
     }}>{children}</a>;
 
-Link.propTypes = {
-    href: PropTypes.string.isRequired,
-};
+if (window.isNotProductionEnvironment) {
+    Link.propTypes = {
+        href: PropTypes.string.isRequired,
+    };
+}
 
 export default Link;

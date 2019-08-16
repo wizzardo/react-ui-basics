@@ -52,7 +52,7 @@ FormUploadProgress.defaultProps = {
     value: 0,
 };
 
-if (process.env.NODE_ENV !== 'production')
+if (window.isNotProductionEnvironment) {
     FormUploadProgress.propTypes = {
         value: PropTypes.number,
         loaded: PropTypes.number,
@@ -67,6 +67,6 @@ if (process.env.NODE_ENV !== 'production')
         ]),
         cancel: PropTypes.func,
     };
-
+}
 
 export default FormUploadProgress;

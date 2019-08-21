@@ -1,5 +1,7 @@
-export const WINDOW = window;
-export const DOCUMENT = document;
+
+var global = global || window;
+export const WINDOW = global;
+export const DOCUMENT = WINDOW.document;
 
 export function classNames() {
     const filtered = [];

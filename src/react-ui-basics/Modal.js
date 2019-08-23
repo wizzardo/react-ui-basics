@@ -32,9 +32,11 @@ class Modal extends PureComponent {
         const that = this;
         that.state = {};
 
-        const [isShow, setShow] = stateGS(that);
-        const [getMenu, setMenu] = stateGS(that);
-        const [getBeforeClose, setBeforeClose] = stateGS(that);
+        const [
+            isShow, setShow,
+            getMenu, setMenu,
+            getBeforeClose, setBeforeClose,
+        ] = stateGS(that, 3);
         const overlay = createRef();
         const closeButton = createRef();
         const el = createRef();

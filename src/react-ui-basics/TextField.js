@@ -12,9 +12,11 @@ class TextField extends PureComponent {
         that.state = {};
 
         const randomId = getRandomId('tf-');
-        const [isFocused, setFocused] = stateGS(that);
-        const [isErrored, setErrored] = stateGS(that);
-        const [isWithValue, setWithValue] = stateGS(that);
+        const [
+            isFocused, setFocused,
+            isErrored, setErrored,
+            isWithValue, setWithValue,
+        ] = stateGS(that, 3);
         const props = propsGetter(that);
 
         const inputRef = createRef();

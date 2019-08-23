@@ -3,84 +3,106 @@ import ReactCreateElement from './ReactCreateElement';
 import './Dialog.css'
 import Button from "./Button";
 import Modal from "./Modal";
-import {isUndefined, orNoop, preventDefault, ref, UNDEFINED} from "./Tools";
+import {isUndefined, orNoop, preventDefault, ref, UNDEFINED, classNames, createRef} from "./Tools";
+import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
 
-const Dialog = ({title, description, accept, cancel, onAccept, onCancel, children}) => (
-    <div className="Dialog">
-        {title && <div className="title">{title}</div>}
-        {description && <div className="description">{description}</div>}
-        {children}
-        <div className="row right">
-            {cancel && <Button flat={true} onClick={onCancel}>{cancel}</Button>}
-            {accept && <Button flat={true} onClick={onAccept}>{accept}</Button>}
-        </div>
-    </div>
-);
+class Dialog extends PureComponent {
+    constructor(properties) {
+        super(properties);
+
+        this[render] = () => {
+            const {title, description, accept, cancel, onAccept, onCancel, children} = this.props;
+            return <div className="Dialog">
+                {title && <div className="title">{title}</div>}
+                {description && <div className="description">{description}</div>}
+                {children}
+                <div className="row right">
+                    {cancel && <Button flat={true} onClick={onCancel}>{cancel}</Button>}
+                    {accept && <Button flat={true} onClick={onAccept}>{accept}</Button>}
+                </div>
+            </div>
+        }
+    }
+}
 
 Dialog.defaultProps = {
     accept: 'Accept',
     cancel: 'Decline',
 };
 
+const ERROR_PROP_EXISTS = " was already set by props";
+
 class DialogWrapper extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {};
 
-    clearState = () => this.setState({
-        title: UNDEFINED,
-        description: UNDEFINED,
-        onAccept: UNDEFINED,
-        onCancel: UNDEFINED,
-        accept: UNDEFINED,
-        cancel: UNDEFINED,
-    });
+        const props = propsGetter(that);
+        const openRef = createRef();
+        const closeRef = createRef();
 
-    render = () => {
-        const {top, ...other} = this.props;
-        const {title, description, accept, cancel} = this.state;
-        return (
-            <Modal
-                top={top}
-                className="DialogModal"
-                open={ref('openModal', this)}
-                close={ref('closeModal', this)}
-                onClose={this.onCancel}
-            >
-                <Dialog title={title} description={description} accept={accept} cancel={cancel} {...other} onAccept={this.onAccept} onCancel={this.onCancel}/>
-            </Modal>
-        );
-    };
+        const [
+            getTitle, setTitle,
+            getDescription, setDescription,
+            getOnAccept, setOnAccept,
+            getOnCancel, setOnCancel,
+            getAccept, setAccept,
+            getCancel, setCancel,
+        ] = stateGS(that, 6);
 
-    onCancel = (e) => {
-        preventDefault(e);
-        orNoop(this.props.onCancel || this.state.onCancel)();
-        this.closeModal();
-    };
+        const onCancel = (e) => {
+            preventDefault(e);
+            orNoop(props().onCancel || getOnCancel())();
+            closeRef()();
+        };
 
-    onAccept = (e) => {
-        preventDefault(e);
-        orNoop(this.props.onAccept || this.state.onAccept)();
-        this.closeModal();
-    };
+        const onAccept = (e) => {
+            preventDefault(e);
+            orNoop(props().onAccept || getOnAccept())();
+            closeRef()();
+        };
 
-    open = (onAccept, onCancel, title, description, accept, cancel) => {
-        this.clearState();
-        if (!isUndefined(onAccept)) if (this.props.onAccept) throw Error("onAccept was already set by props"); else this.setState({onAccept});
-        if (!isUndefined(onCancel)) if (this.props.onCancel) throw Error("onCancel was already set by props"); else this.setState({onCancel});
-        if (!isUndefined(title)) if (this.props.title) throw Error("title was already set by props"); else this.setState({title});
-        if (!isUndefined(description)) if (this.props.description) throw Error("description was already set by props"); else this.setState({description});
-        if (!isUndefined(accept)) if (this.props.accept) throw Error("accept was already set by props"); else this.setState({accept});
-        if (!isUndefined(cancel)) if (this.props.cancel) throw Error("cancel was already set by props"); else this.setState({cancel});
-        this.openModal();
-    };
+        that[render] = () => {
+            const {top, className, ...other} = props();
+            return (
+                <Modal
+                    top={top}
+                    className={classNames('DialogModal', className)}
+                    open={openRef}
+                    close={closeRef}
+                    onClose={onCancel}
+                >
+                    <Dialog title={getTitle()} description={getDescription()} accept={getAccept()} cancel={getCancel()} {...other} onAccept={onAccept} onCancel={onCancel}/>
+                </Modal>
+            );
+        };
 
-    componentDidMount = () => {
-        orNoop(this.props.open)(this.open);
-        orNoop(this.props.close)(this.closeModal);
-        this.props.show && this.open();
+        that.open = (onAccept, onCancel, title, description, accept, cancel) => {
+            setTitle(UNDEFINED);
+            setDescription(UNDEFINED);
+            setOnAccept(UNDEFINED);
+            setOnCancel(UNDEFINED);
+            setAccept(UNDEFINED);
+            setCancel(UNDEFINED);
+
+            const _props = props();
+            if (!isUndefined(onAccept)) if (_props.onAccept) throw Error("onAccept" + ERROR_PROP_EXISTS); else setOnAccept(onAccept);
+            if (!isUndefined(onCancel)) if (_props.onCancel) throw Error("onCancel" + ERROR_PROP_EXISTS); else setOnCancel(onCancel);
+            if (!isUndefined(title)) if (_props.title) throw Error("title" + ERROR_PROP_EXISTS); else setTitle(title);
+            if (!isUndefined(description)) if (_props.description) throw Error("description" + ERROR_PROP_EXISTS); else setDescription(description);
+            if (!isUndefined(accept)) if (_props.accept) throw Error("accept" + ERROR_PROP_EXISTS); else setAccept(accept);
+            if (!isUndefined(cancel)) if (_props.cancel) throw Error("cancel" + ERROR_PROP_EXISTS); else setCancel(cancel);
+            openRef()();
+        };
+
+        that[componentDidMount] = () => {
+            const _props = props();
+            orNoop(_props.open)(that.open);
+            orNoop(_props.close)(closeRef());
+            _props.show && that.open();
+        }
     }
 }
 

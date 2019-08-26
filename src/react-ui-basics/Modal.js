@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef} from "./Tools";
+import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
 import {PureComponent, componentDidMount, render, propsGetter, stateGS, componentDidUpdate} from "./ReactConstants";
 
 let listenerRef;
@@ -24,8 +24,6 @@ const addListener = (modal, listener) => {
 };
 
 class Modal extends PureComponent {
-
-    static defaultContainer = undefined;
 
     constructor(properties) {
         super(properties);
@@ -124,6 +122,7 @@ class Modal extends PureComponent {
     }
 }
 
+Modal.defaultContainer = UNDEFINED;
 Modal.pollListener = pollListener;
 Modal.addListener = addListener;
 

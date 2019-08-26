@@ -30,7 +30,9 @@ Dialog.defaultProps = {
     cancel: 'Decline',
 };
 
-const ERROR_PROP_EXISTS = " was already set by props";
+const throwIfPropExists = (key, props) => {
+    if (props[key]) throw Error(key + " was already set by props")
+};
 
 class DialogWrapper extends Component {
 
@@ -88,12 +90,30 @@ class DialogWrapper extends Component {
             setCancel(UNDEFINED);
 
             const _props = props();
-            if (!isUndefined(onAccept)) if (_props.onAccept) throw Error("onAccept" + ERROR_PROP_EXISTS); else setOnAccept(onAccept);
-            if (!isUndefined(onCancel)) if (_props.onCancel) throw Error("onCancel" + ERROR_PROP_EXISTS); else setOnCancel(onCancel);
-            if (!isUndefined(title)) if (_props.title) throw Error("title" + ERROR_PROP_EXISTS); else setTitle(title);
-            if (!isUndefined(description)) if (_props.description) throw Error("description" + ERROR_PROP_EXISTS); else setDescription(description);
-            if (!isUndefined(accept)) if (_props.accept) throw Error("accept" + ERROR_PROP_EXISTS); else setAccept(accept);
-            if (!isUndefined(cancel)) if (_props.cancel) throw Error("cancel" + ERROR_PROP_EXISTS); else setCancel(cancel);
+            if (!isUndefined(onAccept)) {
+                throwIfPropExists("onAccept", _props);
+                setOnAccept(onAccept);
+            }
+            if (!isUndefined(onCancel)) {
+                throwIfPropExists("onCancel", _props);
+                setOnCancel(onCancel);
+            }
+            if (!isUndefined(title)) {
+                throwIfPropExists("title", _props);
+                setTitle(title);
+            }
+            if (!isUndefined(description)) {
+                throwIfPropExists("description", _props);
+                setDescription(description);
+            }
+            if (!isUndefined(accept)) {
+                throwIfPropExists("accept", _props);
+                setAccept(accept);
+            }
+            if (!isUndefined(cancel)) {
+                throwIfPropExists("cancel", _props);
+                setCancel(cancel);
+            }
             openRef()();
         };
 

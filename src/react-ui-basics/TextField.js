@@ -3,6 +3,7 @@ import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
 import {classNames, getRandomId, isUndefined, orNoop, ref, addEventListener, createRef} from "./Tools";
 import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
+import PropTypes from "prop-types";
 
 class TextField extends PureComponent {
 
@@ -94,6 +95,42 @@ class TextField extends PureComponent {
             addEventListener(inputRef(), 'animationstart', () => setWithValue(true), false);
         };
     }
+}
+
+if (window.isNotProductionEnvironment) {
+    TextField.propTypes = {
+        id: PropTypes.string,
+        className: PropTypes.string,
+        value: PropTypes.string,
+        name: PropTypes.string,
+        type: PropTypes.string,
+        autoComplete: PropTypes.string,
+        placeholder: PropTypes.string,
+        label: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        error: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        check: PropTypes.func,
+        onClick: PropTypes.func,
+        onKeyDown: PropTypes.func,
+        onFocus: PropTypes.func,
+        onBlur: PropTypes.func,
+        onChange: PropTypes.func,
+        required: PropTypes.bool,
+        disabled: PropTypes.bool,
+        min: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+        ]),
+        max: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+        ]),
+    };
 }
 
 export default TextField

@@ -40,13 +40,13 @@ class Dropzone extends PureComponent {
         let entries = [];
 
         const props = propsGetter(that);
-        const [isDragging, setDragging] = stateGS(that);
+        const isDragging = stateGS(that);
 
         const onDrop = (e) => {
             const dt = e.dataTransfer;
             const files = toArray(dt && dt.files || e.target.files);
             props().onDrop(files);
-            setDragging(false);
+            isDragging(false);
             entries = [];
             prevent(e);
         };
@@ -55,7 +55,7 @@ class Dropzone extends PureComponent {
             if (ignore(dt)) return;
 
             dt && (dt.dropEffect = 'copy');
-            !isDragging() && setDragging(true);
+            !isDragging() && isDragging(true);
             prevent(e);
         };
         const onDragEnter = (e) => {
@@ -66,14 +66,14 @@ class Dropzone extends PureComponent {
             }
 
             dt && (dt.dropEffect = 'copy');
-            !isDragging() && setDragging(true);
+            !isDragging() && isDragging(true);
             prevent(e);
         };
         const onDragLeave = (e) => {
             entries = entries.filter(el => el !== e.target);
 
             if (entries.length === 0)
-                setDragging(false);
+                isDragging(false);
 
             prevent(e)
         };

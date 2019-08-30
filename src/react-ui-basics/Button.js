@@ -15,7 +15,7 @@ class Button extends PureComponent {
         const el = createRef();
         const ripple = createRef();
 
-        const [getRippleClassName, setRippleClassName] = stateGS(that);
+        const rippleClassName = stateGS(that);
 
         const onMouseDown = (e) => {
             const rect = el().getBoundingClientRect();
@@ -27,10 +27,10 @@ class Button extends PureComponent {
             style.top = (e.pageY - rect.top - rippleElement.offsetHeight / 2 - body.scrollTop) + 'px';
             style.left = (e.pageX - rect.left - rippleElement.offsetWidth / 2 - body.scrollLeft) + 'px';
 
-            setRippleClassName('show');
+            rippleClassName('show');
 
             addEventListener(rippleElement, 'animationend', () => {
-                setRippleClassName('showed');
+                rippleClassName('showed');
             });
         };
 
@@ -52,7 +52,7 @@ class Button extends PureComponent {
                         onMouseDown={onMouseDown}
                         ref={el}>
                     {children}
-                    <span className={classNames(`ripple`, getRippleClassName())} ref={ripple}/>
+                    <span className={classNames(`ripple`, rippleClassName())} ref={ripple}/>
                 </button>
             );
         }

@@ -4,7 +4,7 @@ import './Dialog.css'
 import Button from "./Button";
 import Modal from "./Modal";
 import {isUndefined, orNoop, preventDefault, ref, UNDEFINED, classNames, createRef} from "./Tools";
-import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
+import {PureComponent, render, componentDidMount, propsGetter, stateGSs} from "./ReactConstants";
 
 class Dialog extends PureComponent {
     constructor(properties) {
@@ -45,24 +45,23 @@ class DialogWrapper extends Component {
         const openRef = createRef();
         const closeRef = createRef();
 
-        const [
-            getTitle, setTitle,
-            getDescription, setDescription,
-            getOnAccept, setOnAccept,
-            getOnCancel, setOnCancel,
-            getAccept, setAccept,
-            getCancel, setCancel,
-        ] = stateGS(that, 6);
+        const [titleState,
+            descriptionState,
+            onAcceptState,
+            onCancelState,
+            acceptState,
+            cancelState
+        ] = stateGSs(that, 6);
 
         const onCancel = (e) => {
             preventDefault(e);
-            orNoop(props().onCancel || getOnCancel())();
+            orNoop(props().onCancel || onCancelState())();
             closeRef()();
         };
 
         const onAccept = (e) => {
             preventDefault(e);
-            orNoop(props().onAccept || getOnAccept())();
+            orNoop(props().onAccept || onAcceptState())();
             closeRef()();
         };
 
@@ -76,43 +75,43 @@ class DialogWrapper extends Component {
                     close={closeRef}
                     onClose={onCancel}
                 >
-                    <Dialog title={getTitle()} description={getDescription()} accept={getAccept()} cancel={getCancel()} {...other} onAccept={onAccept} onCancel={onCancel}/>
+                    <Dialog title={titleState()} description={descriptionState()} accept={acceptState()} cancel={cancelState()} {...other} onAccept={onAccept} onCancel={onCancel}/>
                 </Modal>
             );
         };
 
         that.open = (onAccept, onCancel, title, description, accept, cancel) => {
-            setTitle(UNDEFINED);
-            setDescription(UNDEFINED);
-            setOnAccept(UNDEFINED);
-            setOnCancel(UNDEFINED);
-            setAccept(UNDEFINED);
-            setCancel(UNDEFINED);
+            titleState(UNDEFINED);
+            descriptionState(UNDEFINED);
+            onAcceptState(UNDEFINED);
+            onCancelState(UNDEFINED);
+            acceptState(UNDEFINED);
+            cancelState(UNDEFINED);
 
             const _props = props();
             if (!isUndefined(onAccept)) {
                 throwIfPropExists("onAccept", _props);
-                setOnAccept(onAccept);
+                onAcceptState(onAccept);
             }
             if (!isUndefined(onCancel)) {
                 throwIfPropExists("onCancel", _props);
-                setOnCancel(onCancel);
+                onCancelState(onCancel);
             }
             if (!isUndefined(title)) {
                 throwIfPropExists("title", _props);
-                setTitle(title);
+                titleState(title);
             }
             if (!isUndefined(description)) {
                 throwIfPropExists("description", _props);
-                setDescription(description);
+                descriptionState(description);
             }
             if (!isUndefined(accept)) {
                 throwIfPropExists("accept", _props);
-                setAccept(accept);
+                acceptState(accept);
             }
             if (!isUndefined(cancel)) {
                 throwIfPropExists("cancel", _props);
-                setCancel(cancel);
+                cancelState(cancel);
             }
             openRef()();
         };

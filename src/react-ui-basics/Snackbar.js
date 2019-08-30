@@ -4,7 +4,7 @@ import ReactCreateElement from './ReactCreateElement';
 import PropTypes from "prop-types";
 import './Snackbar.css'
 import {classNames, setTimeout, clearTimeout} from "./Tools";
-import {componentWillUnmount, render, props, className, PureComponent, stateGS} from "./ReactConstants";
+import {componentWillUnmount, render, props, className, PureComponent, stateGSs} from "./ReactConstants";
 
 const shown = 'shown';
 
@@ -15,9 +15,9 @@ class Snackbar extends PureComponent {
         const that = this;
         that.state = {};
         const [
-            isShow, setShow,
-            getText, setText,
-        ] = stateGS(this, 2);
+            isShow,
+            getText
+        ] = stateGSs(this, 2);
 
         let timeout;
         that[componentWillUnmount] = () => {
@@ -36,14 +36,12 @@ class Snackbar extends PureComponent {
         that.show = (text) => {
             if (isShow()) {
                 clearTimeout(timeout);
-                setShow(false);
-                timeout = setTimeout(() => {
-                    that.show(text);
-                }, 260);
+                isShow(false);
+                timeout = setTimeout(that.show, 260, text)
             } else {
-                setShow(true);
-                setText(text);
-                timeout = setTimeout(setShow, 3000);
+                isShow(true);
+                getText(text);
+                timeout = setTimeout(isShow, 3000, false);
             }
         }
     }

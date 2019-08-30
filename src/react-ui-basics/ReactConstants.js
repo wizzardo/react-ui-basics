@@ -10,16 +10,20 @@ export const setState = (that, data, cb) => {
 export const stateFieldSetter = (that, key, cb) => (value, cb2) => {
     setState(that, {[key]: value}, cb2 || cb);
 };
-export const stateGS = (that, num) => {
-    num = num || 1;
+export const stateGS = (that) => {
+    !that.sfc && (that.sfc = 0);
+    const key = '_' + (that.sfc++);
+    const setter = stateFieldSetter(that, key);
+    const result = function () {
+        return !arguments.length ? state(that)[key] : setter.apply(null, arguments);
+    };
+    result.key = key;
+    return result;
+};
+export const stateGSs = (that, num) => {
     const result = [];
-    if (!that.sfc) that.sfc = 0;
     for (let i = 0; i < num; i++) {
-        let key = '_' + (that.sfc++);
-        result.push(
-            () => state(that)[key],
-            stateFieldSetter(that, key)
-        )
+        result.push(stateGS(that));
     }
     return result;
 };

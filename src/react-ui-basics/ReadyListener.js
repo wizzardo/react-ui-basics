@@ -23,7 +23,9 @@ export const createReadyListener = () => {
                 else
                     return (!ready && _props[children]) || null;
             };
-            that[componentDidMount] = that[componentDidUpdate] = () => orNoop(props(that).onChange)(state(that).r)
+            that[componentDidMount] = that[componentDidUpdate] = () => {
+                orNoop(props(that).onChange)(state(that).r);
+            }
         }
     }
 

@@ -11,9 +11,11 @@ class ModalMenu extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {};
-        const [isOpen, setOpen] = stateGS(this);
+        const isOpen = stateGS(this);
 
-        const toggle = () => setOpen(!isOpen());
+        const toggle = () => {
+            isOpen(!isOpen());
+        };
         this[render] = () => {
             const {items} = this.props;
             const filtered = (items || []).filter(it => !!it);

@@ -4,7 +4,7 @@ import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
-import {PureComponent, componentDidMount, render, propsGetter, stateGS, componentDidUpdate} from "./ReactConstants";
+import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 
 let listenerRef;
 
@@ -31,10 +31,10 @@ class Modal extends PureComponent {
         that.state = {};
 
         const [
-            isShow, setShow,
-            getMenu, setMenu,
-            getBeforeClose, setBeforeClose,
-        ] = stateGS(that, 3);
+            isShow,
+            getMenu,
+            getBeforeClose,
+        ] = stateGSs(that, 3);
         const overlay = createRef();
         const closeButton = createRef();
         const el = createRef();
@@ -65,8 +65,8 @@ class Modal extends PureComponent {
                      style={top && {top: top + 'px'}}
                 >
                     {React.Children.map(children, child => React.cloneElement(child, {
-                        modalMenuConsumer: setMenu,
-                        modalBeforeCloseConsumer: setBeforeClose
+                        modalMenuConsumer: getMenu,
+                        modalBeforeCloseConsumer: getBeforeClose
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
@@ -87,7 +87,7 @@ class Modal extends PureComponent {
                 return;
 
             addTransitionListener();
-            setShow(false);
+            isShow(false);
 
             pollListener(that);
         };
@@ -96,7 +96,7 @@ class Modal extends PureComponent {
                 return;
 
             addTransitionListener();
-            setShow(true);
+            isShow(true);
 
             let listener = event => {
                 if (!event.defaultPrevented && event.keyCode === 27/*escape*/)
@@ -109,8 +109,12 @@ class Modal extends PureComponent {
 
         that[componentDidMount] = () => {
             const _props = props();
-            orNoop(_props.open)(() => setTimeout(open, 0));
-            orNoop(_props.close)(() => setTimeout(close, 0));
+            orNoop(_props.open)(() => {
+                setTimeout(open, 0);
+            });
+            orNoop(_props.close)(() => {
+                setTimeout(close, 0);
+            });
             _props.show && setTimeout(open, 0)
         };
         that[componentDidUpdate] = (prevProps) => {

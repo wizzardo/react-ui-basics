@@ -40,9 +40,7 @@ const animatedState = (isEnabled, isMounting, isMounted, isUnMounting) => {
 const doMounting = (that, duration) => {
     setState(that, animatedState(true, true, false, false));
 
-    that[timeout] = setTimeout(() => {
-        setState(that, animatedState(true, false, true, false))
-    }, duration)
+    that[timeout] = setTimeout(setState, duration, that, animatedState(true, false, true, false))
 };
 
 const processMounting = (that, duration, mountingDelay) => {
@@ -65,9 +63,7 @@ const processMounting = (that, duration, mountingDelay) => {
 
 const doUnmounting = (that, duration) => {
     setState(that, animatedState(true, false, false, true));
-    that[timeout] = setTimeout(() => {
-        setState(that, animatedState(false, false, false, false))
-    }, duration);
+    that[timeout] = setTimeout(setState, duration, that, animatedState(false, false, false, false));
 };
 
 const processUnmounting = (that, duration, unmountingDelay) => {

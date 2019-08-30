@@ -3,7 +3,7 @@ import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
 import {allPropsExcept, isDifferent, orNoop, setOf, WINDOW, addEventListener, removeEventListener} from "../Tools";
-import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, propsGetter, stateGS} from "../ReactConstants";
+import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, propsGetter, stateGSs} from "../ReactConstants";
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
 
@@ -95,43 +95,43 @@ class Route extends PureComponent {
 
         const props = propsGetter(that);
         const [
-            isRendering, setRendering,
-            getParams, setParams,
-            getMergedProps, setMergedProps,
-            getVariables, setVariables,
-        ] = stateGS(that, 4);
+            isRendering,
+            paramsState,
+            mergedPropsState,
+            variablesState,
+        ] = stateGSs(that, 4);
 
         const process = () => {
             let params = {};
             let isMatching = matcher(cleanPath(WINDOW.location.pathname), params);
-            if (isDifferent(getParams(), params)) {
-                setParams(params);
-                setMergedProps(Object.assign(allPropsExcept(props(), selfProps), params));
+            if (isDifferent(paramsState(), params)) {
+                paramsState(params);
+                mergedPropsState(Object.assign(allPropsExcept(props(), selfProps), params));
             }
 
             const toggle = isMatching !== isRendering();
-            setRendering(isMatching, () => {
+            isRendering(isMatching, () => {
                 toggle && orNoop(props().onToggle)(isMatching);
             });
         };
 
         that[componentDidUpdate] = (prevProps, prevState) => {
             if (props() !== prevProps) {
-                let mergedProps = Object.assign(allPropsExcept(props(), selfProps), getParams());
-                if (isDifferent(mergedProps, getMergedProps()))
-                    setMergedProps(mergedProps);
+                let mergedProps = Object.assign(allPropsExcept(props(), selfProps), paramsState());
+                if (isDifferent(mergedProps, mergedPropsState()))
+                    mergedPropsState(mergedProps);
             }
         };
 
         that[render] = () => {
             const {children, controller} = props();
-            return (controller || DefaultController)(isRendering(), children, getMergedProps(), getVariables());
+            return (controller || DefaultController)(isRendering(), children, mergedPropsState(), variablesState());
         };
 
         that[componentDidMount] = () => {
             const urlMatcher = createUrlMatcher(props().path);
             matcher = urlMatcher[0];
-            setVariables(urlMatcher[1]);
+            variablesState(urlMatcher[1]);
 
             historyEvents.forEach(it => {
                 addEventListener(WINDOW, it, process);

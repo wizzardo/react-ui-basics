@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
-import {classNames, getRandomId, isUndefined, orNoop, ref, addEventListener, createRef} from "./Tools";
-import {PureComponent, render, componentDidMount, propsGetter, stateGS} from "./ReactConstants";
+import {classNames, getRandomId, isUndefined, orNoop, addEventListener, createRef} from "./Tools";
+import {PureComponent, render, componentDidMount, propsGetter, stateGSs} from "./ReactConstants";
 import PropTypes from "prop-types";
 
 class TextField extends PureComponent {
@@ -14,10 +14,10 @@ class TextField extends PureComponent {
 
         const randomId = getRandomId('tf-');
         const [
-            isFocused, setFocused,
-            isErrored, setErrored,
-            isWithValue, setWithValue,
-        ] = stateGS(that, 3);
+            isFocused,
+            isErrored,
+            isWithValue,
+        ] = stateGSs(that, 3);
         const props = propsGetter(that);
 
         const inputRef = createRef();
@@ -25,22 +25,22 @@ class TextField extends PureComponent {
             const {required, check} = props();
             const value = inputRef().value;
             const errored = (required && value === '') || (check && !check(value));
-            setErrored(errored);
+            isErrored(errored);
             return !errored;
         };
 
         const onChange = (e) => {
             orNoop(props().onChange)(e);
-            setWithValue(!!inputRef().value);
+            isWithValue(!!inputRef().value);
             check()
         };
 
         const onFocus = () => {
-            setFocused(true);
+            isFocused(true);
             orNoop(props().onFocus)();
         };
         const onBlur = () => {
-            setFocused(false);
+            isFocused(false);
             check();
             orNoop(props().onBlur)();
         };
@@ -58,7 +58,9 @@ class TextField extends PureComponent {
                         disabled && 'disabled',
                         label && 'withLabel',
                         className)}
-                    onClick={() => inputRef().focus()}
+                    onClick={() => {
+                        inputRef().focus();
+                    }}
                 >
                     {label && (<label className={classNames(isErrored() && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
                     <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
@@ -84,7 +86,7 @@ class TextField extends PureComponent {
         that[componentDidMount] = () => {
             const {focused, input} = props(),
                 i = inputRef();
-            setWithValue(!!i.value);
+            isWithValue(!!i.value);
             focused && i.focus();
             orNoop(input)(i);
         };
@@ -92,7 +94,9 @@ class TextField extends PureComponent {
         that.getInput = inputRef;
 
         that.withAutofillAnimationCallback = () => {
-            addEventListener(inputRef(), 'animationstart', () => setWithValue(true), false);
+            addEventListener(inputRef(), 'animationstart', () => {
+                isWithValue(true);
+            }, false);
         };
     }
 }

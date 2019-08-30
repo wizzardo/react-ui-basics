@@ -47,7 +47,7 @@ class Button extends PureComponent {
                         onFocus={onFocus}
                         disabled={disabled}
                         style={style}
-                        type={type || 'button'}
+                        type={type}
                         onClick={onClick}
                         onMouseDown={onMouseDown}
                         ref={el}>
@@ -67,6 +67,9 @@ if(window.isNotProductionEnvironment) {
         disabled: PropTypes.bool,
         type: PropTypes.oneOf(['button', 'submit', 'reset']),
         className: PropTypes.string,
+        onClick: PropTypes.func,
+        onFocus: PropTypes.func,
+        style: PropTypes.object,
     };
 }
 

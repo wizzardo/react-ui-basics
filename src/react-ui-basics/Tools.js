@@ -1,4 +1,3 @@
-
 var global = global || window;
 export const WINDOW = global;
 export const DOCUMENT = WINDOW.document;
@@ -94,16 +93,32 @@ export const isDifferent = (a, b) => {
     return a !== b;
 };
 
-export const preventDefault = e => e && e.preventDefault();
-export const stopPropagation = e => e && e.stopPropagation();
+export const preventDefault = e => {
+     e && e.preventDefault();
+};
+export const stopPropagation = e => {
+     e && e.stopPropagation();
+};
 
-export const setTimeout = (cb, timeout) => WINDOW.setTimeout(cb, timeout);
-export const clearTimeout = (id) => WINDOW.clearTimeout(id);
-export const setInterval = (cb, timeout) => WINDOW.setInterval(cb, timeout);
-export const clearInterval = (id) => WINDOW.clearInterval(id);
+export const setTimeout = function () {
+    return WINDOW.setTimeout.apply(WINDOW, arguments);
+};
+export const clearTimeout = (id) => {
+    WINDOW.clearTimeout(id);
+};
+export const setInterval = function () {
+    return WINDOW.setInterval.apply(WINDOW, arguments);
+};
+export const clearInterval = (id) => {
+    WINDOW.clearInterval(id);
+};
 export const requestAnimationFrame = (cb) => WINDOW.requestAnimationFrame(cb);
-export const addEventListener = (el, type, listener, options) => el && el.addEventListener(type, listener, options);
-export const removeEventListener = (el, type, listener, options) => el && el.removeEventListener(type, listener, options);
+export const addEventListener = (el, type, listener, options) => {
+    el && el.addEventListener(type, listener, options);
+};
+export const removeEventListener = (el, type, listener, options) => {
+    el && el.removeEventListener(type, listener, options);
+};
 
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;

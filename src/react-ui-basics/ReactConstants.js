@@ -4,8 +4,12 @@ const EMPTY = {};
 export const props = that => that.props;
 export const propsGetter = that => () => props(that);
 export const state = that => that.state || EMPTY;
-export const setState = (that, data, cb) => that.setState(data, cb);
-export const stateFieldSetter = (that, key, cb) => (value, cb2) => setState(that, {[key]: value}, cb || cb2);
+export const setState = (that, data, cb) => {
+    that.setState(data, cb);
+};
+export const stateFieldSetter = (that, key, cb) => (value, cb2) => {
+    setState(that, {[key]: value}, cb2 || cb);
+};
 export const stateGS = (that, num) => {
     num = num || 1;
     const result = [];

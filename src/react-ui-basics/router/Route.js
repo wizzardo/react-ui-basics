@@ -28,15 +28,16 @@ const createUrlMatcher = path => {
     } else {
         const endsWithAny = path.lastIndexOf('*') === path.length - 1;
         const matchers = segments.map((segment, i) => {
+            let matcher;
             if (segment === '*')
-                return () => true;
+                matcher = () => true;
             else if (segment.indexOf(':') === 0) {
                 let variable = segment.substring(1);
                 if (variable.indexOf('?') !== -1)
                     variable = variable.substring(0, variable.indexOf('?'));
 
                 variables.push(variable);
-                return (p, params) => {
+                matcher = (p, params) => {
                     if (!p && !optionals[i])
                         return false;
 
@@ -45,9 +46,10 @@ const createUrlMatcher = path => {
                 }
             } else if (segment.indexOf('!') === 0) {
                 const not = segment.substring(1);
-                return (p) => p !== not;
+                matcher = (p) => p !== not;
             } else
-                return (p) => p === segment;
+                matcher = (p) => p === segment;
+            return matcher;
         });
 
         matcher = (path, params) => {
@@ -131,12 +133,16 @@ class Route extends PureComponent {
             matcher = urlMatcher[0];
             setVariables(urlMatcher[1]);
 
-            historyEvents.forEach(it => addEventListener(WINDOW, it, process));
+            historyEvents.forEach(it => {
+                addEventListener(WINDOW, it, process);
+            });
             process();
         };
 
         that[componentWillUnmount] = () => {
-            historyEvents.forEach(it => removeEventListener(WINDOW, it, process));
+            historyEvents.forEach(it => {
+                removeEventListener(WINDOW, it, process);
+            });
         };
     }
 }

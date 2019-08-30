@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",
@@ -32,7 +32,8 @@
     "prebuild": "npm run build-css",
     "build": "./build.sh",
     "postinstall": "",
-    "dist": "npm run build && npm run build-storybook && cd build && npm publish",
+    "clean": "rm -rf build && mkdir build",
+    "dist": "npm run clean && npm run build && npm run build-storybook && cd build && npm publish",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -c .storybook -o docs"
   },

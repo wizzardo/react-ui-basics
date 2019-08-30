@@ -17,7 +17,7 @@ export const stateGS = (that) => {
     const result = function () {
         return !arguments.length ? state(that)[key] : setter.apply(null, arguments);
     };
-    result.key = key;
+    result.toString = () => key;
     return result;
 };
 export const stateGSs = (that, num) => {

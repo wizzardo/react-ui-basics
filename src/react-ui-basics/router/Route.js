@@ -3,7 +3,7 @@ import ReactCreateElement from '../ReactCreateElement';
 import PropTypes from 'prop-types';
 import './HistoryTools'
 import {allPropsExcept, isDifferent, orNoop, setOf, WINDOW, addEventListener, removeEventListener} from "../Tools";
-import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, propsGetter, stateGSs} from "../ReactConstants";
+import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, propsGetter, stateGSs, setState} from "../ReactConstants";
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
 
@@ -103,16 +103,21 @@ class Route extends PureComponent {
 
         const process = () => {
             let params = {};
+            let nextState = {};
             let isMatching = matcher(cleanPath(WINDOW.location.pathname), params);
-            if (isDifferent(paramsState(), params)) {
-                paramsState(params);
-                mergedPropsState(Object.assign(allPropsExcept(props(), selfProps), params));
-            }
 
             const toggle = isMatching !== isRendering();
-            isRendering(isMatching, () => {
+            toggle && (nextState[isRendering] = isMatching);
+
+            if (isDifferent(paramsState(), params)) {
+                nextState[mergedPropsState] = Object.assign(allPropsExcept(props(), selfProps), params);
+                nextState[paramsState] = params;
+            }
+
+            //set new state just once to avoid several renders
+            setState(that, nextState, () => {
                 toggle && orNoop(props().onToggle)(isMatching);
-            });
+            })
         };
 
         that[componentDidUpdate] = (prevProps, prevState) => {

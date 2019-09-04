@@ -6,6 +6,7 @@ import TextField from "./TextField";
 import FilteredList from "./FilteredList";
 import {classNames, continuousIncludes, getRandomId, ref, orNoop, preventDefault, stopPropagation, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
 import Button from "./Button";
+import MaterialIcon from "./MaterialIcon";
 
 export const MODE_DEFAULT = 'default';
 export const MODE_INLINE = 'inline';
@@ -173,7 +174,7 @@ class AutocompleteSelect extends React.Component {
                                     stopPropagation(e);
                                     this.remove(id);
                                 }}>
-                                    <i className="material-icons">close</i>
+                                    <MaterialIcon icon="close"/>
                                 </div>
                             </div>
                         )}
@@ -185,7 +186,7 @@ class AutocompleteSelect extends React.Component {
                         )}
                         {!label && withArrow && <span className="arrow"/>}
                         {withReset && <Button className="reset" raised={false} onClick={this.clean}>
-                            <i className="material-icons">close</i>
+                            <MaterialIcon icon="close"/>
                         </Button>}
                     </div>
                 )}

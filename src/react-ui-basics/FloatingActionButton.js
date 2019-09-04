@@ -4,16 +4,17 @@ import PropTypes from 'prop-types';
 import './FloatingActionButton.css'
 import Button from "./Button";
 import {classNames} from "./Tools";
+import MaterialIcon from "./MaterialIcon";
 
 const FloatingActionButton = ({icon, onClick, mini, className, hidden}) => {
     return <Button onClick={onClick} round={true} className={classNames("FloatingActionButton", className, mini && 'mini', hidden && 'hidden')}>
-        <i className="material-icons">{icon}</i>
+        <MaterialIcon icon={icon}/>
     </Button>;
 };
 
 if (window.isNotProductionEnvironment) {
     FloatingActionButton.propTypes = {
-        icon: PropTypes.string,
+        icon: MaterialIcon.propTypes.icon,
         mini: PropTypes.bool,
         hidden: PropTypes.bool,
     };

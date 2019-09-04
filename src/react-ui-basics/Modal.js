@@ -5,6 +5,7 @@ import './Modal.css'
 import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
+import MaterialIcon from "./MaterialIcon";
 
 let listenerRef;
 
@@ -70,7 +71,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <i className="material-icons" ref={closeButton}>close</i>
+                        <MaterialIcon icon={'close'} ref={closeButton}/>
                     </Button>
                 </div>
             </div>;

@@ -842,9 +842,15 @@
       margin-left: 0px; }
     .FilteredList .child.active {
       background-color: #eeeeee; }
-    .FilteredList .child:first-child {
-      margin-top: 8px; }
-    .FilteredList .child:last-child {
+  .FilteredList .child {
+    margin-top: 8px; }
+    .FilteredList .child.hidden {
+      margin-top: 0; }
+    .FilteredList .child:not(.hidden) ~ .child {
+      margin-top: 0; }
+      .FilteredList .child:not(.hidden) ~ .child:last-child {
+        margin-bottom: 8px; }
+    .FilteredList .child:not(.hidden):last-child {
       margin-bottom: 8px; }
 
 .Scrollable {

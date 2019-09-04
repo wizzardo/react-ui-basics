@@ -23,6 +23,7 @@
       visibility: visible;
     }
   }
+
   &.inline {
     max-height: 225px;
     margin-top: 5px;
@@ -57,14 +58,31 @@
       padding-left: 10px;
       margin-left: 0px;
     }
+
     &.active {
       background-color: rgb(238, 238, 238);
     }
-    &:first-child {
-      margin-top: 8px
+  }
+
+  .child {
+    margin-top: 8px;
+
+    &.hidden {
+      margin-top: 0;
     }
-    &:last-child {
-      margin-bottom: 8px
+
+    &:not(.hidden) {
+      ~ .child {
+        margin-top: 0;
+
+        &:last-child {
+          margin-bottom: 8px;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 8px;
+      }
     }
   }
 }

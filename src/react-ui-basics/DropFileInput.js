@@ -4,11 +4,12 @@ import './DropFileInput.css'
 import Dropzone from "./Dropzone";
 import PropTypes from "prop-types";
 import {classNames} from "./Tools";
+import MaterialIcon from "./MaterialIcon";
 
 const DropFileInput = ({icon, label, onDrop, droppable}) => (
     <section className="DropFileInput">
         <Dropzone droppable={droppable} onDrop={onDrop}>
-            <i className={classNames(`material-icons icon`, label && 'withText')}>{icon}</i>
+            <MaterialIcon className={classNames(`icon`, label && 'withText')} icon={icon}/>
             {label && <div>{label}</div>}
         </Dropzone>
     </section>
@@ -21,7 +22,7 @@ DropFileInput.defaultProps = {
 
 if (window.isNotProductionEnvironment) {
     DropFileInput.propTypes = {
-        icon: PropTypes.string,
+        icon: MaterialIcon.propTypes.icon,
         label: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.element

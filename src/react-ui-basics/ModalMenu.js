@@ -5,6 +5,7 @@ import {PureComponent, stateGS, render} from "./ReactConstants";
 import {classNames} from "./Tools";
 import Animated from "./Animated";
 import Button from "./Button";
+import MaterialIcon from "./MaterialIcon";
 
 class ModalMenu extends PureComponent {
 
@@ -35,12 +36,12 @@ class ModalMenu extends PureComponent {
                                                    }}
                 >
                     <Button flat={true} round={true} onClick={it.action}>
-                        <i className="material-icons">{it.icon}</i>
+                        <MaterialIcon icon={it.icon}/>
                     </Button>
                 </Animated>)}
 
                 <Button className={classNames("more", open && 'active')} flat={true} round={true} onClick={toggle}>
-                    <i className="material-icons">more_vert</i>
+                    <MaterialIcon icon="more_vert"/>
                 </Button>
 
                 <div className="separator"/>

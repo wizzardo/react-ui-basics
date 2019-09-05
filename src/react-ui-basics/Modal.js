@@ -71,7 +71,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <MaterialIcon icon={'close'} ref={closeButton}/>
+                        <i className="material-icons" ref={closeButton}>close</i>
                     </Button>
                 </div>
             </div>;
@@ -79,11 +79,7 @@ class Modal extends PureComponent {
             return container ? ReactDOM.createPortal(modal, container) : modal;
         };
 
-        const close = that.close = (e) => {
-            const target = e && e.target;
-            if (target && !(target === overlay() || target === closeButton() || target.classList.contains('close')))
-                return true;
-
+        const close = that.close = () => {
             if (!isShow())
                 return;
 

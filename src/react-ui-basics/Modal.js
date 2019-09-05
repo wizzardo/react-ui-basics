@@ -37,7 +37,6 @@ class Modal extends PureComponent {
             getBeforeClose,
         ] = stateGSs(that, 3);
         const overlay = createRef();
-        const closeButton = createRef();
         const el = createRef();
         const props = propsGetter(that);
 
@@ -71,7 +70,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <i className="material-icons" ref={closeButton}>close</i>
+                        <MaterialIcon icon={'close'}/>
                     </Button>
                 </div>
             </div>;

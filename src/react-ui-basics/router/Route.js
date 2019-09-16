@@ -16,7 +16,6 @@ const cleanPath = (path) => {
 
 const createUrlMatcher = path => {
     let matcher;
-    const variables = [];
     const segments = path.split('/');
     const optionals = segments.map(it => it === '*' || it.indexOf('?') === it.length - 1);
     const containsVariables = path.indexOf(':') !== -1;
@@ -36,7 +35,6 @@ const createUrlMatcher = path => {
                 if (variable.indexOf('?') !== -1)
                     variable = variable.substring(0, variable.indexOf('?'));
 
-                variables.push(variable);
                 matcher = (p, params) => {
                     if (!p && !optionals[i])
                         return false;
@@ -75,7 +73,25 @@ const createUrlMatcher = path => {
             return true;
         };
     }
-    return [matcher, variables, optionals, segments]
+    return matcher
+};
+
+const createUrlMatchers = path => {
+    if (Array.isArray(path)) {
+        const matchers = path.map(it => createUrlMatcher(it));
+        return (path, params) => {
+            for (let i = 0; i < matchers.length; i++) {
+                let props = {};
+                if (matchers[i](path, props)) {
+                    Object.assign(params, props);
+                    return true;
+                }
+            }
+            return false;
+        }
+    } else {
+        return createUrlMatcher(path);
+    }
 };
 
 const selfProps = setOf([
@@ -98,8 +114,7 @@ class Route extends PureComponent {
             isRendering,
             paramsState,
             mergedPropsState,
-            variablesState,
-        ] = stateGSs(that, 4);
+        ] = stateGSs(that, 3);
 
         const process = () => {
             let params = {};
@@ -130,13 +145,11 @@ class Route extends PureComponent {
 
         that[render] = () => {
             const {children, controller} = props();
-            return (controller || DefaultController)(isRendering(), children, mergedPropsState(), variablesState());
+            return (controller || DefaultController)(isRendering(), children, mergedPropsState());
         };
 
         that[componentDidMount] = () => {
-            const urlMatcher = createUrlMatcher(props().path);
-            matcher = urlMatcher[0];
-            variablesState(urlMatcher[1]);
+            matcher = createUrlMatchers(props().path);
 
             historyEvents.forEach(it => {
                 addEventListener(WINDOW, it, process);
@@ -154,15 +167,18 @@ class Route extends PureComponent {
 
 if (window.isNotProductionEnvironment) {
     Route.propTypes = {
-        path: PropTypes.string.isRequired,
+        path: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.arrayOf(PropTypes.string)
+        ]).isRequired,
         controller: PropTypes.func,
         onToggle: PropTypes.func,
     };
 }
 
-const DefaultController = (matches, children, props, variables) => {
+const DefaultController = (matches, children, props) => {
     if (!matches || !children) return null;
-    if (variables.length > 0 || Object.keys(props).length > 0) {
+    if (Object.keys(props).length > 0) {
         return React.Children.map(children, child => React.cloneElement(child, props));
     }
     return children;

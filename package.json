@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",

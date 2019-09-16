@@ -5,6 +5,7 @@ import Button from "./Button";
 import Modal from "./Modal";
 import {isUndefined, orNoop, preventDefault, ref, UNDEFINED, classNames, createRef} from "./Tools";
 import {PureComponent, render, componentDidMount, propsGetter, stateGSs} from "./ReactConstants";
+import PropTypes from "prop-types";
 
 class Dialog extends PureComponent {
     constructor(properties) {
@@ -126,3 +127,28 @@ class DialogWrapper extends Component {
 }
 
 export default DialogWrapper;
+
+if (window.isNotProductionEnvironment) {
+    DialogWrapper.propTypes = {
+        title: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        description: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        accept: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        cancel: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
+        onAccept: PropTypes.func,
+        onCancel: PropTypes.func,
+        className: PropTypes.string,
+        top: PropTypes.number,
+    };
+}

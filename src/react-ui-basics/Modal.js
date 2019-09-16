@@ -6,6 +6,7 @@ import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
+import PropTypes from "prop-types";
 
 let listenerRef;
 
@@ -127,3 +128,11 @@ Modal.pollListener = pollListener;
 Modal.addListener = addListener;
 
 export default Modal;
+
+if (window.isNotProductionEnvironment) {
+    Modal.propTypes = {
+        className: PropTypes.string,
+        top: PropTypes.number,
+        container: PropTypes.node,
+    };
+}

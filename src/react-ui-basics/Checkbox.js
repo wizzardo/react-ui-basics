@@ -30,7 +30,10 @@ if (window.isNotProductionEnvironment) {
         onChange: PropTypes.func.isRequired,
         value: PropTypes.bool,
         className: PropTypes.string,
-        label: PropTypes.string,
+        label: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.element
+        ]),
         name: PropTypes.string,
         id: PropTypes.oneOfType([
             PropTypes.string,

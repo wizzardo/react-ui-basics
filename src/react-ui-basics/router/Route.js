@@ -28,16 +28,24 @@ const createUrlMatcher = path => {
         const endsWithAny = path.lastIndexOf('*') === path.length - 1;
         const matchers = segments.map((segment, i) => {
             let matcher;
+            const variableNameIndex = segment.indexOf(':');
             if (segment === '*')
                 matcher = () => true;
-            else if (segment.indexOf(':') === 0) {
-                let variable = segment.substring(1);
+            else if (variableNameIndex !== -1) {
+                let variable = segment.substring(variableNameIndex + 1);
                 if (variable.indexOf('?') !== -1)
                     variable = variable.substring(0, variable.indexOf('?'));
 
+                const prefix = variableNameIndex && segment.substring(0, variableNameIndex);
                 matcher = (p, params) => {
                     if (!p && !optionals[i])
                         return false;
+                    if (prefix) {
+                        if (p.indexOf(prefix) === 0)
+                            p = p.substring(variableNameIndex);
+                        else
+                            return false;
+                    }
 
                     params[variable] = p;
                     return true;

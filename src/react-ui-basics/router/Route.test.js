@@ -70,6 +70,14 @@ it('do not render if require variable', () => {
     </div>)).toHaveHTML('<div></div>');
 });
 
+it('renders path with variable and prefix', () => {
+    pushLocation('/test-123');
+    const WithVariable = ({id}) => <div>{id}</div>;
+    expect(mount(<Route path="/test-:id">
+        <WithVariable/>
+    </Route>)).toContainReact(<div>123</div>);
+});
+
 it('renders path with optional variable', () => {
     const WithVariable = ({id}) => <div>optional: {id || 'default value'}</div>;
 

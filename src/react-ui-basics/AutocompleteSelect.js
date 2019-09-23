@@ -106,11 +106,17 @@ class AutocompleteSelect extends React.Component {
 
         const selectedIds = Object.values(selected);
         const hasSelected = selectedIds.length !== 0;
-        const setActive = () => {
+        const setActive = (e) => {
+            stopPropagation(e);
             this.setState({isActive: true}, () => (scrollToValue && selectedIds.length > 0) && this.list.scrollTo(selectedIds[0]));
         };
-        const toggle = () => {
-            return !this.state.isActive ? setActive() : this.setState({isActive: false});
+        const toggle = (e) => {
+            if (!this.state.isActive) {
+                setActive(e);
+            } else {
+                stopPropagation(e);
+                this.setState({isActive: false});
+            }
         };
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;

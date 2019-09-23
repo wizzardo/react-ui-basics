@@ -2,7 +2,7 @@ import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './FilteredList.css'
 import Scrollable from "./Scrollable";
-import {classNames, orNoop, ref} from "./Tools";
+import {classNames, orNoop, ref, stopPropagation} from "./Tools";
 
 class FilteredList extends React.Component {
 
@@ -54,7 +54,10 @@ class FilteredList extends React.Component {
                     childComponent={childComponent}
                     childProps={childProps}
                     element={el => this.elements[id] = el}
-                    onMouseDown={e => this.onSelect(id)}
+                    onClick={e => {
+                        stopPropagation(e);
+                        this.onSelect(id);
+                    }}
                     onMouseEnter={e => this.setState({selected: id})}
                     onMouseLeave={e => id === this.state.selected && this.setState({selected: -1})}
                     className={classNames('child', this.state.selected === id && 'active', selected === id || (typeof selected === 'object' && selected[id]) && 'selected')}

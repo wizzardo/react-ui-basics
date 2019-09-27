@@ -120,11 +120,6 @@ class AutocompleteSelect extends React.Component {
         };
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
-        let maxHeight = 0;
-        if (this.list && (isActive || isInline)) {
-            const height = parseInt(this.list.el.container.style.height);
-            maxHeight = Math.max(250, Math.min(250, Number.isNaN(height) ? 0 : height));
-        }
 
         const list = <FilteredList className={classNames(isActive && 'visible')}
                                    ref={ref('list', this)}
@@ -139,7 +134,6 @@ class AutocompleteSelect extends React.Component {
                                        let value = (typeof it === 'string' ? it : it.name).toLowerCase();
                                        return continuousIncludes(value, f);
                                    }}
-                                   style={{maxHeight: maxHeight + 'px'}}
                                    scroll={scroll}
                                    inline={isInline}
                                    nextProvider={ref('next', this)}

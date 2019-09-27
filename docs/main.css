@@ -806,7 +806,6 @@
     -webkit-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
     top: 20px;
-    max-height: 0;
     opacity: 0;
     border-radius: 2px; }
     .FilteredList.popup.visible {

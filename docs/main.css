@@ -324,6 +324,7 @@
   .TextField > .error {
     text-align: left;
     font-size: 10px;
+    min-height: 11px;
     color: #f44336;
     margin-top: 2px;
     visibility: hidden;
@@ -594,7 +595,7 @@
   justify-content: center;
   position: relative;
   min-width: 250px;
-  min-height: 27px;
+  min-height: 36px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
@@ -624,8 +625,7 @@
   100% {
     -webkit-transform: translateX(0px); } }
   .AutocompleteSelect > .input {
-    width: 100%;
-    position: relative; }
+    width: 100%; }
   .AutocompleteSelect .Scrollable {
     padding-right: 0;
     min-width: 100%; }
@@ -668,6 +668,8 @@
       margin-top: 0; }
   .AutocompleteSelect .TextField {
     margin-top: 8px; }
+    .AutocompleteSelect .TextField input {
+      font-size: 14px; }
   .AutocompleteSelect > .label {
     position: absolute;
     -webkit-transition: all 0.2s ease;

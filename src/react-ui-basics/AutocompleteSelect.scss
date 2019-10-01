@@ -6,7 +6,7 @@
   justify-content: center;
   position: relative;
   min-width: 250px;
-  min-height: 27px;
+  min-height: 36px;
   user-select: none;
 
   @keyframes clockwise {
@@ -29,7 +29,6 @@
 
   > .input {
     width: 100%;
-    position: relative;
   }
 
   .Scrollable {
@@ -106,6 +105,10 @@
 
   .TextField {
     margin-top: 8px;
+
+    input {
+      font-size: $fontSizeInput;
+    }
   }
 
   > .label {

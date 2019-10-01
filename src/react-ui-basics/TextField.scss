@@ -73,6 +73,7 @@ $redColor: rgb(244, 67, 54);
   > .error {
     text-align: left;
     font-size: 10px;
+    min-height: 11px;
     color: $redColor;
     margin-top: 2px;
     visibility: hidden;

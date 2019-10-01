@@ -91,7 +91,7 @@ class TextField extends PureComponent {
             orNoop(input)(i);
         };
         that[componentDidUpdate] = () => {
-            if (props().value !== inputRef.valueOf())
+            if (props().value !== inputRef().value)
                 check();
         };
         that.check = check;

@@ -6,3 +6,4 @@ package-lock.json
 src/*/*.css
 
 docs/*.map
+coverage/*

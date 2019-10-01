@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
-import {classNames, getRandomId, isUndefined, orNoop, addEventListener, createRef} from "./Tools";
-import {PureComponent, render, componentDidMount, propsGetter, stateGSs} from "./ReactConstants";
+import {classNames, getRandomId, isUndefined, orNoop, addEventListener, createRef, setTimeout} from "./Tools";
+import {PureComponent, render, componentDidMount, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import PropTypes from "prop-types";
 
 class TextField extends PureComponent {
@@ -25,7 +25,7 @@ class TextField extends PureComponent {
             const {required, check} = props();
             const value = inputRef().value;
             const errored = (required && value === '') || (check && !check(value));
-            isErrored(errored);
+            isErrored() !== errored && setTimeout(isErrored, 0, errored);
             return !errored;
         };
 
@@ -89,6 +89,10 @@ class TextField extends PureComponent {
             isWithValue(!!i.value);
             focused && i.focus();
             orNoop(input)(i);
+        };
+        that[componentDidUpdate] = () => {
+            if (props().value !== inputRef.valueOf())
+                check();
         };
         that.check = check;
         that.getInput = inputRef;

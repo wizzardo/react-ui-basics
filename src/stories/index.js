@@ -103,7 +103,7 @@ storiesOf('TextField', module)
         <TextField label={"TextField required with error text"} required={true} className={'errored'} error={'error message'}/>
         <br/>
         <br/>
-        <TextField label={"TextField required with check"} required={true} type={'password'} error={'Min 8 chars'} check={value => value.length >= 8}/>
+        <TextField label={"TextField required with check"} required={true} type={'password'} check={value => value.length < 8 && 'Min 8 chars'}/>
     </React.Fragment>)
 ;
 

@@ -15,7 +15,7 @@ class TextField extends PureComponent {
         const randomId = getRandomId('tf-');
         const [
             isFocused,
-            isErrored,
+            errorState,
             isWithValue,
         ] = stateGSs(that, 3);
         const props = propsGetter(that);
@@ -24,9 +24,9 @@ class TextField extends PureComponent {
         const check = () => {
             const {required, check} = props();
             const value = inputRef().value;
-            const errored = (required && value === '') || (check && !check(value));
-            isErrored() !== errored && setTimeout(isErrored, 0, errored);
-            return !errored;
+            const error = (required && value === '') || (check && check(value));
+            errorState() !== error && setTimeout(errorState, 0, error);
+            return error;
         };
 
         const onChange = (e) => {
@@ -47,14 +47,15 @@ class TextField extends PureComponent {
 
         that[render] = () => {
             const _props = props();
-            const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, autoComplete, error, placeholder, className} = _props;
+            const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, autoComplete, placeholder, className} = _props;
             const id = _props.id || randomId;
+            const error = errorState();
             return (
                 <div
                     className={classNames('TextField',
                         isFocused() && 'focused',
                         (value || placeholder || (isWithValue() && isUndefined(value))) && 'withValue',
-                        isErrored() && (required || check) && 'errored',
+                        error && (required || check) && 'errored',
                         disabled && 'disabled',
                         label && 'withLabel',
                         className)}
@@ -62,7 +63,7 @@ class TextField extends PureComponent {
                         inputRef().focus();
                     }}
                 >
-                    {label && (<label className={classNames(isErrored() && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
+                    {label && (<label className={classNames(error && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
                     <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
                            min={min}
                            max={max}
@@ -115,10 +116,6 @@ if (window.isNotProductionEnvironment) {
         autoComplete: PropTypes.string,
         placeholder: PropTypes.string,
         label: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        error: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.element
         ]),

@@ -49,7 +49,7 @@ class DNDContainer extends Component {
 
         orNoop(provideDraggableInitializer)(this.draggableInitializer);
         orNoop(provideDroppableInitializer)(this.droppableInitializer);
-        addEventListener(this.container, 'dragover', this.onDrag)
+        addEventListener(this.container, 'dragover', this.onDrag, {capture: true, passive: true})
     };
 
     draggableInitializer = (item) => {

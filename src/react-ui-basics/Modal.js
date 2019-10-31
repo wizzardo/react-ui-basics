@@ -9,6 +9,7 @@ import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
 
 let listenerRef;
+let zIndex = 100;
 
 const EVENT_TYPE = 'keydown';
 const pollListener = (modal) => {
@@ -83,6 +84,7 @@ class Modal extends PureComponent {
             if (!isShow())
                 return;
 
+            zIndex--;
             addTransitionListener();
             isShow(false);
 
@@ -92,6 +94,7 @@ class Modal extends PureComponent {
             if (isShow())
                 return;
 
+            el() && (el().style.zIndex = zIndex++);
             addTransitionListener();
             isShow(true);
 

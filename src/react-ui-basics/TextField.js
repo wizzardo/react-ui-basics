@@ -47,7 +47,7 @@ class TextField extends PureComponent {
 
         that[render] = () => {
             const _props = props();
-            const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, autoComplete, placeholder, className} = _props;
+            const {value, name, type, label, check, disabled, required, min, max, onClick, onKeyDown, onKeyUp, onMouseUp, autoComplete, placeholder, className} = _props;
             const id = _props.id || randomId;
             const error = errorState();
             return (
@@ -73,6 +73,8 @@ class TextField extends PureComponent {
                            onBlur={onBlur}
                            onClick={onClick}
                            onKeyDown={onKeyDown}
+                           onKeyUp={onKeyUp}
+                           onMouseUp={onMouseUp}
                            autoComplete={autoComplete || 'on'}
                            placeholder={placeholder}
                     />

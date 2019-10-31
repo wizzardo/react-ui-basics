@@ -55,6 +55,9 @@
   #root .AnimatedHolder .animated {
     -webkit-transition: all 1s ease;
     transition: all 1s ease; }
+  #root .FormUploadProgress {
+    max-width: 300px;
+    max-height: 200px; }
   #root .DNDExample {
     position: absolute;
     left: 0;
@@ -95,24 +98,12 @@
   padding: 20px;
   position: relative; }
 
-.Button.FloatingActionButton {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: 56px;
-  height: 56px;
-  padding: 16px;
-  -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-  .Button.FloatingActionButton.raised {
-    -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
-    transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
-  .Button.FloatingActionButton.mini {
-    width: 40px;
-    height: 40px;
-    padding: 8px; }
-  .Button.FloatingActionButton.hidden {
-    bottom: -100px; }
+.animated {
+  -webkit-transition: opacity 250ms ease;
+  transition: opacity 250ms ease;
+  opacity: 0; }
+  .animated.mounting, .animated.mounted {
+    opacity: 1; }
 
 .Button {
   position: relative;
@@ -214,182 +205,24 @@
   .Button::-moz-focus-inner {
     border: 0; }
 
-.Snackbar {
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
-  overflow: hidden;
-  background-color: #323232;
-  padding: 14px 24px 14px 24px;
-  color: #fff;
-  min-width: 288px;
-  max-width: 568px;
-  position: fixed;
-  bottom: -50px;
-  left: 50%;
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  opacity: 0;
-  -webkit-transition: bottom 0.25s ease, opacity 0.2s ease;
-  transition: bottom 0.25s ease, opacity 0.2s ease;
-  border-radius: 4px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); }
-  .Snackbar.shown {
-    bottom: 15px;
-    opacity: 1; }
-  .Snackbar .message {
-    overflow: hidden;
-    line-height: 1.2em;
-    min-height: 1.2em;
-    max-height: 2.4em;
-    flex: 1 1; }
-  .Snackbar .action {
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-left: 48px;
-    color: #bf3727; }
-    .Snackbar .action a {
-      text-decoration: none;
-      color: #bf3727; }
-
-.TextField {
-  position: relative;
-  width: 100%; }
-  .TextField > label {
-    font-family: Roboto, sans-serif;
-    color: rgba(0, 0, 0, 0.3);
-    font-size: 16px;
-    position: absolute;
-    left: 0px;
-    top: 16px;
-    margin-top: -16px;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    cursor: text; }
-  .TextField > input {
-    font-family: Roboto, sans-serif;
-    color: #1e252d;
-    height: 19px;
-    font-size: 16px;
-    width: 100%;
-    border: 0px;
-    padding-bottom: 4px;
-    padding-top: 0;
-    outline-color: rgba(0, 0, 0, 0); }
-    .TextField > input:focus {
-      outline: none; }
-    .TextField > input:disabled {
-      color: gray;
-      background-color: white; }
-    .TextField > input:disabled + .border {
-      height: 0px;
-      border-bottom: 2px dotted #e0e0e0; }
-    .TextField > input::-webkit-input-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-    .TextField > input::-moz-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-    .TextField > input:-ms-input-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-    .TextField > input::-ms-input-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-    .TextField > input::placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-  .TextField > .border {
-    border-bottom: 1px solid #e0e0e0;
-    height: 1px;
-    position: relative; }
-    .TextField > .border .line {
-      left: 50%;
-      width: 0;
-      height: 2px;
-      min-height: 2px;
-      background-color: #00bcd4;
-      -webkit-transition: all 0.2s ease;
-      transition: all 0.2s ease;
-      position: absolute; }
-  .TextField > .error {
-    text-align: left;
-    font-size: 10px;
-    min-height: 11px;
-    color: #f44336;
-    margin-top: 2px;
-    visibility: hidden;
-    opacity: 0;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease; }
-  .TextField.focused > label, .TextField.withValue > label {
-    top: 4px;
-    font-size: 12px;
-    line-height: 14px; }
-  .TextField.errored > .error {
-    visibility: visible;
-    opacity: 1; }
-  .TextField.errored > .border {
-    border-bottom-color: #f44336; }
-  .TextField.errored > label {
-    color: #f44336; }
-  .TextField.focused > label {
-    color: #00bcd4; }
-  .TextField.focused > .border .line {
-    left: 0;
-    width: 100%; }
-  .TextField.disabled label, .TextField.disabled input {
-    cursor: not-allowed; }
-  .TextField.withLabel {
-    margin-top: 15px; }
-  .TextField input::-webkit-contacts-auto-fill-button {
-    visibility: hidden;
-    display: none !important;
-    pointer-events: none;
-    position: absolute;
-    right: 0; }
-  .TextField input:-webkit-autofill {
-    -webkit-box-shadow: inset 0 0 0px 9999px white; }
-
-@-webkit-keyframes shake {
-  0%, 100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0); }
-  20%, 60% {
-    -webkit-transform: translateX(-5px);
-            transform: translateX(-5px); }
-  40%, 80% {
-    -webkit-transform: translateX(5px);
-            transform: translateX(5px); } }
-
-@keyframes shake {
-  0%, 100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0); }
-  20%, 60% {
-    -webkit-transform: translateX(-5px);
-            transform: translateX(-5px); }
-  40%, 80% {
-    -webkit-transform: translateX(5px);
-            transform: translateX(5px); } }
-  .TextField .shake {
-    -webkit-animation-duration: .5s;
-            animation-duration: .5s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-    -webkit-animation-timing-function: ease-in-out;
-            animation-timing-function: ease-in-out;
-    -webkit-animation-name: shake;
-            animation-name: shake; }
+.Button.FloatingActionButton {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  padding: 16px;
+  -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .Button.FloatingActionButton.raised {
+    -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .Button.FloatingActionButton.mini {
+    width: 40px;
+    height: 40px;
+    padding: 8px; }
+  .Button.FloatingActionButton.hidden {
+    bottom: -100px; }
 
 .Checkbox {
   position: relative;
@@ -432,69 +265,6 @@
       border-top-style: none;
       border-right-style: none; }
 
-.Switch {
-  display: inline-flex;
-  padding-top: 5px; }
-  .Switch .switch-input {
-    display: none; }
-  .Switch .switch-label {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    min-width: 38px;
-    height: 24px;
-    cursor: pointer;
-    font-weight: 500;
-    text-align: left;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    margin: 0;
-    padding: 0;
-    padding-left: 44px;
-    box-sizing: border-box; }
-    .Switch .switch-label:before, .Switch .switch-label:after {
-      content: "";
-      box-sizing: border-box;
-      position: absolute;
-      margin: 0;
-      outline: 0;
-      top: 50%;
-      -webkit-transform: translate(0, -50%);
-              transform: translate(0, -50%);
-      -webkit-transition: all 0.3s ease;
-      transition: all 0.3s ease; }
-    .Switch .switch-label:before {
-      left: 1px;
-      width: 34px;
-      height: 14px;
-      background-color: #9E9E9E;
-      border-radius: 8px; }
-    .Switch .switch-label:after {
-      left: 0;
-      width: 20px;
-      height: 20px;
-      background-color: #FAFAFA;
-      border-radius: 50%;
-      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084); }
-    .Switch .switch-label .toggle--on {
-      display: none; }
-    .Switch .switch-label .toggle--off {
-      display: inline-block; }
-    .Switch .switch-label .label {
-      margin-right: 5px; }
-  .Switch .switch-input:checked + .switch-label:before {
-    background-color: #A5D6A7; }
-  .Switch .switch-input:checked + .switch-label:after {
-    background-color: #4CAF50;
-    -webkit-transform: translate(80%, -50%);
-            transform: translate(80%, -50%); }
-  .Switch .switch-input:checked + .switch-label .toggle--on {
-    display: inline-block; }
-  .Switch .switch-input:checked + .switch-label .toggle--off {
-    display: none; }
-
 .DialogModal {
   overflow: hidden; }
   .DialogModal .content {
@@ -527,7 +297,6 @@
 
 .Modal {
   display: block;
-  z-index: 100;
   position: fixed;
   top: 0;
   left: 0;
@@ -559,7 +328,6 @@
     left: 50%;
     top: 10vh;
     margin-bottom: 10vh;
-    z-index: 101;
     font-size: 16px;
     padding: 0;
     opacity: 0;
@@ -588,6 +356,157 @@
       top: 10px;
       right: 10px;
       position: absolute; }
+
+.DNDContainer {
+  position: relative; }
+  .DNDContainer .Draggable[draggable=true], .DNDContainer .Draggable [draggable=true] {
+    cursor: pointer; }
+  .DNDContainer .Draggable.placeholder {
+    opacity: 0.2; }
+  .DNDContainer .Draggable.copy {
+    position: absolute;
+    box-sizing: border-box;
+    will-change: transform;
+    opacity: 0; }
+  .DNDContainer .Draggable.dragged {
+    z-index: 10; }
+  .DNDContainer .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none; }
+
+.CircleProgress {
+  width: 48px;
+  height: 48px; }
+  .CircleProgress .line {
+    stroke-width: 2px;
+    stroke: black;
+    stroke-linecap: square;
+    fill: none;
+    -webkit-transition: stroke-dashoffset 0.2s ease;
+    transition: stroke-dashoffset 0.2s ease; }
+
+.SpinningProgress {
+  width: 48px;
+  height: 48px;
+  position: relative;
+  margin: 0 auto; }
+  .SpinningProgress:before {
+    content: '';
+    display: block;
+    padding-top: 100%; }
+  .SpinningProgress .circular {
+    -webkit-animation: rotate 2s linear infinite;
+            animation: rotate 2s linear infinite;
+    height: 100%;
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto; }
+  .SpinningProgress .line {
+    stroke: black;
+    stroke-width: 2px;
+    stroke-dasharray: 1, 96;
+    stroke-dashoffset: 0;
+    -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dasharray: 1, 96;
+    stroke-dashoffset: 0; }
+  50% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -17px; }
+  100% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -53px; } }
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 96;
+    stroke-dashoffset: 0; }
+  50% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -17px; }
+  100% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -53px; } }
+
+.FormUploadProgress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 2; }
+  .FormUploadProgress.animated.mounting, .FormUploadProgress.animated.mounted {
+    -webkit-transition-delay: 500ms;
+            transition-delay: 500ms; }
+  .FormUploadProgress .wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 40%;
+    margin-top: 40%;
+    margin-left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center; }
+    .FormUploadProgress .wrapper .CircleProgress, .FormUploadProgress .wrapper .SpinningProgress {
+      position: absolute;
+      width: 107px;
+      height: 107px;
+      top: 0;
+      left: 0; }
+      .FormUploadProgress .wrapper .CircleProgress .line, .FormUploadProgress .wrapper .SpinningProgress .line {
+        stroke: #2196F3; }
+    .FormUploadProgress .wrapper > .progress {
+      width: 107px;
+      height: 107px;
+      min-height: 107px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+      border-radius: 50%;
+      background: white;
+      position: relative; }
+      .FormUploadProgress .wrapper > .progress > .value {
+        display: inline-block;
+        margin-top: 5px;
+        font-weight: bold;
+        line-height: 16px;
+        font-size: 13px;
+        text-align: center;
+        color: #818181; }
+    .FormUploadProgress .wrapper .cancel {
+      min-width: 107px;
+      margin-top: 20px;
+      background-color: white;
+      color: #F96B5C;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); }
 
 .AutocompleteSelect {
   display: inline-flex;
@@ -913,163 +832,245 @@
       .Scrollable .scrollbar .thumb:active {
         background-color: rgba(0, 0, 0, 0.7); }
 
-.CircleProgress {
-  width: 48px;
-  height: 48px; }
-  .CircleProgress .line {
-    stroke-width: 2px;
-    stroke: black;
-    stroke-linecap: square;
-    fill: none;
-    -webkit-transition: stroke-dashoffset 0.2s ease;
-    transition: stroke-dashoffset 0.2s ease; }
-
-.SpinningProgress {
-  width: 48px;
-  height: 48px;
+.TextField {
   position: relative;
-  margin: 0 auto; }
-  .SpinningProgress:before {
-    content: '';
-    display: block;
-    padding-top: 100%; }
-  .SpinningProgress .circular {
-    -webkit-animation: rotate 2s linear infinite;
-            animation: rotate 2s linear infinite;
-    height: 100%;
-    -webkit-transform-origin: center center;
-            transform-origin: center center;
+  width: 100%; }
+  .TextField > label {
+    font-family: Roboto, sans-serif;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    position: absolute;
+    left: 0px;
+    top: 16px;
+    margin-top: -16px;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: text; }
+  .TextField > input {
+    font-family: Roboto, sans-serif;
+    color: #1e252d;
+    height: 19px;
+    font-size: 16px;
     width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto; }
-  .SpinningProgress .line {
-    stroke: black;
-    stroke-width: 2px;
-    stroke-dasharray: 1, 96;
-    stroke-dashoffset: 0;
-    -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
-
-@-webkit-keyframes rotate {
-  100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg); } }
-
-@keyframes rotate {
-  100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg); } }
-
-@-webkit-keyframes dash {
-  0% {
-    stroke-dasharray: 1, 96;
-    stroke-dashoffset: 0; }
-  50% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -17px; }
-  100% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -53px; } }
-
-@keyframes dash {
-  0% {
-    stroke-dasharray: 1, 96;
-    stroke-dashoffset: 0; }
-  50% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -17px; }
-  100% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -53px; } }
-
-.FormUploadProgress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.6);
-  z-index: 2; }
-  .FormUploadProgress.animated.mounting, .FormUploadProgress.animated.mounted {
-    -webkit-transition-delay: 500ms;
-            transition-delay: 500ms; }
-  .FormUploadProgress .wrapper {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 40%;
-    margin-top: 40%;
-    margin-left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
-    align-items: center; }
-    .FormUploadProgress .wrapper .CircleProgress, .FormUploadProgress .wrapper .SpinningProgress {
-      position: absolute;
-      width: 107px;
-      height: 107px;
-      top: 0;
-      left: 0; }
-      .FormUploadProgress .wrapper .CircleProgress .line, .FormUploadProgress .wrapper .SpinningProgress .line {
-        stroke: #2196F3; }
-    .FormUploadProgress .wrapper > .progress {
-      width: 107px;
-      height: 107px;
-      min-height: 107px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
-      border-radius: 50%;
-      background: white;
-      position: relative; }
-      .FormUploadProgress .wrapper > .progress > .value {
-        display: inline-block;
-        margin-top: 5px;
-        font-weight: bold;
-        line-height: 16px;
-        font-size: 13px;
-        text-align: center;
-        color: #818181; }
-    .FormUploadProgress .wrapper .cancel {
-      min-width: 107px;
-      margin-top: 20px;
-      background-color: white;
-      color: #F96B5C;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); }
-
-.animated {
-  -webkit-transition: opacity 250ms ease;
-  transition: opacity 250ms ease;
-  opacity: 0; }
-  .animated.mounting, .animated.mounted {
+    border: 0px;
+    padding-bottom: 4px;
+    padding-top: 0;
+    outline-color: rgba(0, 0, 0, 0); }
+    .TextField > input:focus {
+      outline: none; }
+    .TextField > input:disabled {
+      color: gray;
+      background-color: white; }
+    .TextField > input:disabled + .border {
+      height: 0px;
+      border-bottom: 2px dotted #e0e0e0; }
+    .TextField > input::-webkit-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::-moz-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input:-ms-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::-ms-input-placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+    .TextField > input::placeholder {
+      font-family: Roboto, sans-serif;
+      color: rgba(0, 0, 0, 0.3);
+      opacity: 1; }
+  .TextField > .border {
+    border-bottom: 1px solid #e0e0e0;
+    height: 1px;
+    position: relative; }
+    .TextField > .border .line {
+      left: 50%;
+      width: 0;
+      height: 2px;
+      min-height: 2px;
+      background-color: #00bcd4;
+      -webkit-transition: all 0.2s ease;
+      transition: all 0.2s ease;
+      position: absolute; }
+  .TextField > .error {
+    text-align: left;
+    font-size: 10px;
+    min-height: 11px;
+    color: #f44336;
+    margin-top: 2px;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease; }
+  .TextField.focused > label, .TextField.withValue > label {
+    top: 4px;
+    font-size: 12px;
+    line-height: 14px; }
+  .TextField.errored > .error {
+    visibility: visible;
     opacity: 1; }
-
-.DNDContainer {
-  position: relative; }
-  .DNDContainer .Draggable[draggable=true], .DNDContainer .Draggable [draggable=true] {
-    cursor: pointer; }
-  .DNDContainer .Draggable.placeholder {
-    opacity: 0.2; }
-  .DNDContainer .Draggable.copy {
-    position: absolute;
-    box-sizing: border-box;
-    will-change: transform;
-    opacity: 0; }
-  .DNDContainer .Draggable.dragged {
-    z-index: 10; }
-  .DNDContainer .overlay {
-    position: absolute;
-    top: 0;
+  .TextField.errored > .border {
+    border-bottom-color: #f44336; }
+  .TextField.errored > label {
+    color: #f44336; }
+  .TextField.focused > label {
+    color: #00bcd4; }
+  .TextField.focused > .border .line {
     left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none; }
+    width: 100%; }
+  .TextField.disabled label, .TextField.disabled input {
+    cursor: not-allowed; }
+  .TextField.withLabel {
+    margin-top: 15px; }
+  .TextField input::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0; }
+  .TextField input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px white; }
+
+@-webkit-keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
+  20%, 60% {
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
+  40%, 80% {
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
+
+@keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
+  20%, 60% {
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
+  40%, 80% {
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
+  .TextField .shake {
+    -webkit-animation-duration: .5s;
+            animation-duration: .5s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+    -webkit-animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in-out;
+    -webkit-animation-name: shake;
+            animation-name: shake; }
+
+.Snackbar {
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  overflow: hidden;
+  background-color: #323232;
+  padding: 14px 24px 14px 24px;
+  color: #fff;
+  min-width: 288px;
+  max-width: 568px;
+  position: fixed;
+  bottom: -50px;
+  left: 50%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  opacity: 0;
+  -webkit-transition: bottom 0.25s ease, opacity 0.2s ease;
+  transition: bottom 0.25s ease, opacity 0.2s ease;
+  border-radius: 4px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); }
+  .Snackbar.shown {
+    bottom: 15px;
+    opacity: 1; }
+  .Snackbar .message {
+    overflow: hidden;
+    line-height: 1.2em;
+    min-height: 1.2em;
+    max-height: 2.4em;
+    flex: 1 1; }
+  .Snackbar .action {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: 48px;
+    color: #bf3727; }
+    .Snackbar .action a {
+      text-decoration: none;
+      color: #bf3727; }
+
+.Switch {
+  display: inline-flex;
+  padding-top: 5px; }
+  .Switch .switch-input {
+    display: none; }
+  .Switch .switch-label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-width: 38px;
+    height: 24px;
+    cursor: pointer;
+    font-weight: 500;
+    text-align: left;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    margin: 0;
+    padding: 0;
+    padding-left: 44px;
+    box-sizing: border-box; }
+    .Switch .switch-label:before, .Switch .switch-label:after {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      margin: 0;
+      outline: 0;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+              transform: translate(0, -50%);
+      -webkit-transition: all 0.3s ease;
+      transition: all 0.3s ease; }
+    .Switch .switch-label:before {
+      left: 1px;
+      width: 34px;
+      height: 14px;
+      background-color: #9E9E9E;
+      border-radius: 8px; }
+    .Switch .switch-label:after {
+      left: 0;
+      width: 20px;
+      height: 20px;
+      background-color: #FAFAFA;
+      border-radius: 50%;
+      box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.14), 0 2px 2px 0 rgba(0, 0, 0, 0.098), 0 1px 5px 0 rgba(0, 0, 0, 0.084); }
+    .Switch .switch-label .toggle--on {
+      display: none; }
+    .Switch .switch-label .toggle--off {
+      display: inline-block; }
+    .Switch .switch-label .label {
+      margin-right: 5px; }
+  .Switch .switch-input:checked + .switch-label:before {
+    background-color: #A5D6A7; }
+  .Switch .switch-input:checked + .switch-label:after {
+    background-color: #4CAF50;
+    -webkit-transform: translate(80%, -50%);
+            transform: translate(80%, -50%); }
+  .Switch .switch-input:checked + .switch-label .toggle--on {
+    display: inline-block; }
+  .Switch .switch-input:checked + .switch-label .toggle--off {
+    display: none; }
 
 
 /*# sourceMappingURL=main.css.map*/

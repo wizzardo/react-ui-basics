@@ -1,7 +1,6 @@
 .Modal {
   display: block;
 
-  z-index: 100;
   position: fixed;
   top: 0;
   left: 0;
@@ -39,7 +38,6 @@
     top: 10vh;
     margin-bottom: 10vh;
 
-    z-index: 101;
     font-size: 16px;
     padding: 0;
     opacity: 0;

@@ -6,8 +6,12 @@ function loadStories() {
 
 addParameters({
     options: {
-        showPanel: false,
+        showPanel: true,
+        panelPosition: 'right',
     }
 });
 
-configure(loadStories, module);
+// configure(loadStories, module);
+
+// automatically import all files ending in *.stories.js
+configure(require.context('../src/stories', true, /\.stories\.js$/), module);

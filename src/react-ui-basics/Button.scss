@@ -27,29 +27,57 @@
 
   transition: all 0.2s ease;
 
+  &.flat {
+    background-color: transparent;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, .05);
+    }
+  }
+
   &.green {
     background-color: #4AC263;
     color: white;
+
+    &:hover {
+      background-color: darken(#4AC263, 5%);
+    }
   }
 
   &.blue {
     background-color: #61a0b2;
     color: white;
+
+    &:hover {
+      background-color: darken(#61a0b2, 5%);
+    }
   }
 
   &.red {
     background-color: #F44336;
     color: white;
+
+    &:hover {
+      background-color: darken(#F44336, 5%);
+    }
   }
 
   &.black {
     background-color: #1e252d;
     color: white;
+
+    &:hover {
+      background-color: darken(#1e252d, 5%);
+    }
   }
 
   &.gray {
     background: #D9D9D9;
     color: #999999;
+
+    &:hover {
+      background-color: darken(#D9D9D9, 5%);
+    }
   }
 
   &.small {
@@ -121,14 +149,6 @@
     box-shadow: none;
     background: #D9D9D9;
     color: #999999;
-  }
-
-  &.flat {
-    background-color: transparent;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, .05);
-    }
   }
 
   &::-moz-focus-inner {

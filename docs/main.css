@@ -260,20 +260,27 @@
       transition: background .3s; }
   .Checkbox input[type="checkbox"] {
     outline: 0;
-    margin-right: 10px; }
+    margin-right: 10px;
+    visibility: hidden; }
     .Checkbox input[type="checkbox"]:checked + label:before {
       background: #4AC263;
       border: none; }
     .Checkbox input[type="checkbox"]:checked + label:after {
       -webkit-transform: rotate(-45deg);
               transform: rotate(-45deg);
-      top: 5px;
+      top: 6px;
       left: 4px;
       width: 12px;
       height: 6px;
       border: 2px solid #fff;
       border-top-style: none;
       border-right-style: none; }
+    .Checkbox input[type="checkbox"]:disabled + label {
+      color: gray; }
+      .Checkbox input[type="checkbox"]:disabled + label:before {
+        border-color: rgba(0, 0, 0, 0.26); }
+    .Checkbox input[type="checkbox"]:disabled:checked + label:before {
+      background: rgba(0, 0, 0, 0.26); }
 
 .DialogModal {
   overflow: hidden; }

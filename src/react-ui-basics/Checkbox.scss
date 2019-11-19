@@ -45,6 +45,7 @@ $checkMarkSize: $size - 2*$padding;
   input[type="checkbox"] {
     outline: 0;
     margin-right: $size - 10px;
+    visibility: hidden;
 
     &:checked {
       + label:before {
@@ -55,7 +56,7 @@ $checkMarkSize: $size - 2*$padding;
       + label:after {
         transform: rotate(-45deg);
 
-        top: ($size / 2) - ($checkMarkSize / 4) - $size/10;
+        top: ($size / 2) - ($checkMarkSize / 4) - $size/10 + 1;
         left: $padding;
         width: $checkMarkSize;
         height: $checkMarkSize / 2;
@@ -63,6 +64,22 @@ $checkMarkSize: $size - 2*$padding;
         border: $checkMarkWidth solid $checkMarkColor;
         border-top-style: none;
         border-right-style: none;
+      }
+    }
+
+    &:disabled {
+      + label {
+        color: gray;
+
+        &:before {
+          border-color: rgba(0, 0, 0, .26);
+        }
+      }
+
+      &:checked {
+        + label:before {
+          background: rgba(0, 0, 0, .26);
+        }
       }
     }
   }

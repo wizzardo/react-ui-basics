@@ -93,7 +93,7 @@ class AutocompleteSelect extends React.Component {
     };
 
     render() {
-        const {childComponent, childProps, withArrow, withFilter, withReset, filter, label, mode, selectedMode, prefilter, className, scrollToValue, scroll} = this.props;
+        const {childComponent, childProps, withArrow, withFilter, withReset, filter, label, inputLabel, mode, selectedMode, prefilter, className, scrollToValue, scroll} = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
         const {isActive, selected = {}, filterValue = ''} = this.state;
@@ -196,6 +196,7 @@ class AutocompleteSelect extends React.Component {
                                                   ref={ref('input', this)}
                                                   focused={isActive}
                                                   value={filterValue}
+                                                  label={inputLabel}
                                                   onChange={this.onChange}
                                                   onFocus={e => this.setState({isActive: true})}
                                                   check={this.props.filterCheck}

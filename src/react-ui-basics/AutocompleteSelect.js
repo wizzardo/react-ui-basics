@@ -75,6 +75,8 @@ class AutocompleteSelect extends React.Component {
                 this.setState({selected: value});
             else
                 this.setState({selected: {[value]: value}});
+        } else {
+            this.setState({selected: {}});
         }
     };
 

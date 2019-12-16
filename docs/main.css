@@ -811,7 +811,8 @@
     .Scrollable .viewport::-webkit-scrollbar {
       display: none; }
   .Scrollable.without-scroll {
-    padding-right: 0; }
+    padding-right: 0;
+    max-height: unset; }
     .Scrollable.without-scroll > .viewport {
       overflow: inherit;
       padding-right: 0;
@@ -923,9 +924,9 @@
   .TextField > .error {
     text-align: left;
     font-size: 10px;
-    min-height: 11px;
+    min-height: 0;
+    line-height: 14px;
     color: #f44336;
-    margin-top: 2px;
     visibility: hidden;
     opacity: 0;
     -webkit-transition: all 0.2s ease;

@@ -28,6 +28,7 @@
 
   &.without-scroll {
     padding-right: 0;
+    max-height: unset;
 
     > .viewport {
       overflow: inherit;

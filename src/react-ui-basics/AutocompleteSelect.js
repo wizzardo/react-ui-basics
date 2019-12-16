@@ -63,7 +63,7 @@ class AutocompleteSelect extends React.Component {
     }
 
     initSelected = ({value}) => {
-        if (value) {
+        if (value != null) {
             if (Array.isArray(value))
                 this.setState({
                     selected: value.reduce((map, obj) => {

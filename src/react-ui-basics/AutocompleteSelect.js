@@ -235,10 +235,10 @@ class AutocompleteSelect extends React.Component {
     };
 
     onSelect = (selectedId) => {
-        if (!selectedId && this.props.allowCustom && this.input.check())
+        if (selectedId == null && this.props.allowCustom && this.input.check())
             selectedId = this.state.filterValue;
 
-        const isSelected = !!selectedId;
+        const isSelected = selectedId != null;
         const isMultipleSelect = this.props.mode === MODE_MULTIPLE || this.props.mode === MODE_MULTIPLE_AUTO || this.props.mode === MODE_INLINE_MULTIPLE || this.props.mode === MODE_MULTIPLE_MINI || this.props.mode === MODE_MULTIPLE_MINI_INLINE;
 
         let selected = {...this.state.selected};

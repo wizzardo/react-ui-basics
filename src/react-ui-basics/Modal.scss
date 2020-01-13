@@ -24,6 +24,7 @@
     transition: opacity .2s cubic-bezier(.4, 0, .2, 1);
     opacity: 0;
     background-color: black;
+    pointer-events: none;
 
     &.show {
       opacity: 0.5;

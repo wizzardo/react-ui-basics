@@ -4,7 +4,7 @@ import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
-import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
+import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
 
@@ -40,6 +40,7 @@ class Modal extends PureComponent {
         ] = stateGSs(that, 3);
         const overlay = createRef();
         const el = createRef();
+        const content = createRef();
         const props = propsGetter(that);
 
         const beforeClose = (e) => {
@@ -47,6 +48,11 @@ class Modal extends PureComponent {
             if (!bc || bc(that.close))
                 that.close(e);
         };
+
+        const shouldClose = (e) => {
+            !(e && content().contains(e.target)) && beforeClose(e);
+        };
+
         const addTransitionListener = () => {
             const transitionend = "transitionend";
             let listener = () => {
@@ -60,11 +66,12 @@ class Modal extends PureComponent {
             const {className, top, container = Modal.defaultContainer, children} = props();
             const menu = getMenu();
             const show = isShow();
-            const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={el}>
-                <div ref={overlay} className={classNames(`overlay`, show && 'show')} onClick={beforeClose}>
+            const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={el} onClick={shouldClose}>
+                <div ref={overlay} className={classNames(`overlay`, show && 'show')}>
                 </div>
                 <div className={classNames(`content`, show && 'show', top && 'top')}
                      style={top && {top: top + 'px'}}
+                     ref={content}
                 >
                     {React.Children.map(children, child => React.cloneElement(child, {
                         modalMenuConsumer: getMenu,

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
-import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED} from "./Tools";
+import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED, stopPropagation} from "./Tools";
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
@@ -50,7 +50,8 @@ class Modal extends PureComponent {
         };
 
         const shouldClose = (e) => {
-            !(e && content().contains(e.target)) && beforeClose(e);
+            const isSameModal = el().style.zIndex == zIndex - 1;
+            !(e && content().contains(e.target)) && isSameModal && beforeClose(e);
         };
 
         const addTransitionListener = () => {

@@ -23,6 +23,24 @@ const DummyChild = ({id, label, dataConsumer}) => {
     return <div className={`DummyChild`}>{label || id}</div>
 };
 
+const prepareSelected = (value) => {
+    let result;
+    if (value != null) {
+        if (Array.isArray(value))
+            result = value.reduce((map, obj) => {
+                map[obj] = obj;
+                return map;
+            }, {});
+        else if (typeof value === 'object')
+            result = value;
+        else
+            result = {[value]: value};
+    } else {
+        result = {};
+    }
+    return result;
+};
+
 class AutocompleteSelect extends React.Component {
 
     static propTypes = {
@@ -31,24 +49,23 @@ class AutocompleteSelect extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            selected: {},
+        const that = this;
+        that.state = {
+            selected: prepareSelected(props.value),
             isActive: !!props.focused,
 
         };
-        this.randomId = getRandomId('acs-');
+        that.randomId = getRandomId('acs-');
+
+        const {data, getSelected} = props;
+        if (data && typeof data === "function") {
+            data(data => that.setState({data}));
+        }
+
+        getSelected && getSelected(() => Object.values(that.state.selected));
     }
 
     componentDidMount() {
-        this.initSelected(this.props);
-
-        const data = this.props.data;
-        if (data && typeof data === "function") {
-            data(data => this.setState({data}));
-        }
-
-        orNoop(this.props.getSelected)(() => Object.values(this.state.selected));
-
         addEventListener(DOCUMENT, 'mousedown', this.listener = (e) => {
             if (this.state.isActive && this.el && !this.el.contains(e.target)) {
                 this.setState({isActive: false});
@@ -63,21 +80,7 @@ class AutocompleteSelect extends React.Component {
     }
 
     initSelected = ({value}) => {
-        if (value != null) {
-            if (Array.isArray(value))
-                this.setState({
-                    selected: value.reduce((map, obj) => {
-                        map[obj] = obj;
-                        return map;
-                    }, {})
-                });
-            else if (typeof value === 'object')
-                this.setState({selected: value});
-            else
-                this.setState({selected: {[value]: value}});
-        } else {
-            this.setState({selected: {}});
-        }
+        this.setState({selected: prepareSelected(value)});
     };
 
     componentWillUnmount() {

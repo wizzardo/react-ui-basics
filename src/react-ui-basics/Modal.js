@@ -4,7 +4,7 @@ import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
 import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED, stopPropagation} from "./Tools";
-import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
+import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
 
@@ -44,6 +44,7 @@ class Modal extends PureComponent {
         const props = propsGetter(that);
 
         const beforeClose = (e) => {
+            stopPropagation(e);
             const bc = getBeforeClose() || props().beforeClose;
             if (!bc || bc(that.close))
                 that.close(e);

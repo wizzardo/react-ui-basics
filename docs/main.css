@@ -528,6 +528,65 @@
       color: #F96B5C;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); }
 
+.Scrollable {
+  max-height: 250px;
+  padding-right: 5px;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+  align-items: stretch;
+  overflow: hidden; }
+  .Scrollable:hover > .scrollbar.auto {
+    -webkit-transition-delay: 0s;
+            transition-delay: 0s;
+    opacity: 1; }
+  .Scrollable .viewport {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 100%; }
+    .Scrollable .viewport::-webkit-scrollbar {
+      display: none; }
+  .Scrollable.without-scroll {
+    padding-right: 0; }
+    .Scrollable.without-scroll > .viewport {
+      overflow: inherit;
+      padding-right: 0;
+      margin-right: 0; }
+    .Scrollable.without-scroll > .scrollbar {
+      visibility: hidden; }
+  .Scrollable .scrollbar {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 5px;
+    -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-transition-delay: 0.5s;
+            transition-delay: 0.5s;
+    z-index: 1; }
+    .Scrollable .scrollbar.auto, .Scrollable .scrollbar.hidden {
+      opacity: 0; }
+    .Scrollable .scrollbar.visible, .Scrollable .scrollbar:active {
+      -webkit-transition-delay: 0s;
+              transition-delay: 0s;
+      opacity: 1; }
+    .Scrollable .scrollbar .thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 5px;
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+      will-change: top;
+      border-radius: 2px; }
+      .Scrollable .scrollbar .thumb:hover {
+        background-color: rgba(0, 0, 0, 0.5); }
+      .Scrollable .scrollbar .thumb:active {
+        background-color: rgba(0, 0, 0, 0.7); }
+
 .AutocompleteSelect {
   display: inline-flex;
   flex-flow: column;
@@ -792,66 +851,6 @@
         margin-bottom: 8px; }
     .FilteredList .child:not(.hidden):last-child {
       margin-bottom: 8px; }
-
-.Scrollable {
-  max-height: 250px;
-  padding-right: 5px;
-  position: relative;
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
-  overflow: hidden; }
-  .Scrollable:hover > .scrollbar.auto {
-    -webkit-transition-delay: 0s;
-            transition-delay: 0s;
-    opacity: 1; }
-  .Scrollable .viewport {
-    overflow-y: scroll;
-    overflow-x: hidden;
-    max-height: 100%; }
-    .Scrollable .viewport::-webkit-scrollbar {
-      display: none; }
-  .Scrollable.without-scroll {
-    padding-right: 0;
-    max-height: unset; }
-    .Scrollable.without-scroll > .viewport {
-      overflow: inherit;
-      padding-right: 0;
-      margin-right: 0; }
-    .Scrollable.without-scroll > .scrollbar {
-      visibility: hidden; }
-  .Scrollable .scrollbar {
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    width: 5px;
-    -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transition-delay: 0.5s;
-            transition-delay: 0.5s;
-    z-index: 1; }
-    .Scrollable .scrollbar.auto, .Scrollable .scrollbar.hidden {
-      opacity: 0; }
-    .Scrollable .scrollbar.visible, .Scrollable .scrollbar:active {
-      -webkit-transition-delay: 0s;
-              transition-delay: 0s;
-      opacity: 1; }
-    .Scrollable .scrollbar .thumb {
-      background-color: rgba(0, 0, 0, 0.3);
-      width: 5px;
-      position: absolute;
-      right: 0px;
-      top: 0px;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none;
-      will-change: top;
-      border-radius: 2px; }
-      .Scrollable .scrollbar .thumb:hover {
-        background-color: rgba(0, 0, 0, 0.5); }
-      .Scrollable .scrollbar .thumb:active {
-        background-color: rgba(0, 0, 0, 0.7); }
 
 .TextField {
   position: relative;

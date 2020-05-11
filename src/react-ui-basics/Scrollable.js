@@ -58,6 +58,7 @@ class Scrollable extends PureComponent {
 
             let scrolling = false;
             let scrolledToBottom = false;
+            let scrolledToTop = false;
             let adjustedScrollWidth = false;
             let lastY = 0;
             let scrollY = 0;
@@ -71,11 +72,18 @@ class Scrollable extends PureComponent {
 
                 styleOf(thumb).top = (position * (scrollbarHeight - offsetHeightOf(thumb))) + 'px';
 
-                if (scrollHeight - offsetHeight - viewport.scrollTop <= 200) {
+                if (position >= 0.98) {
                     !scrolledToBottom && orNoop(props().onScrolledToBottom)();
                     scrolledToBottom = true;
                 } else {
                     scrolledToBottom = false;
+                }
+
+                if (position <= 0.02) {
+                    !scrolledToTop && orNoop(props().onScrolledToTop)();
+                    scrolledToTop = true;
+                } else {
+                    scrolledToTop = false;
                 }
             };
             const reset = () => {
@@ -159,7 +167,7 @@ class Scrollable extends PureComponent {
                     if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
                         return;
 
-                    if (scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio) {
+                    if (scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
                         viewport.scrollTop = 0; // scroll to top if scrollbar gets smaller
                     }
 
@@ -182,6 +190,9 @@ class Scrollable extends PureComponent {
                         hideScrollbar(scrollbar, viewport);
                     }
 
+                    scrolledToBottom = false;
+                    scrolledToTop = false;
+
                     const position = viewport.scrollTop / (scrollHeight - offsetHeight);
                     styleOf(thumb).top = (position * (scrollbarHeight - offsetHeightOf(thumb))) + 'px';
                 }, 50);
@@ -200,6 +211,7 @@ class Scrollable extends PureComponent {
             viewportRef().scrollTop = y
         };
         that.getScroll = () => viewportRef().scrollTop;
+        that.getScrollHeight = () => scrollHeightOf(viewportRef());
         that.getHeight = () => containerRef().clientHeight;
 
         that[render] = () => {
@@ -227,5 +239,6 @@ if (window.isNotProductionEnvironment) {
         className: PropTypes.string,
         style: PropTypes.object,
         onScrolledToBottom: PropTypes.func,
+        onScrolledToTop: PropTypes.func,
     }
 }

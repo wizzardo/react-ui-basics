@@ -122,3 +122,56 @@ export const removeEventListener = (el, type, listener, options) => {
 
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;
+
+
+export class Comparators {
+    static SORT_ASC = 'ASC';
+    static SORT_DESC = 'DESC';
+
+    static of = (field, order, data) => {
+        let comparator;
+        if (Array.isArray(field)) {
+            const isOrderArray = Array.isArray(order);
+            comparator = Comparators.chain(field.map((it, i) => Comparators.of(it, (isOrderArray && order[i]) || Comparators.SORT_ASC, data)));
+        } else if (typeof field === 'function') {
+            if (data && data[0] && typeof field(data[0]) === 'string') {
+                const collator = new Intl.Collator({sensitivity: 'base'});
+                comparator = (a, b) => {
+                    return collator.compare(field(a), field(b));
+                }
+            } else
+                comparator = (a, b) => {
+                    const A = field(a);
+                    const B = field(b);
+                    return (A < B ? -1 : (A > B ? 1 : 0));
+                };
+        } else if (typeof field === 'string')
+            comparator = Comparators.of(it => it[field], Comparators.SORT_ASC, data);
+        else
+            comparator = Comparators.of(it => it, Comparators.SORT_ASC, data);
+
+        if (order && order === Comparators.SORT_DESC) {
+            return Comparators.inverse(comparator);
+        }
+
+        return addComparatorMethods(comparator);
+    };
+    static chain = (comparators) => addComparatorMethods((a, b) => {
+            let result;
+            for (let i = 0; i < comparators.length; i++) {
+                result = comparators[i](a, b);
+                if (result !== 0)
+                    return result;
+            }
+            return result;
+        }
+    );
+
+    static inverse = (comparator) => addComparatorMethods((a, b) => -comparator(a, b));
+}
+
+const addComparatorMethods = function (comparator) {
+    comparator.inverse = () => Comparators.inverse(comparator);
+    comparator.and = (another) => Comparators.chain([comparator, another]);
+    return comparator;
+};

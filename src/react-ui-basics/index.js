@@ -24,6 +24,8 @@ import Switch from "./Switch";
 import ReactCreateElement from './ReactCreateElement'
 import * as ReadyListener from './ReadyListener'
 import TextField from "./TextField";
+import Table from "./Table";
+import ScrollableTable from "./ScrollableTable";
 
 export {
     Animated,
@@ -45,11 +47,13 @@ export {
     ModalMenu,
     Router,
     Scrollable,
+    ScrollableTable,
     Size,
     Snackbar,
     SpinningProgress,
     Switch,
     ReactCreateElement,
     ReadyListener,
+    Table,
     TextField,
 };

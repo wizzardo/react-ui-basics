@@ -1092,5 +1092,86 @@
   .Switch .switch-input:checked + .switch-label .toggle--off {
     display: none; }
 
+.Table {
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  color: #1e252d;
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+  position: relative; }
+  .Table td, .Table th {
+    padding: 5px;
+    font-weight: 500;
+    color: #2e2e2e; }
+  .Table td {
+    height: 48px;
+    border-bottom: 1px solid #ebebeb;
+    border-top: 1px solid #ebebeb; }
+    .Table td:first-child {
+      padding-left: 45px; }
+    .Table td:last-child {
+      padding-right: 45px; }
+  .Table th {
+    color: #808080;
+    height: 55px;
+    padding: 0px; }
+    .Table th .sortable {
+      cursor: pointer; }
+      .Table th .sortable.active {
+        font-weight: bold; }
+        .Table th .sortable.active .material-icons {
+          font-size: 16px; }
+      .Table th .sortable.false {
+        padding-right: 22px; }
+    .Table th:first-child .hidden, .Table th:first-child .fixed {
+      padding-left: 45px; }
+    .Table th:last-child .hidden, .Table th:last-child .fixed {
+      padding-right: 45px; }
+    .Table th .hidden {
+      color: transparent;
+      height: 0px;
+      padding: 5px; }
+    .Table th .fixed {
+      font-weight: normal;
+      display: flex;
+      flex-flow: row;
+      justify-items: center;
+      align-items: center;
+      text-align: left;
+      height: 56px;
+      padding: 0px 5px;
+      background-color: white;
+      position: absolute;
+      top: 0px;
+      z-index: 1;
+      box-sizing: border-box;
+      border-bottom: 1px solid #ebebeb;
+      border-top: 1px solid #ebebeb; }
+  .Table tbody tr:hover {
+    background-color: #f2f2f2; }
+  .Table tbody tr.disabled td {
+    color: #93a4b7; }
+  .Table .ro {
+    color: #47576a; }
+  .Table .editable {
+    cursor: pointer; }
+    .Table .editable > .TextField {
+      height: 20px !important;
+      margin: 0px;
+      position: relative;
+      display: block; }
+      .Table .editable > .TextField input {
+        width: 100%;
+        height: 20px;
+        padding: 0px;
+        background-color: #f0f0f0; }
+
+.ScrollableTable .Scrollable .scrollbar {
+  top: 56px; }
+
+.ScrollableTable .Table {
+  position: static; }
+
 
 /*# sourceMappingURL=main.css.map*/

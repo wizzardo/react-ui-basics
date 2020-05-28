@@ -2,8 +2,9 @@ import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './Scrollable.css'
-import {classNames, preventDefault, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, setInterval, clearInterval, createRef, orNoop} from "./Tools";
+import {classNames, preventDefault, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, setInterval, clearInterval, createRef, orNoop, NOOP} from "./Tools";
 import {propsGetter, stateGS, PureComponent, render, componentDidMount, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
+import Table from "./Table";
 
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
 export const SCROLLBAR_MODE_VISIBLE = 'visible';
@@ -167,7 +168,7 @@ class Scrollable extends PureComponent {
                     if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
                         return;
 
-                    if (scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
+                    if (props().autoScrollTop && scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
                         viewport.scrollTop = 0; // scroll to top if scrollbar gets smaller
                     }
 
@@ -233,6 +234,10 @@ class Scrollable extends PureComponent {
 
 export default Scrollable
 
+Scrollable.defaultProps = {
+    autoScrollTop: true,
+};
+
 if (window.isNotProductionEnvironment) {
     Scrollable.propTypes = {
         scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE]),
@@ -240,5 +245,6 @@ if (window.isNotProductionEnvironment) {
         style: PropTypes.object,
         onScrolledToBottom: PropTypes.func,
         onScrolledToTop: PropTypes.func,
+        autoScrollTop: PropTypes.bool,
     }
 }

@@ -79,7 +79,7 @@ class Dropzone extends PureComponent {
         };
 
         that[render] = () => {
-            const {children, className, disabled, clickable, multiple, droppable, overlayLabel} = props();
+            const {children, className, disabled, clickable, multiple, droppable, overlayLabel, accept} = props();
 
             return <div className={classNames('Dropzone', className, isDragging() && 'dragging')}
                         onDragLeave={!disabled && droppable && onDragLeave || UNDEFINED}
@@ -92,7 +92,7 @@ class Dropzone extends PureComponent {
                         {overlayLabel}
                     </div>
                 </div>}
-                {!disabled && clickable && <input className={'file'} type="file" multiple={!!multiple} onChange={onDrop}/>}
+                {!disabled && clickable && <input className={'file'} type="file" accept={accept} multiple={!!multiple} onChange={onDrop}/>}
                 {children}
             </div>
         }
@@ -117,6 +117,7 @@ if (window.isNotProductionEnvironment) {
         multiple: PropTypes.bool,
         disabled: PropTypes.bool,
         onDrop: PropTypes.func.isRequired,
+        accept: PropTypes.string,
     };
 }
 

@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 import {classNames} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 
-const DropFileInput = ({icon, label, onDrop, droppable}) => (
+const DropFileInput = ({icon, label, onDrop, droppable, multiple, accept}) => (
     <section className="DropFileInput">
-        <Dropzone droppable={droppable} onDrop={onDrop}>
+        <Dropzone droppable={droppable} onDrop={onDrop} accept={accept} multiple={multiple}>
             <MaterialIcon className={classNames(`icon`, label && 'withText')} icon={icon}/>
             {label && <div>{label}</div>}
         </Dropzone>
@@ -18,6 +18,7 @@ const DropFileInput = ({icon, label, onDrop, droppable}) => (
 DropFileInput.defaultProps = {
     icon: 'cloud_upload',
     droppable: false,
+    multiple: true,
 };
 
 if (window.isNotProductionEnvironment) {
@@ -29,6 +30,8 @@ if (window.isNotProductionEnvironment) {
         ]),
         droppable: PropTypes.bool,
         onDrop: PropTypes.func,
+        multiple: PropTypes.bool,
+        accept: PropTypes.string,
     };
 }
 

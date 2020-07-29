@@ -16,8 +16,9 @@ class Snackbar extends PureComponent {
         that.state = {};
         const [
             isShow,
-            getText
-        ] = stateGSs(this, 2);
+            getText,
+            clazzName
+        ] = stateGSs(this, 3);
 
         let timeout;
         that[componentWillUnmount] = () => {
@@ -27,21 +28,27 @@ class Snackbar extends PureComponent {
             const _props = props(that);
             const {container} = _props;
 
-            const el = <div className={classNames(`Snackbar`, _props[className], isShow() && shown)}>
+            const el = <div className={classNames(`Snackbar`, _props[className], isShow() && shown, clazzName())}>
                 <div className="message">{getText() || _props.text}</div>
             </div>;
             return container ? ReactDOM.createPortal(el, container) : el;
         };
 
-        that.show = (text) => {
+        const hide = ()=>{
+            isShow(false)
+            clazzName(null)
+        }
+
+        that.show = (text, className) => {
             if (isShow()) {
                 clearTimeout(timeout);
                 isShow(false);
-                timeout = setTimeout(that.show, 260, text)
+                timeout = setTimeout(that.show, 260, text, className)
             } else {
                 isShow(true);
                 getText(text);
-                timeout = setTimeout(isShow, 3000, false);
+                clazzName(className)
+                timeout = setTimeout(hide, 3000);
             }
         }
     }

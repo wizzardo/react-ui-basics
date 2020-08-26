@@ -93,6 +93,11 @@
         background-color: #5bd073; }
       #root .DNDExample .Droppable.hover {
         background-color: #4CAF50; }
+  #root .ImageGalleryHolder > .images {
+    display: flex;
+    flex-flow: row wrap; }
+    #root .ImageGalleryHolder > .images a.image {
+      margin: 10px; }
 
 .sb-show-main {
   padding: 20px;
@@ -398,16 +403,175 @@
     bottom: 0;
     pointer-events: none; }
 
-.CircleProgress {
-  width: 48px;
-  height: 48px; }
-  .CircleProgress .line {
-    stroke-width: 2px;
-    stroke: black;
-    stroke-linecap: square;
-    fill: none;
-    -webkit-transition: stroke-dashoffset 0.2s ease;
-    transition: stroke-dashoffset 0.2s ease; }
+.ImageGallery {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.01);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
+  .ImageGallery.animated {
+    -webkit-transition: background-color 0.25s ease;
+    transition: background-color 0.25s ease;
+    opacity: 1; }
+  .ImageGallery.mounting, .ImageGallery.mounted {
+    background-color: rgba(0, 0, 0, 0.8); }
+  .ImageGallery .image {
+    position: absolute;
+    cursor: -webkit-grab;
+    cursor: grab; }
+    .ImageGallery .image img {
+      border-radius: 4px;
+      max-width: 100%;
+      min-width: 100%; }
+    .ImageGallery .image.animated {
+      -webkit-transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+      transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease; }
+      .ImageGallery .image.animated.mounting, .ImageGallery .image.animated.mounted, .ImageGallery .image.animated.unmounting {
+        opacity: 1; }
+    .ImageGallery .image.zoomed {
+      overflow: scroll;
+      -webkit-transition: none;
+      transition: none;
+      text-align: center; }
+      .ImageGallery .image.zoomed img {
+        max-width: unset;
+        min-width: unset;
+        box-sizing: border-box;
+        padding: 50px; }
+    .ImageGallery .image.dragging {
+      -webkit-transition: none;
+      transition: none;
+      cursor: move; }
+    .ImageGallery .image .close {
+      position: absolute;
+      top: -18px;
+      right: -18px; }
+    .ImageGallery .image .spinner {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.65); }
+      .ImageGallery .image .spinner .SpinningProgress {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -24px;
+        margin-top: -24px; }
+        .ImageGallery .image .spinner .SpinningProgress .line {
+          stroke: #2196F3; }
+  .ImageGallery .Button.animated {
+    -webkit-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0); }
+    .ImageGallery .Button.animated.mounted, .ImageGallery .Button.animated.mounting {
+      opacity: 1;
+      -webkit-transform: scale(1);
+              transform: scale(1); }
+  .ImageGallery .Button {
+    color: white;
+    background: rgba(0, 0, 0, 0.4); }
+    .ImageGallery .Button:hover {
+      background: rgba(0, 0, 0, 0.7); }
+  .ImageGallery > .arrow {
+    position: absolute;
+    top: 50%;
+    height: 76px;
+    width: 76px;
+    margin-top: -38px; }
+    .ImageGallery > .arrow.left {
+      left: 5%; }
+    .ImageGallery > .arrow.right {
+      right: 5%; }
+    .ImageGallery > .arrow .material-icons {
+      font-size: 40px; }
+  .ImageGallery .counter {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 13px; }
+  .ImageGallery .previews {
+    height: 80px;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+    overflow: hidden;
+    padding: 0 45px; }
+    .ImageGallery .previews .container {
+      position: relative;
+      display: flex;
+      flex-flow: row nowrap;
+      height: 100%;
+      -webkit-transition: left 0.25s ease;
+      transition: left 0.25s ease; }
+    .ImageGallery .previews .preview {
+      position: relative;
+      height: 100%;
+      display: inline-block;
+      width: 106.66px;
+      overflow: hidden;
+      margin-left: 12px;
+      border-radius: 2px;
+      cursor: pointer; }
+      .ImageGallery .previews .preview:first-child {
+        margin-left: 0; }
+      .ImageGallery .previews .preview > .border {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 3px; }
+        .ImageGallery .previews .preview > .border .line {
+          left: 50%;
+          width: 0;
+          height: 3px;
+          min-height: 3px;
+          background-color: #4AC263;
+          -webkit-transition: all 0.2s ease;
+          transition: all 0.2s ease;
+          position: absolute; }
+      .ImageGallery .previews .preview:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.35);
+        -webkit-transition: background 0.2s ease;
+        transition: background 0.2s ease; }
+      .ImageGallery .previews .preview:hover:after {
+        background: rgba(0, 0, 0, 0.1); }
+      .ImageGallery .previews .preview.selected .border .line {
+        left: 0;
+        width: 100%; }
+      .ImageGallery .previews .preview.selected:after {
+        background: rgba(0, 0, 0, 0); }
+    .ImageGallery .previews > .arrow {
+      position: absolute;
+      top: 50%;
+      height: 30px;
+      width: 30px;
+      min-width: 30px;
+      min-height: 30px;
+      margin-top: -15px; }
+      .ImageGallery .previews > .arrow.left {
+        left: 0; }
+      .ImageGallery .previews > .arrow.right {
+        right: 0; }
+      .ImageGallery .previews > .arrow .material-icons {
+        font-size: 24px; }
 
 .SpinningProgress {
   width: 48px;
@@ -470,6 +634,17 @@
   100% {
     stroke-dasharray: 43, 96;
     stroke-dashoffset: -53px; } }
+
+.CircleProgress {
+  width: 48px;
+  height: 48px; }
+  .CircleProgress .line {
+    stroke-width: 2px;
+    stroke: black;
+    stroke-linecap: square;
+    fill: none;
+    -webkit-transition: stroke-dashoffset 0.2s ease;
+    transition: stroke-dashoffset 0.2s ease; }
 
 .FormUploadProgress {
   position: absolute;

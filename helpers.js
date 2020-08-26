@@ -130,8 +130,14 @@ function _possibleConstructorReturn(self, call) {
     return call && (_typeof(call) === "object" || _typeof(call) === "function") ? call : _assertThisInitialized(self);
 }
 
+var isArray = Array.isArray;
+
 function _slicedToArray(arr) {
-    return Array.isArray(arr) ? arr : throwTypeError("Invalid attempt to destructure non-iterable instance");
+    return isArray(arr) ? arr : throwTypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _toConsumableArray(arr) {
+    return isArray(arr) ? arr.slice() : throwTypeError("Invalid attempt to spread non-iterable instance");
 }
 
 
@@ -148,5 +154,6 @@ export {
     _possibleConstructorReturn as possibleConstructorReturn,
     _setPrototypeOf as setPrototypeOf,
     _slicedToArray as slicedToArray,
+    _toConsumableArray as toConsumableArray,
     _typeof as typeof
 };

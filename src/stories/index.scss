@@ -144,6 +144,17 @@
       }
     }
   }
+
+  .ImageGalleryHolder {
+    > .images {
+      display: flex;
+      flex-flow: row wrap;
+
+      a.image {
+        margin: 10px;
+      }
+    }
+  }
 }
 
 .sb-show-main {

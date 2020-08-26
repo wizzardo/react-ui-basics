@@ -12,6 +12,7 @@ import Dropzone from "./Dropzone";
 import FilteredList from "./FilteredList";
 import FloatingActionButton from "./FloatingActionButton";
 import FormUploadProgress from "./FormUploadProgress";
+import ImageGallery from "./ImageGallery";
 import MaterialIcon from "./MaterialIcon";
 import Modal from "./Modal";
 import ModalMenu from "./ModalMenu";
@@ -42,6 +43,7 @@ export {
     FilteredList,
     FloatingActionButton,
     FormUploadProgress,
+    ImageGallery,
     MaterialIcon,
     Modal,
     ModalMenu,

@@ -6,7 +6,7 @@ import Button from "./Button";
 import SpinningProgress from "./SpinningProgress";
 import {UNDEFINED, preventDefault, stopPropagation, classNames, DOCUMENT, WINDOW, addEventListener, removeEventListener, setTimeout} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
-import ReactDOM from "react-dom";
+import {componentDidUpdate, componentWillUnmount, componentDidMount, render, propsGetter, stateGSs} from "./ReactConstants";
 
 const min = Math.min;
 const abs = Math.abs;
@@ -98,6 +98,13 @@ function calculatePreview(width, height, url) {
     };
 }
 
+const loadImage = (src, cb) => {
+    const image = new Image();
+    image.onload = () => {
+        cb(image)
+    };
+    image.src = src;
+}
 
 const ACTION_PREFIX = 'IMAGE_GALLERY_';
 const ACTION_IMAGE_GALLERY_SHOW = ACTION_PREFIX + 'SHOW';
@@ -115,17 +122,15 @@ export class Actions {
             images: images.map(it => {
                 const el = it.el;
                 const rect = el.getBoundingClientRect();
-                it.fromLeft = rect.left;
-                it.fromTop = rect.top;
-                it.fromWidth = el.clientWidth;
-                it.fromHeight = el.clientHeight;
+                const fromWidth = el.clientWidth;
+                const fromHeight = el.clientHeight;
 
-                it.fromLeftPx = toPx(it.fromLeft);
-                it.fromTopPx = toPx(it.fromTop);
-                it.fromWidthPx = toPx(it.fromWidth);
-                it.fromHeightPx = toPx(it.fromHeight);
+                it.fromLeftPx = toPx(rect.left);
+                it.fromTopPx = toPx(rect.top);
+                it.fromWidthPx = toPx(fromWidth);
+                it.fromHeightPx = toPx(fromHeight);
 
-                let ratio = el.clientWidth / el.clientHeight;
+                let ratio = fromWidth / fromHeight;
                 calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0);
                 if (!it.toWidth || !it.toHeight)
                     Actions.loadPreview(it)(dispatch);
@@ -146,24 +151,30 @@ export class Actions {
             },
         };
 
-        data.previews.scroll = calculatePreviewsScroll(data.index, data.previews.images.length, data.previews.width);
+        data.previews.scroll = calculatePreviewsScroll(data.index, length, data.previews.width);
 
         dispatch({type: ACTION_IMAGE_GALLERY_SHOW, data});
         Actions.load(data.images[data.index])(dispatch)
     };
-    static close = () => (dispatch) => dispatch({type: ACTION_IMAGE_GALLERY_CLOSE});
-    static loaded = (item, image) => (dispatch) => dispatch({type: ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED, item, image});
-    static loadedPreview = (item, image) => (dispatch) => dispatch({type: ACTION_IMAGE_GALLERY_PREVIEW_LOADED, item, image});
+    static close = () => (dispatch) => {
+        dispatch({type: ACTION_IMAGE_GALLERY_CLOSE});
+    };
+    static loaded = (item, image) => (dispatch) => {
+        dispatch({type: ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED, item, image});
+    };
+    static loadedPreview = (item, image) => (dispatch) => {
+        dispatch({type: ACTION_IMAGE_GALLERY_PREVIEW_LOADED, item, image});
+    };
     static load = (item) => (dispatch) => {
-        const image = new Image();
-        image.onload = () => Actions.loaded(item, image)(dispatch);
-        image.src = item.url;
+        loadImage(item.url, (image) => {
+            Actions.loaded(item, image)(dispatch);
+        })
     };
 
     static loadPreview = (item) => (dispatch) => {
-        const image = new Image();
-        image.onload = () => Actions.loadedPreview(item, image)(dispatch);
-        image.src = item.previewUrl;
+        loadImage(item.previewUrl, (image) => {
+            Actions.loadedPreview(item, image)(dispatch);
+        })
     };
 }
 
@@ -173,28 +184,31 @@ const reducers = {
     [ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED]: (state, action) => {
         const item = action.item;
         const image = action.image;
-        const result = {...state, images: state.images.slice()};
-        const index = state.images.findIndex(it => it.id === item.id);
-        const it = {...result.images[index], loaded: true};
+        const images = [...state.images];
+        const result = {...state, images};
+        const index = images.findIndex(it => it.id === item.id);
+        const it = {...images[index], loaded: true};
         // debugger
         // if (it.toWidth > image.width)
         calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0);
-        result.images[index] = it;
+        images[index] = it;
         return result;
     },
     [ACTION_IMAGE_GALLERY_PREVIEW_LOADED]: (state, action) => {
         const item = action.item;
         const image = action.image;
-        const result = {...state, images: state.images.slice()};
-        const index = state.images.findIndex(it => it.id === item.id);
-        const it = {...result.images[index]};
+        const images = [...state.images];
+        const result = {...state, images};
+        const index = images.findIndex(it => it.id === item.id);
+        const it = {...images[index]};
         if (!it.toWidth || !it.toHeight)
             calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0);
-        result.images[index] = it;
+        images[index] = it;
 
-        result.previews.images = [...state.previews.images];
-        const preview = calculatePreview(image.width, image.height, result.previews.images[index].url);
-        result.previews.images[index] = preview;
+        const previewImages = [...state.previews.images];
+        result.previews.images = previewImages;
+        const preview = calculatePreview(image.width, image.height, previewImages[index].url);
+        previewImages[index] = preview;
 
         return result;
     },
@@ -236,11 +250,6 @@ const big = (it, index, i, shift, length, previous) => {
         height: it.toHeightPx,
     };
 
-    // if (i !== previous && abs(index - i) > 0) {
-    //     // styles.transition = 'none';
-    //     // styles.transitionDelay = `${1000 * abs(index - i)}ms`
-    //     styles.opacity = '0'
-    // }
 
     if (previous !== UNDEFINED && abs(index - previous) > 1) {
         styles.transitionDelay = 100 * abs(previous - i) + 'ms';
@@ -248,11 +257,6 @@ const big = (it, index, i, shift, length, previous) => {
 
     if (index !== i) {
         const width = WINDOW.innerWidth;
-        // if (index === 0 && i === length - 1) {
-        //     styles.left = (it.toLeft + width + (i - 1 === index ? shift : 0)) + 'px';
-        // } else if (index === length - 1 && i === 0) {
-        //     styles.left = (it.toLeft + width + (i - 1 === index ? shift : 0)) + 'px';
-        // } else
         if (i < index)
             styles.left = toPx(it.toLeft - width + (i + 1 === index ? shift : 0));
         else
@@ -262,256 +266,270 @@ const big = (it, index, i, shift, length, previous) => {
 };
 
 class ImageGallery extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            shift: 0,
-            index: UNDEFINED,
-            previous: UNDEFINED,
+    constructor(properties) {
+        super(properties);
+        const that = this;
+        that.state = {};
+
+        const [
+            shift,
+            index,
+            previous,
+            touchesStart,
+            zoomed,
+            previewScroll,
+        ] = stateGSs(that, 6);
+
+
+        const props = propsGetter(that);
+
+        that[componentDidUpdate] = (prevProps, prevState, snapshot) => {
+            if (props().open !== prevProps.open && !props().open) {
+                setTimeout(() => {
+                    shift(0)
+                    index(UNDEFINED)
+                    previous(UNDEFINED)
+                }, 250 + 100); // 250ms transition + 100ms to be sure it ended
+            }
+            if (index() !== UNDEFINED && !props().images[index()].loaded) {
+                props().load(props().images[index()])
+            }
+        }
+
+        const resizeListener = () => props().open && props().show(props())
+        that[componentDidMount] = () => {
+            addEventListener(WINDOW, 'resize', resizeListener)
+        }
+        that[componentWillUnmount] = () => {
+            removeEventListener(WINDOW, 'resize', resizeListener)
+        }
+
+
+        const onKeyDown = e => {
+            const keyCode = e.keyCode;
+            if (keyCode === 37/*left*/) {
+                left();
+            }
+            if (keyCode === 39/*right*/) {
+                right();
+            }
+            if (keyCode === 27/*escape*/) {
+                zoomed(false)
+                props().close();
+            }
+            preventDefault(e);
         };
-    }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.open !== prevProps.open && !this.props.open) {
-            setTimeout(() => this.setState({
-                shift: 0,
-                index: UNDEFINED,
-                previous: UNDEFINED,
-            }), 250 + 100); // 250ms transition + 100ms to be sure it ended
-        }
-        if (this.state.index !== UNDEFINED && !this.props.images[this.state.index].loaded) {
-            this.props.load(this.props.images[this.state.index])
-        }
-    }
+        const onTouchStart = e => {
+            e.swipeProcessed = false;
+            if (e.button === 2) return;
+            const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
+            // console.log('onTouchStart', touches, e);
+            touchesStart(touches)
+        };
 
-    render() {
-        const {open, close} = this.props;
-        const {images = [], previews = {}} = this.props;
-        const {shift, index = this.props.index, previous, previewScroll = previews.scroll, touchesStart, zoomed} = this.state;
+        const onTouchMove = e => {
+            if (!touchesStart())
+                return;
 
-        const length = images.length;
-        return (
-            <Animated value={open}>
-                <div className={'ImageGallery'}
-                     tabIndex={0}
-                     ref={it => (this.gallery = it) && it.focus()}
-                     onKeyDown={this.onKeyDown}
-                     onClick={e => e.target === this.gallery && !e.swipeProcessed && close()}
-                     onTouchStart={this.onTouchStart}
-                     onTouchMove={this.onTouchMove}
-                     onTouchEnd={this.onTouchEnd}
-                     onMouseDown={this.onTouchStart}
-                     onMouseUp={this.onTouchEnd}
-                     onMouseMove={this.onTouchMove}
-                     onMouseLeave={this.onTouchEnd}
-                    // onDragStart={this.onTouchStart}
-                    // onDragEnd={this.onTouchEnd}
-                    // onDrag={this.onTouchMove}
-                >
-                    {images.map((it, i) => <Animated key={it.id} value={open} styles={zoomed && i === index ? {
-                        default: small(it, index, i, length),
-                        mounting: zoom(it, index, i, shift, length, previous),
-                        mountend: zoom(it, index, i, shift, length, previous),
-                        unmounting: small(it, index, i, length),
-                    } : {
-                        default: small(it, index, i, length),
-                        mounting: big(it, index, i, shift, length, previous),
-                        mountend: big(it, index, i, shift, length, previous),
-                        unmounting: small(it, index, i, length),
-                    }}>
-                        <div
-                            onDoubleClick={e => {
-                                const img = e.target;
-                                if (img.naturalWidth === img.clientWidth && img.naturalHeight === img.clientHeight)
-                                    return;
-                                this.setState({zoomed: !zoomed});
-                                if (!zoomed) {
-                                    const container = img.parentElement;
-                                    const screen = container.parentElement;
-                                    const bounds = container.getBoundingClientRect();
-                                    let x = (e.pageX - bounds.x) / bounds.width;
-                                    let y = (e.pageY - bounds.y) / bounds.height;
-                                    const left = Math.max(x * img.naturalWidth - screen.clientWidth / 2, 0);
-                                    const top = Math.max(y * img.naturalHeight - screen.clientHeight / 2, 0);
-                                    setTimeout(() => {
-                                        container.scrollLeft = left;
-                                        container.scrollTop = top;
-                                    }, 0);
-                                }
-                            }}
-                            key={i} className={classNames('image', touchesStart && 'dragging', zoomed && 'zoomed')}>
-                            <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
-                            {!it.loaded && <div className={'spinner'}><SpinningProgress/></div>}
-                            <Animated value={open && !zoomed}>
-                                <Button className="close" round={true} onClick={close}>
-                                    <MaterialIcon icon={'close'}/>
-                                </Button>
-                            </Animated>
-                        </div>
-                    </Animated>)}
+            const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
+            // console.log('onTouchMove', touches, e)
 
-                    <Animated value={open && length > 1 && index > 0 && !zoomed}>
-                        <Button className="arrow left" onClick={this.left} round={true}>
-                            <MaterialIcon icon={'arrow_back'}/>
-                        </Button>
-                    </Animated>
+            if (touches.length > 1)
+                return;
 
-                    <Animated value={open && length > 1 && index !== length - 1 && !zoomed}>
-                        <Button className="arrow right" onClick={this.right} round={true}>
-                            <MaterialIcon icon={'arrow_forward'}/>
-                        </Button>
-                    </Animated>
+            let touch = touches[0];
+            let touchStart = touchesStart()[0];
+            shift(touch.pageX - touchStart.pageX)
+        };
 
-                    <Animated value={open && length > 1 && !zoomed}>
-                        <div className="counter">
-                            {index + 1} / {length}
-                        </div>
-                    </Animated>
+        const onTouchEnd = e => {
+            if (!touchesStart())
+                return;
 
-                    <Animated value={open && previews.show && !zoomed}>
-                        <div className="previews" style={{width: previews.width}}>
-                            <div className="container" style={{width: previews.totalWidth, left: toPx(previewScroll)}}>
-                                {(previews.images || []).map((it, i) =>
-                                    <div key={i}
-                                         className={classNames('preview', index === i && 'selected')}
-                                         onClick={() => this.scrollTo(i, index)}
-                                    >
-                                        <img src={it.url} style={it}/>
+            const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
+            // console.log('onTouchEnd', touches, e)
 
-                                        <div className="border">
-                                            <div className="line"/>
-                                        </div>
-                                    </div>)}
+            let touchEnd = touches[0];
+            let touchStart = touchesStart()[0];
+            let distX = touchEnd.pageX - touchStart.pageX;
+            let distY = touchEnd.pageY - touchStart.pageY;
+
+            touchesStart(UNDEFINED)
+            shift(0)
+            const minDistance = 20;
+
+            if (abs(distX / distY) > 2 && abs(distX) > minDistance) {
+                distX < 0 ? right() : left();
+                e.swipeProcessed = true
+            } else if (abs(distY / distX) > 2 && abs(distY) > minDistance) {
+                props().close();
+                e.swipeProcessed = true
+            }
+        };
+
+        const scrollTo = (i, prev) => {
+            const {previews} = props();
+            index(i)
+            previous(prev)
+            previewScroll(calculatePreviewsScroll(i, previews.images.length, previews.width))
+        };
+
+        const left = (e) => {
+            if (zoomed())
+                return;
+            preventDefault(e);
+            stopPropagation(e);
+            const indexValue = index() !== UNDEFINED ? index() : props().index;
+            if (indexValue > 0)
+                scrollTo(indexValue - 1, indexValue)
+            // else
+            //     this.setState({index: images.length - 1, previous: index});
+        };
+
+        const right = (e) => {
+            if (zoomed())
+                return;
+            preventDefault(e);
+            stopPropagation(e);
+            const {images} = props();
+            const indexValue = index() !== UNDEFINED ? index() : props().index;
+            if (indexValue < images.length - 1)
+                scrollTo(indexValue + 1, indexValue)
+            // else
+            //     this.setState({index: 0, previous: index});
+        };
+
+        const animatedRoundButton = (show, className, onClick, icon) => (
+            <Animated value={show}>
+                <Button className={className} onClick={onClick} round={true}>
+                    <MaterialIcon icon={icon}/>
+                </Button>
+            </Animated>);
+
+        that[render] = () => {
+            const {open, close} = props();
+            const {images = [], previews = {}} = props();
+
+            const indexValue = index() !== UNDEFINED ? index() : props().index;
+            const length = images.length;
+            const isZoomed = zoomed();
+            const shiftValue = shift() || 0;
+            const previousValue = previous();
+            return (
+                <Animated value={open}>
+                    <div className={'ImageGallery'}
+                         tabIndex={0}
+                         ref={it => (that.gallery = it) && it.focus()}
+                         onKeyDown={onKeyDown}
+                         onClick={e => e.target === that.gallery && !e.swipeProcessed && close()}
+                         onTouchStart={onTouchStart}
+                         onTouchMove={onTouchMove}
+                         onTouchEnd={onTouchEnd}
+                         onMouseDown={onTouchStart}
+                         onMouseUp={onTouchEnd}
+                         onMouseMove={onTouchMove}
+                         onMouseLeave={onTouchEnd}
+                    >
+                        {images.map((it, i) => {
+                            return <Animated key={it.id} value={open} styles={isZoomed && i === indexValue ? {
+                                default: small(it, indexValue, i, length),
+                                mounting: zoom(it, indexValue, i, shiftValue, length, previousValue),
+                                mountend: zoom(it, indexValue, i, shiftValue, length, previousValue),
+                                unmounting: small(it, indexValue, i, length),
+                            } : {
+                                default: small(it, indexValue, i, length),
+                                mounting: big(it, indexValue, i, shiftValue, length, previousValue),
+                                mountend: big(it, indexValue, i, shiftValue, length, previousValue),
+                                unmounting: small(it, indexValue, i, length),
+                            }}>
+                                <div
+                                    onDoubleClick={e => {
+                                        const img = e.target;
+                                        if (img.naturalWidth === img.clientWidth && img.naturalHeight === img.clientHeight)
+                                            return;
+                                        zoomed(!isZoomed)
+                                        if (!isZoomed) {
+                                            const container = img.parentElement;
+                                            const screen = container.parentElement;
+                                            const bounds = container.getBoundingClientRect();
+                                            let x = (e.pageX - bounds.x) / bounds.width;
+                                            let y = (e.pageY - bounds.y) / bounds.height;
+                                            const left = Math.max(x * img.naturalWidth - screen.clientWidth / 2, 0);
+                                            const top = Math.max(y * img.naturalHeight - screen.clientHeight / 2, 0);
+                                            setTimeout(() => {
+                                                container.scrollLeft = left;
+                                                container.scrollTop = top;
+                                            }, 0);
+                                        }
+                                    }}
+                                    key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed')}
+                                >
+                                    <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
+
+                                    {!it.loaded && <div className={'spinner'}><SpinningProgress/></div>}
+
+                                    {animatedRoundButton(open && !isZoomed,
+                                        'close',
+                                        close,
+                                        'close'
+                                    )}
+                                </div>
+                            </Animated>;
+                        })}
+
+                        {animatedRoundButton(open && length > 1 && indexValue > 0 && !isZoomed,
+                            'arrow left',
+                            left,
+                            'arrow_back'
+                        )}
+
+                        {animatedRoundButton(open && length > 1 && indexValue !== length - 1 && !isZoomed,
+                            'arrow right',
+                            right,
+                            'arrow_forward'
+                        )}
+
+                        <Animated value={open && length > 1 && !isZoomed}>
+                            <div className="counter">
+                                {indexValue + 1} / {length}
                             </div>
+                        </Animated>
 
-                            <Animated value={open && length > 1 && index > 0}>
-                                <Button className="arrow left" onClick={this.left} round={true}>
-                                    <MaterialIcon icon={'keyboard_arrow_left'}/>
-                                </Button>
-                            </Animated>
+                        <Animated value={open && previews.show && !isZoomed}>
+                            <div className="previews" style={{width: previews.width}}>
+                                <div className="container" style={{width: previews.totalWidth, left: toPx(previewScroll() || previews.scroll)}}>
+                                    {(previews.images || []).map((it, i) =>
+                                        <div key={i}
+                                             className={classNames('preview', indexValue === i && 'selected')}
+                                             onClick={() => scrollTo(i, indexValue)}
+                                        >
+                                            <img src={it.url} style={it}/>
 
-                            <Animated value={open && length > 1 && index !== length - 1}>
-                                <Button className="arrow right" onClick={this.right} round={true}>
-                                    <MaterialIcon icon={'keyboard_arrow_right'}/>
-                                </Button>
-                            </Animated>
+                                            <div className="border">
+                                                <div className="line"/>
+                                            </div>
+                                        </div>)}
+                                </div>
 
-                            {/*<div className="center"></div>*/}
-                        </div>
-                    </Animated>
+                                {animatedRoundButton(indexValue > 0,
+                                    'arrow left',
+                                    left,
+                                    'keyboard_arrow_left'
+                                )}
+                                {animatedRoundButton(indexValue !== length - 1,
+                                    'arrow right',
+                                    right,
+                                    'keyboard_arrow_right'
+                                )}
+                            </div>
+                        </Animated>
 
-                </div>
-            </Animated>
-        )
-    }
-
-    onKeyDown = e => {
-        const keyCode = e.keyCode;
-        if (keyCode === 37/*left*/) {
-            this.left();
+                    </div>
+                </Animated>
+            )
         }
-        if (keyCode === 39/*right*/) {
-            this.right();
-        }
-        if (keyCode === 27/*escape*/) {
-            this.setState({zoomed: false});
-            this.props.close();
-        }
-        preventDefault(e);
-    };
 
-    onTouchStart = e => {
-        e.swipeProcessed = false;
-        if (e.button === 2) return;
-        const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
-        // console.log('onTouchStart', touches, e);
-        this.setState({touchesStart: touches})
-    };
-
-    onTouchMove = e => {
-        const {touchesStart} = this.state;
-        if (!touchesStart)
-            return;
-
-        // if (!e.buttons) {
-        //     this.setState({touchesStart: UNDEFINED, shift: 0});
-        //     return;
-        // }
-
-        const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
-        // console.log('onTouchMove', touches, e)
-
-        if (touches.length > 1)
-            return;
-
-        let touch = touches[0];
-        let touchStart = touchesStart[0];
-        let shift = touch.pageX - touchStart.pageX;
-        this.setState({shift})
-    };
-
-    onTouchEnd = e => {
-        const {touchesStart} = this.state;
-        if (!touchesStart)
-            return;
-
-        const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
-        // console.log('onTouchEnd', touches, e)
-
-        let touchEnd = touches[0];
-        let touchStart = touchesStart[0];
-        let distX = touchEnd.pageX - touchStart.pageX;
-        let distY = touchEnd.pageY - touchStart.pageY;
-
-        this.setState({touchesStart: UNDEFINED, shift: 0});
-        const minDistance = 20;
-
-        if (abs(distX / distY) > 2 && abs(distX) > minDistance) {
-            distX < 0 ? this.right() : this.left();
-            e.swipeProcessed = true
-        } else if (abs(distY / distX) > 2 && abs(distY) > minDistance) {
-            this.props.close();
-            e.swipeProcessed = true
-        }
-    };
-
-    scrollTo = (index, previous) => {
-        const {previews} = this.props;
-        this.setState({index, previous, previewScroll: calculatePreviewsScroll(index, previews.images.length, previews.width)});
-    };
-
-    left = (e) => {
-        if (this.state.zoomed)
-            return;
-        preventDefault(e);
-        stopPropagation(e);
-        const {images} = this.props;
-        const {index = this.props.index} = this.state;
-        if (index > 0)
-            this.scrollTo(index - 1, index)
-        // else
-        //     this.setState({index: images.length - 1, previous: index});
-    };
-
-    right = (e) => {
-        if (this.state.zoomed)
-            return;
-        preventDefault(e);
-        stopPropagation(e);
-        const {images} = this.props;
-        const {index = this.props.index} = this.state;
-        if (index < images.length - 1)
-            this.scrollTo(index + 1, index)
-        // else
-        //     this.setState({index: 0, previous: index});
-    };
-
-    componentDidMount() {
-        addEventListener(WINDOW, 'resize', this.resizeListener = () => this.props.open && this.props.show(this.props))
-    }
-
-    componentWillUnmount() {
-        removeEventListener(WINDOW, 'resize', this.resizeListener)
     }
 }
 

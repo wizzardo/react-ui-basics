@@ -121,17 +121,19 @@ export class Actions {
             index: gallery.index,
             images: images.map(it => {
                 const el = it.el;
-                const rect = el.getBoundingClientRect();
-                const fromWidth = el.clientWidth;
-                const fromHeight = el.clientHeight;
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    const fromWidth = el.clientWidth;
+                    const fromHeight = el.clientHeight;
 
-                it.fromLeftPx = toPx(rect.left);
-                it.fromTopPx = toPx(rect.top);
-                it.fromWidthPx = toPx(fromWidth);
-                it.fromHeightPx = toPx(fromHeight);
+                    it.fromLeftPx = toPx(rect.left);
+                    it.fromTopPx = toPx(rect.top);
+                    it.fromWidthPx = toPx(fromWidth);
+                    it.fromHeightPx = toPx(fromHeight);
 
-                let ratio = fromWidth / fromHeight;
-                calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0);
+                    let ratio = fromWidth / fromHeight;
+                    calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0);
+                }
                 if (!it.toWidth || !it.toHeight)
                     Actions.loadPreview(it)(dispatch);
                 return it;
@@ -143,6 +145,8 @@ export class Actions {
                 scroll: UNDEFINED,
                 images: images.map(it => {
                     const el = it.el;
+                    if (!el)
+                        return {};
 
                     let width = el.clientWidth;
                     let height = el.clientHeight;
@@ -207,7 +211,7 @@ const reducers = {
 
         const previewImages = [...state.previews.images];
         result.previews.images = previewImages;
-        const preview = calculatePreview(image.width, image.height, previewImages[index].url);
+        const preview = calculatePreview(image.width, image.height, image.src);
         previewImages[index] = preview;
 
         return result;
@@ -552,7 +556,9 @@ export class ImageGalleryContainer extends React.Component {
         that.state = IMAGE_GALLERY_REDUCER(null, {})
 
         const dispatch = (action) => setTimeout(() => {
+            console.log('before action', action, that.state)
             const state = IMAGE_GALLERY_REDUCER(that.state, action);
+            console.log('after action', action, state)
             if (state !== that.state)
                 that.setState(state)
         }, 0)

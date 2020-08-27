@@ -30,11 +30,11 @@ class ImageGalleryHolder extends React.Component {
     imageRefs = {};
 
     render() {
-        const {attachments} = this.props;
+        const {attachments, singleStartImage} = this.props;
         return <div className={"ImageGalleryHolder"}>
             <ImageGalleryContainer ref={it => this.gallery = it}/>
             <div className="images">
-                {attachments.map(it =>
+                {attachments.slice(0, singleStartImage ? 1 : attachments.length).map(it =>
                     <Attachment key={it.id} imgRef={ref => this.imageRefs[it.id] = ref}
                                 href={it.full}
                                 src={it.thumbnail}
@@ -47,12 +47,14 @@ class ImageGalleryHolder extends React.Component {
 
     showGallery = (e, attachment) => {
         if (attachment.isImage) {
+            const {singleStartImage} = this.props;
+
             const images = this.props.attachments
-                .map(it => this.imageRefs[it.id] && {
+                .map(it => it.isImage && {
                     id: it.id,
                     previewUrl: it.thumbnail,
                     url: it.full,
-                    el: this.imageRefs[it.id],
+                    el: !singleStartImage || it.id === attachment.id ? this.imageRefs[it.id] : null,
                 })
                 .filter(it => !!it);
 
@@ -79,7 +81,7 @@ export const story1 = () => <div>
     ]}/>
 </div>;
 story1.story = {
-    name: 'single image',
+    name: 'Single image',
 };
 
 export const story2 = () => <div>
@@ -106,4 +108,30 @@ export const story2 = () => <div>
 </div>;
 story2.story = {
     name: 'Several images',
+};
+
+export const story3 = () => <div>
+    <ImageGalleryHolder singleStartImage={true} attachments={[
+        {
+            id: 0,
+            isImage: true,
+            thumbnail: 'https://picsum.photos/id/1002/367/267',
+            full: 'https://picsum.photos/id/1002/4312/2868'
+        },
+        {
+            id: 1,
+            isImage: true,
+            thumbnail: 'https://picsum.photos/id/102/367/267',
+            full: 'https://picsum.photos/id/102/4320/3240'
+        },
+        {
+            id: 2,
+            isImage: true,
+            thumbnail: 'https://picsum.photos/id/1047/367/267',
+            full: 'https://picsum.photos/id/1047/3264/2448'
+        },
+    ]}/>
+</div>;
+story3.story = {
+    name: 'Single start image',
 };

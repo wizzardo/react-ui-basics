@@ -133,6 +133,9 @@ export class Actions {
 
                     let ratio = fromWidth / fromHeight;
                     calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0);
+                } else {
+                    it.toLeft = 100;
+                    it.toTop = 100;
                 }
                 if (!it.toWidth || !it.toHeight)
                     Actions.loadPreview(it)(dispatch);

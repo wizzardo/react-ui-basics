@@ -158,6 +158,17 @@ export class Actions {
             },
         };
 
+        data.images.forEach(it => {
+            if (!it.fromLeftPx) {
+                const imageWithFromData = data.images.find(it => !!it.fromLeftPx);
+                if (imageWithFromData) {
+                    it.fromLeftPx = imageWithFromData.fromLeftPx;
+                    it.fromTopPx = imageWithFromData.fromTopPx;
+                    it.fromWidthPx = imageWithFromData.fromWidthPx;
+                    it.fromHeightPx = imageWithFromData.fromHeightPx;
+                }
+            }
+        });
         data.previews.scroll = calculatePreviewsScroll(data.index, length, data.previews.width);
 
         dispatch({type: ACTION_IMAGE_GALLERY_SHOW, data});

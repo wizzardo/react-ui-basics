@@ -1,6 +1,6 @@
 import React from 'react';
 import "./index.css"
-import Scrollable, {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
+import Scrollable, {SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE} from "../react-ui-basics/Scrollable";
 
 export default {
     title: 'Scrollable',
@@ -71,4 +71,12 @@ class Story3Holder extends React.Component {
 export const story3 = () => <Story3Holder/>;
 story3.story = {
     name: 'inverted',
+};
+
+
+export const story4 = () => <Scrollable horizontalScrollBarMode={SCROLLBAR_MODE_AUTO}>
+  {createList(100).map((item) => <div style={{whiteSpace: 'nowrap'}} key={item.id}>{item.label} {item.label} {item.label} {item.label} {item.label} {item.label}</div>)}
+</Scrollable>;
+story4.story = {
+  name: 'horizontal scrollable',
 };

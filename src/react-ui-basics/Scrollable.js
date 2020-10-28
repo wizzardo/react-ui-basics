@@ -4,22 +4,25 @@ import PropTypes from 'prop-types';
 import './Scrollable.css'
 import {classNames, preventDefault, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, setInterval, clearInterval, createRef, orNoop, NOOP} from "./Tools";
 import {propsGetter, stateGS, PureComponent, render, componentDidMount, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
-import Table from "./Table";
 
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
 export const SCROLLBAR_MODE_VISIBLE = 'visible';
 export const SCROLLBAR_MODE_AUTO = 'auto';
 
 let NATIVE_SCROLL_WIDTH = -1;
+let NATIVE_SCROLL_HEIGHT = -1;
 
 const WITHOUT_SCROLL = 'without-scroll';
 const WITH_SCROLL = 'with-scroll';
 
 const createFieldGetter = field => el => el[field];
 const scrollHeightOf = createFieldGetter('scrollHeight');
+const scrollWidthOf = createFieldGetter('scrollWidth');
 const offsetHeightOf = createFieldGetter('offsetHeight');
+const offsetWidthOf = createFieldGetter('offsetWidth');
 const styleOf = createFieldGetter('style');
 const scrollBarModeOf = createFieldGetter('scrollBarMode');
+const horizontalScrollBarModeOf = createFieldGetter('horizontalScrollBarMode');
 
 class Scrollable extends PureComponent {
 
@@ -30,11 +33,14 @@ class Scrollable extends PureComponent {
 
         const props = propsGetter(that);
         const status = stateGS(that);
+        const statusH = stateGS(that);
 
         const containerRef = createRef();
         const viewportRef = createRef();
         const scrollbarRef = createRef();
+        const horizontalScrollbarRef = createRef();
         const thumbRef = createRef();
+        const horizontalThumbRef = createRef();
 
         let resizeInterval;
         let initTimeout;
@@ -47,31 +53,45 @@ class Scrollable extends PureComponent {
         const init = () => {
             clear();
 
-            if (scrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
+            if (scrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN && horizontalScrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
                 status(WITHOUT_SCROLL);
+                statusH(WITHOUT_SCROLL);
                 return;
             }
 
             const viewport = viewportRef();
             const scrollbar = scrollbarRef();
+            const scrollbarH = horizontalScrollbarRef();
             const container = containerRef();
             const thumb = thumbRef();
+            const thumbH = horizontalThumbRef();
 
             let scrolling = false;
             let scrolledToBottom = false;
             let scrolledToTop = false;
             let adjustedScrollWidth = false;
             let lastY = 0;
-            let scrollY = 0;
+            let lastX = 0;
             let ratio = 0;
+            let ratioH = 0;
 
             viewport.onscroll = (e) => {
                 const scrollHeight = scrollHeightOf(viewport);
                 const offsetHeight = offsetHeightOf(viewport);
+                const scrollWidth = scrollWidthOf(viewport);
+                const offsetWidth = offsetWidthOf(viewport);
                 const scrollbarHeight = offsetHeightOf(scrollbar);
-                const position = viewport.scrollTop / (scrollHeight - offsetHeight);
+                const scrollbarWidth = offsetWidthOf(scrollbarH);
+                let position = viewport.scrollTop / (scrollHeight - offsetHeight);
+                const positionH = viewport.scrollLeft / (scrollWidth - offsetWidth);
+
+                if (position > 1) {
+                    viewport.scrollTop = scrollHeight - offsetHeight;
+                    position = 1
+                }
 
                 styleOf(thumb).top = (position * (scrollbarHeight - offsetHeightOf(thumb))) + 'px';
+                styleOf(thumbH).left = (positionH * (scrollbarWidth - offsetWidthOf(thumbH))) + 'px';
 
                 if (position >= 0.98) {
                     !scrolledToBottom && orNoop(props().onScrolledToBottom)();
@@ -93,19 +113,24 @@ class Scrollable extends PureComponent {
                 scrolling = false;
             };
             const moveListener = (e) => {
-                if (scrolling) {
-                    if (e.buttons === 0) {
-                        reset();
-                    } else {
-                        viewport.scrollTop += (e.clientY - lastY) * ratio;
-                        lastY = e.clientY;
-                    }
+                if (!scrolling)
+                    return;
+
+                if (e.buttons === 0) {
+                    reset();
+                }
+
+                if (scrolling === 'v') {
+                    viewport.scrollTop += (e.clientY - lastY) * ratio;
+                    lastY = e.clientY;
+                } else if (scrolling === 'h') {
+                    viewport.scrollLeft += (e.clientX - lastX) * ratioH;
+                    lastX = e.clientX;
                 }
             };
             thumb.onmousedown = (e) => {
                 lastY = e.clientY;
-                scrollY = viewport.scrollTop;
-                scrolling = true;
+                scrolling = 'v';
                 ratio = scrollHeightOf(viewport) / offsetHeightOf(viewport);
 
                 addEventListener(WINDOW, 'mouseup', reset);
@@ -113,10 +138,28 @@ class Scrollable extends PureComponent {
             };
             thumb.ondragstart = preventDefault;
             thumb.onmouseup = reset;
+
+            thumbH.onmousedown = (e) => {
+                lastX = e.clientX;
+                scrolling = 'h';
+                ratioH = scrollWidthOf(viewport) / offsetWidthOf(viewport);
+
+                addEventListener(WINDOW, 'mouseup', reset);
+                addEventListener(WINDOW, 'mousemove', moveListener);
+            };
+            thumbH.ondragstart = preventDefault;
+            thumbH.onmouseup = reset;
+
             scrollbar.onclick = (e) => {
                 if (e.target === scrollbar) {
                     let thumbPosition = parseInt(styleOf(thumb).top);
                     viewport.scrollTop += offsetHeightOf(viewport) * 0.9 * (e.offsetY < thumbPosition ? -1 : 1);
+                }
+            };
+            scrollbarH.onclick = (e) => {
+                if (e.target === scrollbarH) {
+                    let thumbPosition = parseInt(styleOf(thumbH).left);
+                    viewport.scrollLeft += offsetWidthOf(viewport) * 0.9 * (e.offsetX < thumbPosition ? -1 : 1);
                 }
             };
 
@@ -127,10 +170,22 @@ class Scrollable extends PureComponent {
                         NATIVE_SCROLL_WIDTH = -1;
                     }
                 }
+                if (NATIVE_SCROLL_HEIGHT < 0) {
+                    NATIVE_SCROLL_HEIGHT = viewport.offsetHeight - viewport.clientHeight;
+                    if (NATIVE_SCROLL_HEIGHT === 0 && scrollWidthOf(viewport) !== offsetWidthOf(viewport)) {
+                        NATIVE_SCROLL_HEIGHT = -1;
+                    }
+                }
 
-                if (!adjustedScrollWidth && NATIVE_SCROLL_WIDTH >= 0) {
-                    styleOf(viewport).paddingRight = (50) + 'px';
-                    styleOf(viewport).marginRight = -(NATIVE_SCROLL_WIDTH + 50) - scrollbar.clientWidth + 'px';
+                if (!adjustedScrollWidth) {
+                    if (NATIVE_SCROLL_WIDTH >= 0) {
+                        styleOf(viewport).paddingRight = (NATIVE_SCROLL_WIDTH) + 'px';
+                        styleOf(viewport).marginRight = -(NATIVE_SCROLL_WIDTH) - scrollbar.clientWidth + 'px';
+                    }
+                    if (NATIVE_SCROLL_HEIGHT >= 0) {
+                        styleOf(viewport).paddingBottom = (NATIVE_SCROLL_HEIGHT) + 'px';
+                        styleOf(viewport).marginBottom = -(NATIVE_SCROLL_HEIGHT) - scrollbarH.clientHeight + 'px';
+                    }
                     adjustedScrollWidth = true;
                 }
             };
@@ -140,62 +195,124 @@ class Scrollable extends PureComponent {
             const showScrollbar = (scrollbar, viewport, adjustScrollWidth) => {
                 styleOf(scrollbar).visibility = 'inherit';
                 styleOf(scrollbar).bottom = '0'; //enable scrollbar
-                styleOf(viewport).overflow = '';
+                styleOf(viewport).overflowY = '';
                 adjustScrollWidth();
                 status() !== WITH_SCROLL && status(WITH_SCROLL);
             };
 
             const hideScrollbar = (scrollbar, viewport) => {
                 styleOf(scrollbar).visibility = 'hidden'; //disable scrollbar
-                styleOf(viewport).overflow = 'inherit';
+                styleOf(viewport).overflowY = 'inherit';
                 styleOf(viewport).paddingRight = '0';
                 styleOf(viewport).marginRight = '0';
                 status() !== WITHOUT_SCROLL && status(WITHOUT_SCROLL);
             };
 
+            const showHorizontalScrollbar = (scrollbar, viewport, adjustScrollWidth) => {
+                styleOf(scrollbar).visibility = 'inherit';
+                styleOf(scrollbar).right = '0'; //enable scrollbar
+                styleOf(viewport).overflowX = '';
+                adjustScrollWidth();
+                statusH() !== WITH_SCROLL && statusH(WITH_SCROLL);
+            };
+
+            const hideHorizontalScrollbar = (scrollbar, viewport) => {
+                styleOf(scrollbar).visibility = 'hidden'; //disable scrollbar
+                styleOf(viewport).overflowX = 'inherit';
+                styleOf(viewport).paddingBottom = '0';
+                styleOf(viewport).marginBottom = '0';
+                statusH() !== WITHOUT_SCROLL && statusH(WITHOUT_SCROLL);
+            };
+
+            const updateVerticalScrollbar = () => {
+                const scrollHeight = scrollHeightOf(viewport);
+                const scrollbarHeight = offsetHeightOf(scrollbar);
+
+                !adjustedScrollWidth && adjustScrollWidth();
+
+                const newRatio = scrollHeight / scrollbarHeight;
+                if ((ratio === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
+
+                const offsetHeight = offsetHeightOf(viewport);
+                let containerOffsetHeight = offsetHeightOf(container);
+                if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
+                    return;
+
+                if (props().autoScrollTop && scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
+                    viewport.scrollTop = 0; // scroll to top if scrollbar gets smaller
+                }
+
+                ratio = newRatio;
+                styleOf(thumb).height = (scrollbarHeight / newRatio) + 'px';
+
+                styleOf(container).height = scrollHeight + 'px';
+                containerOffsetHeight = offsetHeightOf(container);
+
+                if (scrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
+                    if (status() !== WITHOUT_SCROLL)
+                        hideScrollbar(scrollbar, viewport);
+
+                    return
+                }
+
+                if (containerOffsetHeight < scrollHeight) {
+                    adjustedScrollWidth = false;
+                    showScrollbar(scrollbar, viewport, adjustScrollWidth);
+                } else {
+                    hideScrollbar(scrollbar, viewport);
+                }
+
+                scrolledToBottom = false;
+                scrolledToTop = false;
+
+                const position = viewport.scrollTop / (scrollHeight - offsetHeight);
+                styleOf(thumb).top = (position * (scrollbarHeight - offsetHeightOf(thumb))) + 'px';
+            };
+
+            const updateHorizontalScrollbar = () => {
+
+                const scrollWidth = scrollWidthOf(viewport);
+                const scrollbarWidth = offsetWidthOf(scrollbarH);
+
+                !adjustedScrollWidth && adjustScrollWidth();
+
+                const newRatio = scrollWidth / scrollbarWidth;
+                if ((ratioH === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
+
+                const offsetWidth = offsetWidthOf(viewport);
+                let containerOffsetWidth = offsetWidthOf(container);
+                if (containerOffsetWidth === scrollWidth && statusH() === WITHOUT_SCROLL)
+                    return;
+
+                ratioH = newRatio;
+                styleOf(thumbH).width = (scrollbarWidth / newRatio) + 'px';
+
+
+                if (horizontalScrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
+                    if (statusH() !== WITHOUT_SCROLL)
+                        hideHorizontalScrollbar(scrollbarH, viewport);
+
+                    return
+                }
+
+                styleOf(container).width = scrollWidth + 'px';
+                containerOffsetWidth = offsetWidthOf(container);
+
+                if (containerOffsetWidth < scrollWidth) {
+                    adjustedScrollWidth = false;
+                    showHorizontalScrollbar(scrollbarH, viewport, adjustScrollWidth);
+                } else {
+                    hideHorizontalScrollbar(scrollbarH, viewport);
+                }
+
+                const position = viewport.scrollLeft / (scrollWidth - offsetWidth);
+                styleOf(thumbH).left = (position * (scrollbarWidth - offsetWidthOf(thumbH))) + 'px';
+            };
+
             initTimeout = setTimeout(() => {
                 resizeInterval = setInterval(() => {
-                    const scrollHeight = scrollHeightOf(viewport);
-                    const scrollbarHeight = offsetHeightOf(scrollbar);
-
-                    !adjustedScrollWidth && adjustScrollWidth();
-
-                    const newRatio = scrollHeight / scrollbarHeight;
-                    if ((ratio === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
-
-                    const offsetHeight = offsetHeightOf(viewport);
-                    let containerOffsetHeight = offsetHeightOf(container);
-                    if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
-                        return;
-
-                    if (props().autoScrollTop && scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
-                        viewport.scrollTop = 0; // scroll to top if scrollbar gets smaller
-                    }
-
-                    ratio = newRatio;
-                    styleOf(thumb).height = (scrollbarHeight / newRatio) + 'px';
-                    styleOf(container).height = scrollHeight + 'px';
-                    containerOffsetHeight = offsetHeightOf(container);
-
-                    if (scrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
-                        if (status() !== WITHOUT_SCROLL)
-                            hideScrollbar(scrollbar, viewport);
-
-                        return
-                    }
-
-                    if (containerOffsetHeight < scrollHeight) {
-                        adjustedScrollWidth = false;
-                        showScrollbar(scrollbar, viewport, adjustScrollWidth);
-                    } else {
-                        hideScrollbar(scrollbar, viewport);
-                    }
-
-                    scrolledToBottom = false;
-                    scrolledToTop = false;
-
-                    const position = viewport.scrollTop / (scrollHeight - offsetHeight);
-                    styleOf(thumb).top = (position * (scrollbarHeight - offsetHeightOf(thumb))) + 'px';
+                    updateVerticalScrollbar();
+                    updateHorizontalScrollbar();
                 }, 50);
             }, 200)
         };
@@ -219,12 +336,15 @@ class Scrollable extends PureComponent {
             const _props = props();
             const {className, children} = _props;
             return (
-                <div className={classNames('Scrollable', className, status() || WITH_SCROLL)} style={styleOf(_props)} ref={containerRef}>
+                <div className={classNames('Scrollable', className, status() || WITH_SCROLL, statusH() + '-horizontal')} style={styleOf(_props)} ref={containerRef}>
                     <div className="viewport" ref={viewportRef}>
                         {children}
                     </div>
                     <div className={classNames('scrollbar', scrollBarModeOf(_props) || SCROLLBAR_MODE_AUTO)} ref={scrollbarRef}>
                         <div className="thumb" ref={thumbRef}/>
+                    </div>
+                    <div className={classNames('scrollbar horizontal', horizontalScrollBarModeOf(_props))} ref={horizontalScrollbarRef}>
+                        <div className="thumb" ref={horizontalThumbRef}/>
                     </div>
                 </div>
             )
@@ -236,11 +356,13 @@ export default Scrollable
 
 Scrollable.defaultProps = {
     autoScrollTop: true,
+    horizontalScrollBarMode: SCROLLBAR_MODE_HIDDEN
 };
 
 if (window.isNotProductionEnvironment) {
     Scrollable.propTypes = {
         scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE]),
+        horizontalScrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE]),
         className: PropTypes.string,
         style: PropTypes.object,
         onScrolledToBottom: PropTypes.func,

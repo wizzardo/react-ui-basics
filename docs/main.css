@@ -705,6 +705,7 @@
 
 .Scrollable {
   max-height: 250px;
+  max-width: 250px;
   padding-right: 5px;
   position: relative;
   display: flex;
@@ -717,10 +718,12 @@
     opacity: 1; }
   .Scrollable .viewport {
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: scroll;
     max-height: 100%; }
     .Scrollable .viewport::-webkit-scrollbar {
       display: none; }
+  .Scrollable.without-scroll-horizontal {
+    max-width: unset; }
   .Scrollable.without-scroll {
     padding-right: 0; }
     .Scrollable.without-scroll > .viewport {
@@ -741,10 +744,6 @@
     z-index: 1; }
     .Scrollable .scrollbar.auto, .Scrollable .scrollbar.hidden {
       opacity: 0; }
-    .Scrollable .scrollbar.visible, .Scrollable .scrollbar:active {
-      -webkit-transition-delay: 0s;
-              transition-delay: 0s;
-      opacity: 1; }
     .Scrollable .scrollbar .thumb {
       background-color: rgba(0, 0, 0, 0.3);
       width: 5px;
@@ -761,6 +760,18 @@
         background-color: rgba(0, 0, 0, 0.5); }
       .Scrollable .scrollbar .thumb:active {
         background-color: rgba(0, 0, 0, 0.7); }
+  .Scrollable .scrollbar.horizontal {
+    left: 0px;
+    right: 0px;
+    height: 5px;
+    bottom: 0;
+    width: unset;
+    top: unset; }
+    .Scrollable .scrollbar.horizontal .thumb {
+      height: 5px;
+      left: 0px;
+      bottom: 0px;
+      will-change: left; }
 
 .AutocompleteSelect {
   display: inline-flex;

@@ -1,5 +1,6 @@
 .Scrollable {
   max-height: 250px;
+  max-width: 250px;
   padding-right: 5px;
   position: relative;
   display: flex;
@@ -14,7 +15,7 @@
 
   .viewport {
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: scroll;
     max-height: 100%;
 
     //force hide scrollbar for mac-os
@@ -24,6 +25,10 @@
   }
 
   &.with-scroll {
+  }
+
+  &.without-scroll-horizontal {
+    max-width: unset;
   }
 
   &.without-scroll {
@@ -53,11 +58,6 @@
       opacity: 0;
     }
 
-    &.visible, &:active {
-      transition-delay: 0s;
-      opacity: 1;
-    }
-
     .thumb {
       background-color: rgba(0, 0, 0, 0.3);
       width: 5px;
@@ -75,6 +75,23 @@
       &:active {
         background-color: rgba(0, 0, 0, 0.7);
       }
+    }
+  }
+
+  .scrollbar.horizontal {
+    left: 0px;
+    right: 0px;
+    height: 5px;
+    bottom: 0;
+
+    width: unset;
+    top: unset;
+
+    .thumb {
+      height: 5px;
+      left: 0px;
+      bottom: 0px;
+      will-change: left;
     }
   }
 }

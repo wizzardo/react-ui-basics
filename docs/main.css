@@ -727,7 +727,6 @@
   .Scrollable.without-scroll {
     padding-right: 0; }
     .Scrollable.without-scroll > .viewport {
-      overflow: inherit;
       padding-right: 0;
       margin-right: 0; }
     .Scrollable.without-scroll > .scrollbar {

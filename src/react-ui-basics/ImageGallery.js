@@ -19,15 +19,22 @@ const previewWidth = previewRatio * previewHeight;
 const previewPadding = 12;
 const previewsHeight = previewHeight + 15;
 
-const calculatePosition = (it, ratio, width, height, previewsHeight) => {
-    const windowWidth = min(DOCUMENT.body.clientWidth, WINDOW.innerWidth);
-    const windowHeight = min(DOCUMENT.body.clientHeight, WINDOW.innerHeight);
+const calculatePosition = (it, ratio, width, height, previewsHeight, embedded, container) => {
+    const windowWidth = embedded ? container.clientWidth : min(DOCUMENT.body.clientWidth, WINDOW.innerWidth);
+    const windowHeight = embedded ? container.clientHeight : min(DOCUMENT.body.clientHeight, WINDOW.innerHeight);
 
-    const offset = windowHeight * 0.03;
+    const offset = embedded ? 0 : windowHeight * 0.03;
     if (Number.isNaN(ratio))
         ratio = 0;
-
-    if (ratio > 1) {
+    if (embedded) {
+        if (ratio > 1) {
+            it.toHeight = windowHeight - previewsHeight - 2 * offset;
+            it.toWidth = it.toHeight * ratio;
+        } else {
+            it.toWidth = windowWidth - offset * 2;
+            it.toHeight = it.toWidth / ratio;
+        }
+    } else if (ratio > 1) {
         it.toWidth = windowWidth - offset * 2;
         it.toHeight = it.toWidth / ratio;
         if (it.toHeight > windowHeight - previewsHeight - 2 * offset) {
@@ -43,10 +50,10 @@ const calculatePosition = (it, ratio, width, height, previewsHeight) => {
         }
     }
 
-    if (width && it.toWidth > width) {
-        it.toWidth = width;
-        it.toHeight = height;
-    }
+    // if (width && it.toWidth > width) {
+    //     it.toWidth = width;
+    //     it.toHeight = height;
+    // }
 
     it.toTop = offset + (windowHeight - previewsHeight - 2 * offset - it.toHeight) / 2;
     it.toLeft = (windowWidth - it.toWidth) / 2;
@@ -116,9 +123,15 @@ export class Actions {
     static show = (gallery) => (dispatch) => {
         const images = gallery.images;
         const length = images.length;
-        const withPreviews = length > 1;
+        const withPreviews = length > 1 && (gallery.withPreviews === UNDEFINED || !!gallery.withPreviews);
+        const container = gallery.container;
+        const embedded = gallery.embedded;
+        const index = gallery.index;
         const data = {
-            index: gallery.index,
+            index,
+            container,
+            embedded,
+            withPreviews,
             images: images.map(it => {
                 const el = it.el;
                 if (el) {
@@ -132,12 +145,12 @@ export class Actions {
                     it.fromHeightPx = toPx(fromHeight);
 
                     let ratio = fromWidth / fromHeight;
-                    calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0);
+                    calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0, embedded, container);
                 } else {
                     it.toLeft = 100;
                     it.toTop = 100;
                 }
-                if (!it.toWidth || !it.toHeight)
+                if (!it.toWidth || !it.toHeight || !el)
                     Actions.loadPreview(it)(dispatch);
                 return it;
             }),
@@ -169,10 +182,10 @@ export class Actions {
                 }
             }
         });
-        data.previews.scroll = calculatePreviewsScroll(data.index, length, data.previews.width);
+        data.previews.scroll = calculatePreviewsScroll(index, length, data.previews.width);
 
         dispatch({type: ACTION_IMAGE_GALLERY_SHOW, data});
-        Actions.load(data.images[data.index])(dispatch)
+        Actions.load(data.images[index])(dispatch)
     };
     static close = () => (dispatch) => {
         dispatch({type: ACTION_IMAGE_GALLERY_CLOSE});
@@ -208,7 +221,7 @@ const reducers = {
         const it = {...images[index], loaded: true};
         // debugger
         // if (it.toWidth > image.width)
-        calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0);
+        calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0, state.embedded, state.container);
         images[index] = it;
         return result;
     },
@@ -219,8 +232,9 @@ const reducers = {
         const result = {...state, images};
         const index = images.findIndex(it => it.id === item.id);
         const it = {...images[index]};
+
         if (!it.toWidth || !it.toHeight)
-            calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0);
+            calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0, state.embedded, state.container);
         images[index] = it;
 
         const previewImages = [...state.previews.images];
@@ -275,10 +289,12 @@ const big = (it, index, i, shift, length, previous) => {
 
     if (index !== i) {
         const width = WINDOW.innerWidth;
+        const additionalOffset = it.toLeft < 0 ? -it.toLeft : 0;
+
         if (i < index)
-            styles.left = toPx(it.toLeft - width + (i + 1 === index ? shift : 0));
+            styles.left = toPx(it.toLeft - width - additionalOffset + (i + 1 === index ? shift : 0));
         else
-            styles.left = toPx(it.toLeft + width + (i - 1 === index ? shift : 0));
+            styles.left = toPx(it.toLeft + width + additionalOffset + (i - 1 === index ? shift : 0));
     }
     return styles;
 };
@@ -314,7 +330,7 @@ class ImageGallery extends React.Component {
             }
         }
 
-        const resizeListener = () => props().open && props().show(props())
+        const resizeListener = () => props().open && props().show({...props()})
         that[componentDidMount] = () => {
             addEventListener(WINDOW, 'resize', resizeListener)
         }
@@ -333,7 +349,7 @@ class ImageGallery extends React.Component {
             }
             if (keyCode === 27/*escape*/) {
                 zoomed(false)
-                props().close();
+                !props().embedded && props().close();
             }
             preventDefault(e);
         };
@@ -347,7 +363,7 @@ class ImageGallery extends React.Component {
         };
 
         const onTouchMove = e => {
-            if (!touchesStart())
+            if (!touchesStart() || zoomed())
                 return;
 
             const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
@@ -381,7 +397,7 @@ class ImageGallery extends React.Component {
                 distX < 0 ? right() : left();
                 e.swipeProcessed = true
             } else if (abs(distY / distX) > 2 && abs(distY) > minDistance) {
-                props().close();
+                !props().embedded && props().close();
                 e.swipeProcessed = true
             }
         };
@@ -427,7 +443,7 @@ class ImageGallery extends React.Component {
 
         that[render] = () => {
             const {open, close} = props();
-            const {images = [], previews = {}} = props();
+            const {images = [], previews = {}, indicator, embedded} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             const length = images.length;
@@ -436,11 +452,11 @@ class ImageGallery extends React.Component {
             const previousValue = previous();
             return (
                 <Animated value={open}>
-                    <div className={'ImageGallery'}
+                    <div className={classNames('ImageGallery', embedded && 'embedded')}
                          tabIndex={0}
-                         ref={it => (that.gallery = it) && it.focus()}
+                         ref={it => (that.gallery = it) && !embedded && it.focus()}
                          onKeyDown={onKeyDown}
-                         onClick={e => e.target === that.gallery && !e.swipeProcessed && close()}
+                         onClick={e => e.target === that.gallery && !e.swipeProcessed && !embedded && close()}
                          onTouchStart={onTouchStart}
                          onTouchMove={onTouchMove}
                          onTouchEnd={onTouchEnd}
@@ -481,17 +497,23 @@ class ImageGallery extends React.Component {
                                             }, 0);
                                         }
                                     }}
-                                    key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed')}
+                                    key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
                                 >
                                     <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
 
                                     {!it.loaded && <div className={'spinner'}><SpinningProgress/></div>}
 
-                                    {animatedRoundButton(open && !isZoomed,
+                                    {!embedded && animatedRoundButton(open && !isZoomed,
                                         'close',
                                         close,
                                         'close'
                                     )}
+
+                                    <div className="counter">
+                                        {indexValue + 1} / {length}
+                                    </div>
+
+                                    {!isZoomed && it.loaded && it.overlay}
                                 </div>
                             </Animated>;
                         })}
@@ -499,13 +521,13 @@ class ImageGallery extends React.Component {
                         {animatedRoundButton(open && length > 1 && indexValue > 0 && !isZoomed,
                             'arrow left',
                             left,
-                            'arrow_back'
+                            'chevron_left'
                         )}
 
                         {animatedRoundButton(open && length > 1 && indexValue !== length - 1 && !isZoomed,
                             'arrow right',
                             right,
-                            'arrow_forward'
+                            'chevron_right'
                         )}
 
                         <Animated value={open && length > 1 && !isZoomed}>
@@ -513,6 +535,10 @@ class ImageGallery extends React.Component {
                                 {indexValue + 1} / {length}
                             </div>
                         </Animated>
+
+                        {indicator && <Animated value={open && length > 1 && !isZoomed}>
+                            {indicator(indexValue, length)}
+                        </Animated>}
 
                         <Animated value={open && previews.show && !isZoomed}>
                             <div className="previews" style={{width: previews.width}}>
@@ -563,37 +589,45 @@ export const mapStateToProps = (state, ownProps) => state[IMAGE_GALLERY_REDUCER_
 export default ImageGallery;
 
 export class ImageGalleryContainer extends React.Component {
-    constructor(props) {
-        super(props);
+    constructor(properties) {
+        super(properties);
         const that = this;
 
         that.state = IMAGE_GALLERY_REDUCER(null, {})
 
         const dispatch = (action) => setTimeout(() => {
-            console.log('before action', action, that.state)
+            // console.log('before action', action, that.state)
             const state = IMAGE_GALLERY_REDUCER(that.state, action);
-            console.log('after action', action, state)
+            // console.log('after action', action, state)
             if (state !== that.state)
                 that.setState(state)
         }, 0)
 
+        const props = propsGetter(that)
 
-        that.show = (gallery) => {
+        const embedded = 'embedded'
+
+        const show = that.show = (gallery) => {
+            gallery[embedded] = !!props()[embedded]
+            if (gallery[embedded])
+                gallery.container = props().containerRef();
             Actions.show(gallery)(dispatch)
         };
-        that.close = () => {
+        const close = that.close = () => {
             Actions.close()(dispatch)
         };
-        that.load = (item) => {
+        const load = that.load = (item) => {
             Actions.load(item)(dispatch)
         };
-    }
 
-    render() {
-        return <ImageGallery {...this.state}
-                             show={this.show}
-                             load={this.load}
-                             close={this.close}
-        />;
+
+        that[render] = () => <ImageGallery {...that.props} {...that.state} show={show} load={load} close={close}/>
+
+        that[componentDidMount] = () => {
+            props()[embedded] && show(props()[embedded])
+        }
+        that[componentDidUpdate] = (prevProps, prevState) => {
+            prevProps[embedded] !== props()[embedded] && props()[embedded] && show(props()[embedded])
+        }
     }
 }

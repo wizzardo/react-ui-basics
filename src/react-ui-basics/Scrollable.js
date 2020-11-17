@@ -178,12 +178,12 @@ class Scrollable extends PureComponent {
                 }
 
                 if (!adjustedScrollWidth) {
-                    if (NATIVE_SCROLL_WIDTH >= 0) {
-                        styleOf(viewport).paddingRight = (NATIVE_SCROLL_WIDTH) + 'px';
+                    if (NATIVE_SCROLL_WIDTH >= 0 && status() !== WITHOUT_SCROLL) {
+                        styleOf(viewport).paddingRight = (NATIVE_SCROLL_WIDTH) + scrollbar.clientWidth + 'px';
                         styleOf(viewport).marginRight = -(NATIVE_SCROLL_WIDTH) - scrollbar.clientWidth + 'px';
                     }
-                    if (NATIVE_SCROLL_HEIGHT >= 0) {
-                        styleOf(viewport).paddingBottom = (NATIVE_SCROLL_HEIGHT) + 'px';
+                    if (NATIVE_SCROLL_HEIGHT >= 0 && statusH() !== WITHOUT_SCROLL) {
+                        styleOf(viewport).paddingBottom = (NATIVE_SCROLL_HEIGHT) + scrollbarH.clientHeight + 'px';
                         styleOf(viewport).marginBottom = -(NATIVE_SCROLL_HEIGHT) - scrollbarH.clientHeight + 'px';
                     }
                     adjustedScrollWidth = true;
@@ -234,7 +234,9 @@ class Scrollable extends PureComponent {
                 if ((ratio === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
 
                 const offsetHeight = offsetHeightOf(viewport);
-                let containerOffsetHeight = offsetHeightOf(container);
+                const horizontalScrollBarOffset = statusH() !== WITHOUT_SCROLL ? scrollbarH.clientHeight + Math.max(NATIVE_SCROLL_HEIGHT, 0) : 0;
+
+                let containerOffsetHeight = offsetHeightOf(container) + horizontalScrollBarOffset;
                 if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
                     return;
 
@@ -245,8 +247,8 @@ class Scrollable extends PureComponent {
                 ratio = newRatio;
                 styleOf(thumb).height = (scrollbarHeight / newRatio) + 'px';
 
-                styleOf(container).height = scrollHeight + 'px';
-                containerOffsetHeight = offsetHeightOf(container);
+                styleOf(container).height = scrollHeight - horizontalScrollBarOffset + 'px';
+                containerOffsetHeight = offsetHeightOf(container) + horizontalScrollBarOffset;
 
                 if (scrollBarModeOf(props()) === SCROLLBAR_MODE_HIDDEN) {
                     if (status() !== WITHOUT_SCROLL)
@@ -280,7 +282,10 @@ class Scrollable extends PureComponent {
                 if ((ratioH === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
 
                 const offsetWidth = offsetWidthOf(viewport);
-                let containerOffsetWidth = offsetWidthOf(container);
+
+                const verticalScrollBarOffset = status() !== WITHOUT_SCROLL ? scrollbar.clientWidth + Math.max(NATIVE_SCROLL_WIDTH, 0) : 0;
+                let containerOffsetWidth = offsetWidthOf(container) + verticalScrollBarOffset;
+
                 if (containerOffsetWidth === scrollWidth && statusH() === WITHOUT_SCROLL)
                     return;
 
@@ -295,8 +300,8 @@ class Scrollable extends PureComponent {
                     return
                 }
 
-                styleOf(container).width = scrollWidth + 'px';
-                containerOffsetWidth = offsetWidthOf(container);
+                styleOf(container).width = (scrollWidth - verticalScrollBarOffset) + 'px';
+                containerOffsetWidth = offsetWidthOf(container) + verticalScrollBarOffset;
 
                 if (containerOffsetWidth < scrollWidth) {
                     adjustedScrollWidth = false;

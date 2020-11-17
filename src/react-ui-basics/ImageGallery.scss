@@ -11,6 +11,10 @@
   background-color: rgba(0, 0, 0, 0.01);
   user-select: none;
 
+  &:focus {
+    outline-width: 0px;
+  }
+
   &.animated {
     transition: background-color 0.25s ease;
     opacity: 1;
@@ -23,6 +27,10 @@
   .image {
     position: absolute;
     cursor: grab;
+
+    .counter {
+      display: none;
+    }
 
     img {
       border-radius: 4px;

@@ -18,6 +18,8 @@
     overflow-x: scroll;
     max-height: 100%;
 
+    scrollbar-width: none ;
+
     //force hide scrollbar for mac-os
     &::-webkit-scrollbar {
       display: none;
@@ -33,6 +35,7 @@
 
   &.without-scroll {
     padding-right: 0;
+    max-height: unset;
 
     > .viewport {
       padding-right: 0;

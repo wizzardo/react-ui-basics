@@ -415,6 +415,8 @@
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
+  .ImageGallery:focus {
+    outline-width: 0px; }
   .ImageGallery.animated {
     -webkit-transition: background-color 0.25s ease;
     transition: background-color 0.25s ease;
@@ -425,6 +427,8 @@
     position: absolute;
     cursor: -webkit-grab;
     cursor: grab; }
+    .ImageGallery .image .counter {
+      display: none; }
     .ImageGallery .image img {
       border-radius: 4px;
       max-width: 100%;
@@ -719,13 +723,15 @@
   .Scrollable .viewport {
     overflow-y: scroll;
     overflow-x: scroll;
-    max-height: 100%; }
+    max-height: 100%;
+    scrollbar-width: none; }
     .Scrollable .viewport::-webkit-scrollbar {
       display: none; }
   .Scrollable.without-scroll-horizontal {
     max-width: unset; }
   .Scrollable.without-scroll {
-    padding-right: 0; }
+    padding-right: 0;
+    max-height: unset; }
     .Scrollable.without-scroll > .viewport {
       padding-right: 0;
       margin-right: 0; }

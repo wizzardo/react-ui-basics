@@ -417,8 +417,8 @@ class ImageGallery extends React.Component {
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             if (indexValue > 0)
                 scrollTo(indexValue - 1, indexValue)
-            // else
-            //     this.setState({index: images.length - 1, previous: index});
+            else if (props().loop)
+                scrollTo(props().images.length - 1, indexValue)
         };
 
         const right = (e) => {
@@ -430,8 +430,8 @@ class ImageGallery extends React.Component {
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             if (indexValue < images.length - 1)
                 scrollTo(indexValue + 1, indexValue)
-            // else
-            //     this.setState({index: 0, previous: index});
+            else if (props().loop)
+                scrollTo(0, indexValue)
         };
 
         const animatedRoundButton = (show, className, onClick, icon) => (
@@ -443,7 +443,7 @@ class ImageGallery extends React.Component {
 
         that[render] = () => {
             const {open, close} = props();
-            const {images = [], previews = {}, indicator, embedded} = props();
+            const {images = [], previews = {}, indicator, embedded, loop} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             const length = images.length;
@@ -518,13 +518,13 @@ class ImageGallery extends React.Component {
                             </Animated>;
                         })}
 
-                        {animatedRoundButton(open && length > 1 && indexValue > 0 && !isZoomed,
+                        {animatedRoundButton(open && length > 1 && (indexValue > 0 || loop) && !isZoomed,
                             'arrow left',
                             left,
                             'chevron_left'
                         )}
 
-                        {animatedRoundButton(open && length > 1 && indexValue !== length - 1 && !isZoomed,
+                        {animatedRoundButton(open && length > 1 && (indexValue !== length - 1 || loop) && !isZoomed,
                             'arrow right',
                             right,
                             'chevron_right'
@@ -556,12 +556,12 @@ class ImageGallery extends React.Component {
                                         </div>)}
                                 </div>
 
-                                {animatedRoundButton(indexValue > 0,
+                                {animatedRoundButton(indexValue > 0 || loop,
                                     'arrow left',
                                     left,
                                     'keyboard_arrow_left'
                                 )}
-                                {animatedRoundButton(indexValue !== length - 1,
+                                {animatedRoundButton(indexValue !== length - 1 || loop,
                                     'arrow right',
                                     right,
                                     'keyboard_arrow_right'

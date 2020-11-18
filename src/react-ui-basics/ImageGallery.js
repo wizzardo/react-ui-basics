@@ -4,7 +4,7 @@ import './ImageGallery.css'
 import Animated from "./Animated";
 import Button from "./Button";
 import SpinningProgress from "./SpinningProgress";
-import {UNDEFINED, preventDefault, stopPropagation, classNames, DOCUMENT, WINDOW, addEventListener, removeEventListener, setTimeout} from "./Tools";
+import {UNDEFINED, preventDefault, stopPropagation, classNames, DOCUMENT, WINDOW, addEventListener, removeEventListener, setTimeout, orNoop} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 import {componentDidUpdate, componentWillUnmount, componentDidMount, render, propsGetter, stateGSs} from "./ReactConstants";
 
@@ -283,9 +283,9 @@ const big = (it, index, i, shift, length, previous) => {
     };
 
 
-    if (previous !== UNDEFINED && abs(index - previous) > 1) {
-        styles.transitionDelay = 100 * abs(previous - i) + 'ms';
-    }
+    // if (previous !== UNDEFINED && abs(index - previous) > 1) {
+    //     styles.transitionDelay = 100 * abs(previous - i) + 'ms';
+    // }
 
     if (index !== i) {
         const width = WINDOW.innerWidth;
@@ -443,7 +443,7 @@ class ImageGallery extends React.Component {
 
         that[render] = () => {
             const {open, close} = props();
-            const {images = [], previews = {}, indicator, embedded, loop} = props();
+            const {images = [], previews = {}, indicator, embedded, loop,onClick} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             const length = images.length;
@@ -496,6 +496,9 @@ class ImageGallery extends React.Component {
                                                 container.scrollTop = top;
                                             }, 0);
                                         }
+                                    }}
+                                    onClick={() => {
+                                        orNoop(onClick)(it)
                                     }}
                                     key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
                                 >

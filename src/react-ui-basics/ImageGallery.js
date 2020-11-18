@@ -378,7 +378,7 @@ class ImageGallery extends React.Component {
         };
 
         const onTouchEnd = e => {
-            if (!touchesStart())
+            if (!touchesStart() || zoomed())
                 return;
 
             const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
@@ -443,7 +443,7 @@ class ImageGallery extends React.Component {
 
         that[render] = () => {
             const {open, close} = props();
-            const {images = [], previews = {}, indicator, embedded, loop,onClick} = props();
+            const {images = [], previews = {}, indicator, embedded, loop, onClick} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             const length = images.length;
@@ -497,14 +497,16 @@ class ImageGallery extends React.Component {
                                             }, 0);
                                         }
                                     }}
-                                    onClick={() => {
-                                        orNoop(onClick)(it)
+                                    onClick={(e) => {
+                                        !e.swipeProcessed && orNoop(onClick)(e, it, i)
                                     }}
                                     key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
                                 >
                                     <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
 
-                                    {!it.loaded && <div className={'spinner'}><SpinningProgress/></div>}
+                                    <Animated value={!it.loaded && Math.abs(indexValue - i) <= 1}>
+                                        <div className={'spinner'}><SpinningProgress/></div>
+                                    </Animated>
 
                                     {!embedded && animatedRoundButton(open && !isZoomed,
                                         'close',

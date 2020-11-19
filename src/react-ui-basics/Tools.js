@@ -53,9 +53,22 @@ export const continuousIncludes = (value, inc) => {
     return true;
 };
 
+export const debounce = (func, delay) => {
+    let inDebounce;
+    return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(inDebounce);
+        inDebounce = setTimeout(() => {
+            func.apply(context, args);
+        }, delay)
+    }
+};
+
 export const isDifferent = (a, b) => {
     if (a == null && b == null) return false;
     if (a == null || b == null) return true;
+    if (a === b) return false;
 
     const typeA = typeof a;
     const typeB = typeof b;
@@ -90,7 +103,7 @@ export const isDifferent = (a, b) => {
         return r
     }
 
-    return a !== b;
+    return false;
 };
 
 export const preventDefault = e => {

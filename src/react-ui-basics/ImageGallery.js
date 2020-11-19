@@ -4,7 +4,21 @@ import './ImageGallery.css'
 import Animated from "./Animated";
 import Button from "./Button";
 import SpinningProgress from "./SpinningProgress";
-import {UNDEFINED, preventDefault, stopPropagation, classNames, DOCUMENT, WINDOW, addEventListener, removeEventListener, setTimeout, orNoop} from "./Tools";
+import {
+    UNDEFINED,
+    preventDefault,
+    stopPropagation,
+    classNames,
+    DOCUMENT,
+    WINDOW,
+    addEventListener,
+    removeEventListener,
+    setTimeout,
+    orNoop,
+    createRef,
+    debounce,
+    isDifferent
+} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 import {componentDidUpdate, componentWillUnmount, componentDidMount, render, propsGetter, stateGSs} from "./ReactConstants";
 
@@ -116,6 +130,7 @@ const loadImage = (src, cb) => {
 const ACTION_PREFIX = 'IMAGE_GALLERY_';
 const ACTION_IMAGE_GALLERY_SHOW = ACTION_PREFIX + 'SHOW';
 const ACTION_IMAGE_GALLERY_CLOSE = ACTION_PREFIX + 'CLOSE';
+const ACTION_IMAGE_GALLERY_RECALCULATE = ACTION_PREFIX + 'RECALCULATE';
 const ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED = ACTION_PREFIX + 'FULL_IMAGE_LOADED';
 const ACTION_IMAGE_GALLERY_PREVIEW_LOADED = ACTION_PREFIX + 'PREVIEW_LOADED';
 
@@ -132,7 +147,8 @@ export class Actions {
             container,
             embedded,
             withPreviews,
-            images: images.map(it => {
+            images: images.map(item => {
+                const it = {...item}
                 const el = it.el;
                 if (el) {
                     const rect = el.getBoundingClientRect();
@@ -190,6 +206,9 @@ export class Actions {
     static close = () => (dispatch) => {
         dispatch({type: ACTION_IMAGE_GALLERY_CLOSE});
     };
+    static recalculate = () => (dispatch) => {
+        dispatch({type: ACTION_IMAGE_GALLERY_RECALCULATE});
+    };
     static loaded = (item, image) => (dispatch) => {
         dispatch({type: ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED, item, image});
     };
@@ -212,16 +231,35 @@ export class Actions {
 const reducers = {
     [ACTION_IMAGE_GALLERY_SHOW]: (state, action) => ({...action.data, open: true}),
     [ACTION_IMAGE_GALLERY_CLOSE]: (state, action) => ({...state, open: false}),
+    [ACTION_IMAGE_GALLERY_RECALCULATE]: (state, action) => {
+        const images = [...state.images];
+        const result = {...state, images};
+        for (let i = 0; i < images.length; i++) {
+            if (!images[i].width && !images[i].fromWidthPx)
+                continue
+
+            const it = {...images[i]};
+            const width = it.width || Number.parseInt(it.fromWidthPx);
+            const height = it.height || Number.parseInt(it.fromHeightPx);
+            calculatePosition(it, width / height, width, height, result.previews.show ? previewsHeight : 0, state.embedded, state.container);
+            images[i] = it;
+        }
+
+        return result;
+    },
     [ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED]: (state, action) => {
         const item = action.item;
         const image = action.image;
         const images = [...state.images];
         const result = {...state, images};
         const index = images.findIndex(it => it.id === item.id);
-        const it = {...images[index], loaded: true};
+
+        const width = image.width
+        const height = image.height
+        const it = {...images[index], loaded: true, width, height};
         // debugger
         // if (it.toWidth > image.width)
-        calculatePosition(it, image.width / image.height, image.width, image.height, result.previews.show ? previewsHeight : 0, state.embedded, state.container);
+        calculatePosition(it, width / height, width, height, result.previews.show ? previewsHeight : 0, state.embedded, state.container);
         images[index] = it;
         return result;
     },
@@ -330,7 +368,9 @@ class ImageGallery extends React.Component {
             }
         }
 
-        const resizeListener = () => props().open && props().show({...props()})
+        const resizeListener = debounce(() => {
+            props().open && props().recalculate()
+        }, 100)
         that[componentDidMount] = () => {
             addEventListener(WINDOW, 'resize', resizeListener)
         }
@@ -611,12 +651,22 @@ export class ImageGalleryContainer extends React.Component {
         const props = propsGetter(that)
 
         const embedded = 'embedded'
+        const galleryRef = createRef()
 
         const show = that.show = (gallery) => {
-            gallery[embedded] = !!props()[embedded]
-            if (gallery[embedded])
-                gallery.container = props().containerRef();
-            Actions.show(gallery)(dispatch)
+            if (!!props()[embedded]) {
+                if (props().containerRef()) {
+                    Actions.show({
+                        ...gallery,
+                        [embedded]: !!props()[embedded],
+                        container: props().containerRef(),
+                    })(dispatch)
+                } else {
+                    setTimeout(show, 1, gallery)
+                }
+            } else {
+                Actions.show(gallery)(dispatch)
+            }
         };
         const close = that.close = () => {
             Actions.close()(dispatch)
@@ -624,15 +674,17 @@ export class ImageGalleryContainer extends React.Component {
         const load = that.load = (item) => {
             Actions.load(item)(dispatch)
         };
+        const recalculate = that.recalculate = () => {
+            Actions.recalculate()(dispatch)
+        };
 
-
-        that[render] = () => <ImageGallery {...that.props} {...that.state} show={show} load={load} close={close}/>
+        that[render] = () => <ImageGallery ref={galleryRef} {...that.props} {...that.state} show={show} load={load} close={close} recalculate={recalculate}/>
 
         that[componentDidMount] = () => {
             props()[embedded] && show(props()[embedded])
         }
         that[componentDidUpdate] = (prevProps, prevState) => {
-            prevProps[embedded] !== props()[embedded] && props()[embedded] && show(props()[embedded])
+            isDifferent(prevProps[embedded], props()[embedded]) && props()[embedded] && show(props()[embedded])
         }
     }
 }

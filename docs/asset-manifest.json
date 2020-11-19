@@ -1,21 +1,21 @@
 {
   "files": {
     "main.css": "/wizzardo/react-ui-basics/main.css",
-    "main.js": "/wizzardo/react-ui-basics/main.304b766fe8e67e047827.bundle.js",
+    "main.js": "/wizzardo/react-ui-basics/main.e0e9816e7285f38254e3.bundle.js",
     "main.css.map": "/wizzardo/react-ui-basics/main.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.304b766fe8e67e047827.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.304b766fe8e67e047827.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.304b766fe8e67e047827.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.304b766fe8e67e047827.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.304b766fe8e67e047827.bundle.js.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.e0e9816e7285f38254e3.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.e0e9816e7285f38254e3.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.e0e9816e7285f38254e3.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.e0e9816e7285f38254e3.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.e0e9816e7285f38254e3.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "precache-manifest.c5ddab7d08875e9d629c18fa405b735b.js": "/wizzardo/react-ui-basics/precache-manifest.c5ddab7d08875e9d629c18fa405b735b.js",
+    "precache-manifest.f8e49f843d04152a2860254c4b992c17.js": "/wizzardo/react-ui-basics/precache-manifest.f8e49f843d04152a2860254c4b992c17.js",
     "service-worker.js": "/wizzardo/react-ui-basics/service-worker.js"
   },
   "entrypoints": [
-    "runtime~main.304b766fe8e67e047827.bundle.js",
-    "vendors~main.304b766fe8e67e047827.bundle.js",
+    "runtime~main.e0e9816e7285f38254e3.bundle.js",
+    "vendors~main.e0e9816e7285f38254e3.bundle.js",
     "main.css",
-    "main.304b766fe8e67e047827.bundle.js"
+    "main.e0e9816e7285f38254e3.bundle.js"
   ]
 }

@@ -40,6 +40,7 @@
 
     &.animated {
       transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
+      will-change: top, left, width, height, opacity;
 
       &.mounting, &.mounted, &.unmounting {
         opacity: 1;
@@ -47,16 +48,8 @@
     }
 
     &.zoomed {
-      overflow: scroll;
-      transition: none;
       text-align: center;
-
-      img {
-        max-width: unset;
-        min-width: unset;
-        box-sizing: border-box;
-        padding: 50px;
-      }
+      overflow: hidden;
     }
 
     &.dragging {

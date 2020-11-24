@@ -73,7 +73,7 @@ const calculatePosition = (it, ratio, width, height, previewsHeight, embedded, c
     it.toLeft = (windowWidth - it.toWidth) / 2;
 
     it.toWidthPx = toPx(it.toWidth);
-    it.toHeightPx = toPx(it.toHeight);
+    // it.toHeightPx = toPx(it.toHeight);
     it.toTopPx = toPx(it.toTop);
     it.toLeftPx = toPx(it.toLeft);
 };
@@ -158,7 +158,6 @@ export class Actions {
                     it.fromLeftPx = toPx(rect.left);
                     it.fromTopPx = toPx(rect.top);
                     it.fromWidthPx = toPx(fromWidth);
-                    it.fromHeightPx = toPx(fromHeight);
 
                     let ratio = fromWidth / fromHeight;
                     calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0, embedded, container);
@@ -194,7 +193,6 @@ export class Actions {
                     it.fromLeftPx = imageWithFromData.fromLeftPx;
                     it.fromTopPx = imageWithFromData.fromTopPx;
                     it.fromWidthPx = imageWithFromData.fromWidthPx;
-                    it.fromHeightPx = imageWithFromData.fromHeightPx;
                 }
             }
         });
@@ -293,21 +291,8 @@ const small = (it, index, i, length) => {
         top: it.fromTopPx,
         left: it.fromLeftPx,
         width: it.fromWidthPx,
-        height: it.fromHeightPx,
+        // height: it.fromHeightPx,
         opacity: 0,
-    };
-};
-
-const zoom = (it, index, i, length) => {
-    if (index !== i)
-        return big(it, index, i, 0, length);
-
-    return {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
     };
 };
 
@@ -317,7 +302,7 @@ const big = (it, index, i, shift, length, previous) => {
         top: it.toTopPx,
         left: toPx(it.toLeft + shift),
         width: it.toWidthPx,
-        height: it.toHeightPx,
+        // height: it.toHeightPx,
     };
 
 
@@ -347,10 +332,9 @@ class ImageGallery extends React.Component {
             shift,
             index,
             previous,
-            touchesStart,
             zoomed,
             previewScroll,
-        ] = stateGSs(that, 6);
+        ] = stateGSs(that, 5);
 
 
         const props = propsGetter(that);
@@ -377,7 +361,11 @@ class ImageGallery extends React.Component {
         that[componentWillUnmount] = () => {
             removeEventListener(WINDOW, 'resize', resizeListener)
         }
-
+        const onClose = () => {
+            resetZoom()
+            moveListenerAdded = false;
+            this.props.close();
+        }
 
         const onKeyDown = e => {
             const keyCode = e.keyCode;
@@ -388,48 +376,192 @@ class ImageGallery extends React.Component {
                 right();
             }
             if (keyCode === 27/*escape*/) {
-                zoomed(false)
-                !props().embedded && props().close();
+                !props().embedded && onClose();
             }
             preventDefault(e);
         };
 
+        let touchesStart;
+        let zoomValue = 1;
+        let zoomValueStarted;
+        let zoomedImage;
+        let oldLeft;
+        let oldTop;
+
+        let defaultWidth;
+        let defaultLeft;
+        let defaultTop;
+        let touchpadStarted = null;
+
+        const onKeyUp = e => {
+            const keyCode = e.keyCode;
+            if (touchpadStarted && keyCode === 17/*ctrl*/ && zoomed() && zoomValue < 1) {
+                resetZoom()
+            }
+        };
+
+        const resetZoom = () => {
+            if (!zoomed()) return
+            zoomed(false)
+            zoomedImage.style.width = defaultWidth;
+            zoomedImage.style.left = defaultLeft;
+            zoomedImage.style.top = defaultTop;
+            zoomedImage.style.transition = null
+            touchpadStarted = null
+        }
+        const initZoom = () => {
+            zoomed(true)
+            defaultWidth = zoomedImage.style.width;
+            defaultLeft = zoomedImage.style.left;
+            defaultTop = zoomedImage.style.top;
+        }
+
+        const initTouchpadDragging = () => {
+            oldLeft = Number.parseFloat(zoomedImage.style.left);
+            oldTop = Number.parseFloat(zoomedImage.style.top);
+            zoomedImage.style.transition = 'none'
+            touchpadStarted = true;
+        }
+
+        const onWheel = (e) => {
+            if (!zoomed()) return;
+
+            if (!touchpadStarted) {
+                initTouchpadDragging()
+            }
+
+            if (e.ctrlKey) {
+                let diff = e.deltaY * 0.005;
+
+                let newZoom = Math.min(Math.max(zoomValue + diff, 0.5), 10)
+                let zoomX = e.pageX;
+                oldLeft = zoomX - (zoomX - oldLeft) * newZoom / zoomValue;
+
+                let zoomY = e.pageY;
+                oldTop = zoomY - (zoomY - oldTop) * newZoom / zoomValue;
+                zoomValue = newZoom
+
+                zoomedImage.style.width = (zoomValue * 100) + '%';
+            } else {
+                oldLeft += e.deltaX * 0.5;
+                oldTop += e.deltaY * 0.5;
+            }
+            zoomedImage.style.left = oldLeft + 'px'
+            zoomedImage.style.top = oldTop + 'px'
+        }
+
+        let moveListenerAdded
+
         const onTouchStart = e => {
             e.swipeProcessed = false;
             if (e.button === 2) return;
-            const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
-            // console.log('onTouchStart', touches, e);
-            touchesStart(touches)
+            const touches = e.touches || [{pageX: e.pageX, pageY: e.pageY}];
+            // console.log('onTouchStart', touches, e.touches, e.target);
+            if (e.target.tagName.toLowerCase() === 'img') {
+                zoomedImage = e.target.parentElement;
+                oldLeft = Number.parseFloat(zoomedImage.style.left);
+                oldTop = Number.parseFloat(zoomedImage.style.top);
+            }
+            if (zoomed()) {
+                zoomedImage.style.transition = 'none'
+            }
+            if (!moveListenerAdded) {
+                //need to add it like this to be able to call preventDefault
+                addEventListener(this.gallery, 'touchmove', onTouchMove, false)
+                moveListenerAdded = true;
+            }
+
+            if (touches.length === 2) {
+                if (zoomed())
+                    zoomValueStarted = zoomValue;
+                else {
+                    initZoom()
+                    zoomedImage.style.transition = 'none'
+                    zoomValueStarted = zoomValue = Number.parseFloat(zoomedImage.style.width) / WINDOW.innerWidth;
+                }
+            }
+            touchesStart = (touches)
         };
 
+        const power2 = x => x * x;
+
+        const distance = touches => {
+            const a = touches[0]
+            const b = touches[1]
+            return Math.sqrt(power2(a.pageX - b.pageX) + power2(a.pageY - b.pageY))
+        }
+        const center = touches => {
+            const a = touches[0]
+            const b = touches[1]
+            return {x: (a.pageX + b.pageX) / 2, y: (a.pageY + b.pageY) / 2}
+        }
+
         const onTouchMove = e => {
-            if (!touchesStart() || zoomed())
+            if (!touchesStart)
                 return;
 
-            const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
+            const touches = e.touches || [{pageX: e.pageX, pageY: e.pageY}];
             // console.log('onTouchMove', touches, e)
 
-            if (touches.length > 1)
+            if (zoomed()) {
+                preventDefault(e)
+                if (touches.length === 2) {
+                    const diff = distance(touches) / distance(touchesStart);
+
+                    zoomValue = Math.min(Math.max(zoomValueStarted * diff, 0.5), 10)
+
+                    let zoomedAt = center(touchesStart)
+                    let zoomX = zoomedAt.x;
+                    let newLeft = zoomX - (zoomX - oldLeft) * zoomValue / zoomValueStarted;
+
+                    let zoomY = zoomedAt.y;
+                    let newTop = zoomY - (zoomY - oldTop) * zoomValue / zoomValueStarted;
+
+                    zoomedImage.style.left = newLeft + 'px'
+                    zoomedImage.style.top = newTop + 'px'
+                    zoomedImage.style.width = (zoomValue * 100) + '%';
+
+                    return;
+                } else {
+                    let touch = touches[0];
+                    let touchStart = touchesStart[0];
+                    let newLeft = oldLeft + touch.pageX - touchStart.pageX
+                    let newTop = oldTop + touch.pageY - touchStart.pageY
+                    zoomedImage.style.left = newLeft + 'px'
+                    zoomedImage.style.top = newTop + 'px'
+                    return;
+                }
+            }
+
+            if (touches.length > 1 || zoomed())
                 return;
 
             let touch = touches[0];
-            let touchStart = touchesStart()[0];
+            let touchStart = touchesStart[0];
             shift(touch.pageX - touchStart.pageX)
         };
 
         const onTouchEnd = e => {
-            if (!touchesStart() || zoomed())
+            if (!touchesStart)
                 return;
+
+            if (zoomed()) {
+                touchesStart = (UNDEFINED)
+                if (zoomValue < 1) {
+                    resetZoom()
+                }
+                return;
+            }
 
             const touches = e.changedTouches || [{pageX: e.pageX, pageY: e.pageY}];
             // console.log('onTouchEnd', touches, e)
 
             let touchEnd = touches[0];
-            let touchStart = touchesStart()[0];
+            let touchStart = touchesStart[0];
             let distX = touchEnd.pageX - touchStart.pageX;
             let distY = touchEnd.pageY - touchStart.pageY;
 
-            touchesStart(UNDEFINED)
+            touchesStart = (UNDEFINED)
             shift(0)
             const minDistance = 20;
 
@@ -437,7 +569,7 @@ class ImageGallery extends React.Component {
                 distX < 0 ? right() : left();
                 e.swipeProcessed = true
             } else if (abs(distY / distX) > 2 && abs(distY) > minDistance) {
-                !props().embedded && props().close();
+                !props().embedded && onClose();
                 e.swipeProcessed = true
             }
         };
@@ -482,7 +614,7 @@ class ImageGallery extends React.Component {
             </Animated>);
 
         that[render] = () => {
-            const {open, close} = props();
+            const {open} = props();
             const {images = [], previews = {}, indicator, embedded, loop, onClick} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
@@ -496,22 +628,18 @@ class ImageGallery extends React.Component {
                          tabIndex={0}
                          ref={it => (that.gallery = it) && !embedded && it.focus()}
                          onKeyDown={onKeyDown}
-                         onClick={e => e.target === that.gallery && !e.swipeProcessed && !embedded && close()}
+                         onKeyUp={onKeyUp}
+                         onClick={e => e.target === that.gallery && !e.swipeProcessed && !embedded && onClose()}
                          onTouchStart={onTouchStart}
-                         onTouchMove={onTouchMove}
                          onTouchEnd={onTouchEnd}
                          onMouseDown={onTouchStart}
                          onMouseUp={onTouchEnd}
                          onMouseMove={onTouchMove}
                          onMouseLeave={onTouchEnd}
+                         onWheel={onWheel}
                     >
                         {images.map((it, i) => {
-                            return <Animated key={it.id} value={open} styles={isZoomed && i === indexValue ? {
-                                default: small(it, indexValue, i, length),
-                                mounting: zoom(it, indexValue, i, shiftValue, length, previousValue),
-                                mountend: zoom(it, indexValue, i, shiftValue, length, previousValue),
-                                unmounting: small(it, indexValue, i, length),
-                            } : {
+                            return <Animated key={it.id} value={open} styles={{
                                 default: small(it, indexValue, i, length),
                                 mounting: big(it, indexValue, i, shiftValue, length, previousValue),
                                 mountend: big(it, indexValue, i, shiftValue, length, previousValue),
@@ -522,25 +650,33 @@ class ImageGallery extends React.Component {
                                         const img = e.target;
                                         if (img.naturalWidth === img.clientWidth && img.naturalHeight === img.clientHeight)
                                             return;
-                                        zoomed(!isZoomed)
+
                                         if (!isZoomed) {
-                                            const container = img.parentElement;
-                                            const screen = container.parentElement;
-                                            const bounds = container.getBoundingClientRect();
-                                            let x = (e.pageX - bounds.x) / bounds.width;
-                                            let y = (e.pageY - bounds.y) / bounds.height;
-                                            const left = Math.max(x * img.naturalWidth - screen.clientWidth / 2, 0);
-                                            const top = Math.max(y * img.naturalHeight - screen.clientHeight / 2, 0);
-                                            setTimeout(() => {
-                                                container.scrollLeft = left;
-                                                container.scrollTop = top;
-                                            }, 0);
+                                            zoomedImage = img.parentElement;
+                                            initZoom()
+                                            zoomValue = 2;
+                                            let newWidth = WINDOW.innerWidth * 2;
+                                            let oldWidth = Number.parseFloat(zoomedImage.style.width);
+                                            let oldLeft = Number.parseFloat(zoomedImage.style.left);
+                                            let zoomX = e.pageX;
+                                            let diff = newWidth / oldWidth;
+                                            let newLeft = zoomX - (zoomX - oldLeft) * diff;
+
+                                            let oldTop = Number.parseFloat(zoomedImage.style.top);
+                                            let zoomY = e.pageY;
+                                            let newTop = zoomY - (zoomY - oldTop) * diff;
+
+                                            zoomedImage.style.width = '200%'
+                                            zoomedImage.style.left = newLeft + 'px'
+                                            zoomedImage.style.top = newTop + 'px'
+                                        } else {
+                                            resetZoom()
                                         }
                                     }}
                                     onClick={(e) => {
                                         !e.swipeProcessed && orNoop(onClick)(e, it, i)
                                     }}
-                                    key={i} className={classNames('image', touchesStart() && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
+                                    key={i} className={classNames('image', touchesStart && false && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
                                 >
                                     <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
 
@@ -550,7 +686,7 @@ class ImageGallery extends React.Component {
 
                                     {!embedded && animatedRoundButton(open && !isZoomed,
                                         'close',
-                                        close,
+                                        onClose,
                                         'close'
                                     )}
 

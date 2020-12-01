@@ -33,13 +33,27 @@ const prepareSelected = (value) => {
             }, {});
         else if (typeof value === 'object')
             result = value;
-        else
+        else if (value)
             result = {[value]: value};
+        else
+            result = {}
     } else {
         result = {};
     }
     return result;
 };
+
+const findParent = (el, tag) => {
+    if (el != null) {
+        const tagName = el.tagName;
+        if (tagName && tagName.toUpperCase() === tag.toUpperCase()) {
+            return el;
+        } else {
+            return findParent(el.parentNode, tag)
+        }
+    }
+    return null;
+}
 
 class AutocompleteSelect extends React.Component {
 
@@ -72,6 +86,15 @@ class AutocompleteSelect extends React.Component {
                 this.onCancel();
             }
         })
+        if (this.props.required) {
+            const form = findParent(this.el.parentNode, 'form')
+            if (form) {
+                addEventListener(this.submitButton = form.querySelector('button[type=submit]'), 'click', this.formSubmitListener = (e) => {
+                    const errored = Object.keys(this.state.selected).length === 0;
+                    this.setState({errored: errored})
+                })
+            }
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -85,6 +108,7 @@ class AutocompleteSelect extends React.Component {
 
     componentWillUnmount() {
         removeEventListener(DOCUMENT, 'mousedown', this.listener)
+        removeEventListener(this.submitButton, 'click', this.formSubmitListener)
     }
 
     static defaultProps = {
@@ -98,10 +122,26 @@ class AutocompleteSelect extends React.Component {
     };
 
     render() {
-        const {childComponent, childProps, withArrow, withFilter, withReset, filter, label, inputLabel, mode, selectedMode, prefilter, className, scrollToValue, scroll} = this.props;
+        const {
+            childComponent,
+            childProps,
+            withArrow,
+            withFilter,
+            withReset,
+            filter,
+            label,
+            inputLabel,
+            mode,
+            selectedMode,
+            prefilter,
+            className,
+            scrollToValue,
+            scroll,
+            required,
+        } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
-        const {isActive, selected = {}, filterValue = ''} = this.state;
+        const {isActive, selected = {}, filterValue = '', errored} = this.state;
         let {data = [], labels = {}} = this.props;
         if (this.state.data)
             data = this.state.data;
@@ -154,13 +194,14 @@ class AutocompleteSelect extends React.Component {
         />;
 
         return (
-            <div className={classNames('AutocompleteSelect', mode, className, withFilter ? 'withFilter' : 'withoutFilter', isActive && 'active')}
+            <div className={classNames('AutocompleteSelect', mode, className, withFilter ? 'withFilter' : 'withoutFilter', isActive && 'active', errored && 'errored')}
                  ref={ref('el', this)}>
                 {label && <label className={classNames(`label`, (hasSelected || filterValue) && 'active', hasSelected && 'hasSelected')}
                                  htmlFor={'f-' + id}
                                  onClick={() => mode === MODE_MULTIPLE_MINI_INLINE && toggle()}
                 >
                     {label}
+                    {required && '*'}
                     {withArrow && <span className="arrow"/>}
                 </label>}
 
@@ -255,11 +296,14 @@ class AutocompleteSelect extends React.Component {
             selected = {[selectedId]: selectedId};
         }
 
+        const errored = this.props.required && Object.keys(selected) === 0;
+
         if (this.props.mode === MODE_MULTIPLE_MINI_INLINE) {
             this.setState({
                 isActive: true,
                 selected: selected,
                 filterValue: isSelected ? '' : this.state.filter,
+                errored,
             });
 
         } else {
@@ -267,6 +311,7 @@ class AutocompleteSelect extends React.Component {
                 isActive: !isSelected,
                 selected: selected,
                 filterValue: isSelected ? '' : this.state.filter,
+                errored,
             });
         }
 

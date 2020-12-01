@@ -505,8 +505,11 @@
     left: 50%;
     -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
-    overflow: hidden;
     padding: 0 45px; }
+    .ImageGallery .previews .viewport {
+      overflow: hidden;
+      position: relative;
+      height: 100%; }
     .ImageGallery .previews .container {
       position: relative;
       display: flex;
@@ -522,7 +525,8 @@
       overflow: hidden;
       margin-left: 12px;
       border-radius: 2px;
-      cursor: pointer; }
+      cursor: pointer;
+      box-sizing: border-box; }
       .ImageGallery .previews .preview:first-child {
         margin-left: 0; }
       .ImageGallery .previews .preview > .border {

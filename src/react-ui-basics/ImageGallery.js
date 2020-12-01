@@ -30,36 +30,48 @@ const toPx = (value) => value + 'px';
 const previewRatio = 4 / 3;
 const previewHeight = 80;
 const previewWidth = previewRatio * previewHeight;
-const previewPadding = 12;
+const previewPadding = 8;
 const previewsHeight = previewHeight + 15;
 
 const calculatePosition = (it, ratio, width, height, previewsHeight, embedded, container) => {
     const windowWidth = embedded ? container.clientWidth : min(DOCUMENT.body.clientWidth, WINDOW.innerWidth);
     const windowHeight = embedded ? container.clientHeight : min(DOCUMENT.body.clientHeight, WINDOW.innerHeight);
 
-    const offset = embedded ? 0 : windowHeight * 0.03;
+    let offset = it.offset;
+    if (offset == null)
+        offset = (embedded ? 0 : windowHeight * 0.03);
+
+    let offsetTop = it.offsetTop
+    offsetTop = offsetTop == null ? offset : offsetTop
+    let offsetBottom = it.offsetBottom
+    offsetBottom = offsetBottom == null ? offset : offsetBottom
+    let offsetLeft = it.offsetLeft
+    offsetLeft = offsetLeft == null ? offset : offsetLeft
+    let offsetRight = it.offsetRight
+    offsetRight = offsetRight == null ? offset : offsetRight
+
     if (Number.isNaN(ratio))
         ratio = 0;
     if (embedded) {
         if (ratio > 1) {
-            it.toHeight = windowHeight - previewsHeight - 2 * offset;
+            it.toHeight = windowHeight - previewsHeight - -offsetTop - offsetBottom;
             it.toWidth = it.toHeight * ratio;
         } else {
-            it.toWidth = windowWidth - offset * 2;
+            it.toWidth = windowWidth - offsetLeft - offsetRight;
             it.toHeight = it.toWidth / ratio;
         }
     } else if (ratio > 1) {
-        it.toWidth = windowWidth - offset * 2;
+        it.toWidth = windowWidth - offsetLeft - offsetRight;
         it.toHeight = it.toWidth / ratio;
-        if (it.toHeight > windowHeight - previewsHeight - 2 * offset) {
-            it.toHeight = windowHeight - previewsHeight - 2 * offset;
+        if (it.toHeight > windowHeight - previewsHeight - offsetTop - offsetBottom) {
+            it.toHeight = windowHeight - previewsHeight - offsetTop - offsetBottom;
             it.toWidth = it.toHeight * ratio;
         }
     } else {
-        it.toHeight = windowHeight - previewsHeight - 2 * offset;
+        it.toHeight = windowHeight - previewsHeight - offsetTop - offsetBottom;
         it.toWidth = it.toHeight * ratio;
-        if (it.toWidth > windowWidth - offset * 2) {
-            it.toWidth = windowWidth - offset * 2;
+        if (it.toWidth > windowWidth - offsetLeft - offsetRight) {
+            it.toWidth = windowWidth - offsetLeft - offsetRight;
             it.toHeight = it.toWidth / ratio;
         }
     }
@@ -69,7 +81,7 @@ const calculatePosition = (it, ratio, width, height, previewsHeight, embedded, c
     //     it.toHeight = height;
     // }
 
-    it.toTop = offset + (windowHeight - previewsHeight - 2 * offset - it.toHeight) / 2;
+    it.toTop = offsetTop + (windowHeight - previewsHeight - offsetTop - offsetBottom - it.toHeight) / 2;
     it.toLeft = (windowWidth - it.toWidth) / 2;
 
     it.toWidthPx = toPx(it.toWidth);
@@ -79,14 +91,14 @@ const calculatePosition = (it, ratio, width, height, previewsHeight, embedded, c
 };
 
 const calculatePreviewsScroll = (index, length, width) => {
-    if (length <= 7)
+    if (length <= 5)
         return 0;
 
     if (index < 3)
         return 0;
 
-    if (index > length - 4)
-        return -(length - 7) * (previewWidth + previewPadding);
+    if (index > length - 3)
+        return -(length - 5) * (previewWidth + previewPadding);
 
     return -(index * (previewWidth + previewPadding) + (previewWidth) / 2 - width / 2);
 };
@@ -171,7 +183,7 @@ export class Actions {
             }),
             previews: {
                 show: withPreviews,
-                width: min(length, 7) * previewWidth + min(length - 1, 6) * previewPadding,
+                width: min(length, 5) * previewWidth + min(length - 1, 4) * previewPadding,
                 totalWidth: toPx(length * previewWidth + (length - 1) * previewPadding),
                 scroll: UNDEFINED,
                 images: images.map(it => {
@@ -371,14 +383,16 @@ class ImageGallery extends React.Component {
             const keyCode = e.keyCode;
             if (keyCode === 37/*left*/) {
                 left();
+                preventDefault(e);
             }
             if (keyCode === 39/*right*/) {
                 right();
+                preventDefault(e);
             }
-            if (keyCode === 27/*escape*/) {
-                !props().embedded && onClose();
+            if (keyCode === 27/*escape*/ && !props().embedded) {
+                onClose();
+                preventDefault(e);
             }
-            preventDefault(e);
         };
 
         let touchesStart;
@@ -426,6 +440,7 @@ class ImageGallery extends React.Component {
         const onWheel = (e) => {
             if (!zoomed()) return;
 
+            preventDefault(e)
             if (!touchpadStarted) {
                 initTouchpadDragging()
             }
@@ -456,12 +471,12 @@ class ImageGallery extends React.Component {
             e.swipeProcessed = false;
             if (e.button === 2) return;
             const touches = e.touches || [{pageX: e.pageX, pageY: e.pageY}];
-            // console.log('onTouchStart', touches, e.touches, e.target);
-            if (e.target.tagName.toLowerCase() === 'img') {
-                zoomedImage = e.target.parentElement;
-                oldLeft = Number.parseFloat(zoomedImage.style.left);
-                oldTop = Number.parseFloat(zoomedImage.style.top);
-            }
+            // console.log('onTouchStart', e.touches, e.target);
+
+            zoomedImage = e.target;
+            zoomedImage = zoomedImage.tagName.toLowerCase() === 'img' ? zoomedImage.parentElement : zoomedImage;
+            oldLeft = Number.parseFloat(zoomedImage.style.left);
+            oldTop = Number.parseFloat(zoomedImage.style.top);
             if (zoomed()) {
                 zoomedImage.style.transition = 'none'
             }
@@ -474,7 +489,7 @@ class ImageGallery extends React.Component {
             if (touches.length === 2) {
                 if (zoomed())
                     zoomValueStarted = zoomValue;
-                else {
+                else if (!props().embedded) {
                     initZoom()
                     zoomedImage.style.transition = 'none'
                     zoomValueStarted = zoomValue = Number.parseFloat(zoomedImage.style.width) / WINDOW.innerWidth;
@@ -615,7 +630,7 @@ class ImageGallery extends React.Component {
 
         that[render] = () => {
             const {open} = props();
-            const {images = [], previews = {}, indicator, embedded, loop, onClick} = props();
+            const {images = [], previews = {}, indicator, embedded, loop, onClick, children} = props();
 
             const indexValue = index() !== UNDEFINED ? index() : props().index;
             const length = images.length;
@@ -624,12 +639,12 @@ class ImageGallery extends React.Component {
             const previousValue = previous();
             return (
                 <Animated value={open}>
-                    <div className={classNames('ImageGallery', embedded && 'embedded')}
+                    <div className={classNames('ImageGallery', embedded && 'embedded', isZoomed && 'zoomed')}
                          tabIndex={0}
                          ref={it => (that.gallery = it) && !embedded && it.focus()}
                          onKeyDown={onKeyDown}
                          onKeyUp={onKeyUp}
-                         onClick={e => e.target === that.gallery && !e.swipeProcessed && !embedded && onClose()}
+                        // onClick={e => e.target === that.gallery && !e.swipeProcessed && !embedded && onClose()}
                          onTouchStart={onTouchStart}
                          onTouchEnd={onTouchEnd}
                          onMouseDown={onTouchStart}
@@ -639,6 +654,8 @@ class ImageGallery extends React.Component {
                          onWheel={onWheel}
                     >
                         {images.map((it, i) => {
+                            const isZoomedCurrent = isZoomed && i === indexValue;
+                            const loaded = it.loaded;
                             return <Animated key={it.id} value={open} styles={{
                                 default: small(it, indexValue, i, length),
                                 mounting: big(it, indexValue, i, shiftValue, length, previousValue),
@@ -646,13 +663,14 @@ class ImageGallery extends React.Component {
                                 unmounting: small(it, indexValue, i, length),
                             }}>
                                 <div
+                                    draggable={false}
                                     onDoubleClick={e => {
                                         const img = e.target;
                                         if (img.naturalWidth === img.clientWidth && img.naturalHeight === img.clientHeight)
                                             return;
 
                                         if (!isZoomed) {
-                                            zoomedImage = img.parentElement;
+                                            zoomedImage = img.tagName.toLowerCase() === 'img' ? img.parentElement : img;
                                             initZoom()
                                             zoomValue = 2;
                                             let newWidth = WINDOW.innerWidth * 2;
@@ -676,25 +694,28 @@ class ImageGallery extends React.Component {
                                     onClick={(e) => {
                                         !e.swipeProcessed && orNoop(onClick)(e, it, i)
                                     }}
-                                    key={i} className={classNames('image', touchesStart && false && 'dragging', isZoomed && 'zoomed', i === indexValue && 'current')}
+                                    key={i} className={classNames('image', touchesStart && 'dragging', isZoomedCurrent && 'zoomed', i === indexValue && 'current')}
                                 >
-                                    <img draggable={false} src={it.loaded ? it.url : it.previewUrl}/>
+                                    <img draggable={false} src={loaded ? it.url : it.previewUrl} onDragStart={preventDefault}/>
 
-                                    <Animated value={!it.loaded && Math.abs(indexValue - i) <= 1}>
+                                    <Animated value={!loaded && Math.abs(indexValue - i) <= 1}>
                                         <div className={'spinner'}><SpinningProgress/></div>
                                     </Animated>
 
-                                    {!embedded && animatedRoundButton(open && !isZoomed,
+                                    {!embedded && animatedRoundButton(open && !isZoomedCurrent,
                                         'close',
                                         onClose,
                                         'close'
                                     )}
 
-                                    <div className="counter">
-                                        {indexValue + 1} / {length}
-                                    </div>
 
-                                    {!isZoomed && it.loaded && it.overlay}
+                                    <Animated value={loaded && !isZoomedCurrent}>
+                                        <div className="counter">
+                                            {indexValue + 1} / {length}
+                                        </div>
+                                    </Animated>
+
+                                    {!isZoomedCurrent && loaded && it.overlay}
                                 </div>
                             </Animated>;
                         })}
@@ -723,18 +744,20 @@ class ImageGallery extends React.Component {
 
                         <Animated value={open && previews.show && !isZoomed}>
                             <div className="previews" style={{width: previews.width}}>
-                                <div className="container" style={{width: previews.totalWidth, left: toPx(previewScroll() || previews.scroll)}}>
-                                    {(previews.images || []).map((it, i) =>
-                                        <div key={i}
-                                             className={classNames('preview', indexValue === i && 'selected')}
-                                             onClick={() => scrollTo(i, indexValue)}
-                                        >
-                                            <img src={it.url} style={it}/>
+                                <div className="viewport">
+                                    <div className="container" style={{width: previews.totalWidth, left: toPx(previewScroll() || previews.scroll)}}>
+                                        {(previews.images || []).map((it, i) =>
+                                            <div key={i}
+                                                 className={classNames('preview', indexValue === i && 'selected')}
+                                                 onClick={() => scrollTo(i, indexValue)}
+                                            >
+                                                <img src={it.url} style={it}/>
 
-                                            <div className="border">
-                                                <div className="line"/>
-                                            </div>
-                                        </div>)}
+                                                <div className="border">
+                                                    <div className="line"/>
+                                                </div>
+                                            </div>)}
+                                    </div>
                                 </div>
 
                                 {animatedRoundButton(indexValue > 0 || loop,
@@ -750,6 +773,7 @@ class ImageGallery extends React.Component {
                             </div>
                         </Animated>
 
+                        {children}
                     </div>
                 </Animated>
             )
@@ -814,7 +838,9 @@ export class ImageGalleryContainer extends React.Component {
             Actions.recalculate()(dispatch)
         };
 
-        that[render] = () => <ImageGallery ref={galleryRef} {...that.props} {...that.state} show={show} load={load} close={close} recalculate={recalculate}/>
+        that[render] = () => <ImageGallery ref={galleryRef} {...that.props} {...that.state} show={show} load={load} close={close} recalculate={recalculate}>
+            {that.props.children}
+        </ImageGallery>
 
         that[componentDidMount] = () => {
             props()[embedded] && show(props()[embedded])

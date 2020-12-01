@@ -140,8 +140,13 @@
     bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    overflow: hidden;
     padding: 0 45px;
+
+    .viewport {
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+    }
 
     .container {
       position: relative;
@@ -172,6 +177,7 @@
       margin-left: 12px;
       border-radius: 2px;
       cursor: pointer;
+      box-sizing: border-box;
 
       &:first-child {
         margin-left: 0;

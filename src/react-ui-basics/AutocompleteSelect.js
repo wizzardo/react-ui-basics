@@ -266,6 +266,7 @@ class AutocompleteSelect extends React.Component {
                                                       // console.log('key pressed:', e.keyCode)
                                                   }}
                         />}
+                        {!withFilter && inputLabel && <label>{inputLabel}</label>}
                         {(mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE) && list}
                     </div>
                 )}

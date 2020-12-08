@@ -176,7 +176,7 @@ class AutocompleteSelect extends React.Component {
                                        const f = filterValue.toLowerCase();
                                        if (filter) return filter(it, f);
 
-                                       let value = (typeof it === 'string' ? it : it.name).toLowerCase();
+                                       let value = (typeof it === 'string' ? it : (it.name || it.label || '')).toLowerCase();
                                        return continuousIncludes(value, f);
                                    }}
                                    scroll={scroll}

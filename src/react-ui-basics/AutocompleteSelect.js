@@ -280,44 +280,49 @@ class AutocompleteSelect extends React.Component {
     };
 
     onSelect = (selectedId) => {
-        if (selectedId == null && this.props.allowCustom && this.input.check())
-            selectedId = this.state.filterValue;
+        const {mode, required, allowCustom, onSelect, onChange} = this.props;
+        const defaultValue = this.props.default;
+        const {filterValue, filter} = this.state;
+
+        if (selectedId == null && allowCustom && this.input.check())
+            selectedId = filterValue;
+
 
         const isSelected = selectedId != null;
-        const isMultipleSelect = this.props.mode === MODE_MULTIPLE || this.props.mode === MODE_MULTIPLE_AUTO || this.props.mode === MODE_INLINE_MULTIPLE || this.props.mode === MODE_MULTIPLE_MINI || this.props.mode === MODE_MULTIPLE_MINI_INLINE;
+        const isMultipleSelect = mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI || mode === MODE_MULTIPLE_MINI_INLINE;
 
         let selected = {...this.state.selected};
-        if (this.state.selected[selectedId] && (this.props.default || isMultipleSelect)) {
+        if (selected[selectedId] && (defaultValue || isMultipleSelect)) {
             delete selected[selectedId];
-            if (this.props.default && Object.keys(selected).length === 0)
-                selected[this.props.default] = this.props.default;
+            if (defaultValue && Object.keys(selected).length === 0)
+                selected[defaultValue] = defaultValue;
         } else if (isSelected && (isMultipleSelect)) {
             selected[selectedId] = selectedId;
         } else if (isSelected) {
             selected = {[selectedId]: selectedId};
         }
 
-        const errored = this.props.required && Object.keys(selected) === 0;
+        const errored = required && Object.keys(selected) === 0;
 
-        if (this.props.mode === MODE_MULTIPLE_MINI_INLINE) {
+        if (mode === MODE_MULTIPLE_MINI_INLINE) {
             this.setState({
                 isActive: true,
                 selected: selected,
-                filterValue: isSelected ? '' : this.state.filter,
+                filterValue: isSelected ? '' : filter,
                 errored,
             });
 
         } else {
             this.setState({
-                isActive: !isSelected,
+                isActive: isMultipleSelect || !isSelected,
                 selected: selected,
-                filterValue: isSelected ? '' : this.state.filter,
+                filterValue: isSelected ? '' : filter,
                 errored,
             });
         }
 
-        orNoop(this.props.onSelect)(selectedId);
-        orNoop(this.props.onChange)(Object.values(selected));
+        orNoop(onSelect)(selectedId);
+        orNoop(onChange)(Object.values(selected));
     };
 
     clean = (e) => {

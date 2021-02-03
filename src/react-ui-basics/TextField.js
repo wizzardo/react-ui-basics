@@ -63,7 +63,7 @@ class TextField extends PureComponent {
                         inputRef().focus();
                     }}
                 >
-                    {label && (<label className={classNames(error && !isFocused() && 'shake')} htmlFor={id}>{label}{required && '*'}</label>)}
+                    {label && (<label className={classNames(error && !isFocused() && 'shake')} htmlFor={id}>{label}{required && ' *'}</label>)}
                     <input type={type || 'text'} id={id} name={name} value={value} disabled={disabled}
                            min={min}
                            max={max}

@@ -201,7 +201,7 @@ class AutocompleteSelect extends React.Component {
                                  onClick={() => mode === MODE_MULTIPLE_MINI_INLINE && toggle()}
                 >
                     {label}
-                    {required && '*'}
+                    {required && ' *'}
                     {withArrow && <span className="arrow"/>}
                 </label>}
 

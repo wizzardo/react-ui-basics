@@ -3,8 +3,22 @@ import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './AutocompleteSelect.css'
 import TextField from "./TextField";
-import FilteredList from "./FilteredList";
-import {classNames, continuousIncludes, getRandomId, ref, orNoop, preventDefault, stopPropagation, DOCUMENT, addEventListener, removeEventListener} from "./Tools";
+import FilteredList, {getLabel} from "./FilteredList";
+import {
+    classNames,
+    continuousIncludes,
+    getRandomId,
+    ref,
+    orNoop,
+    preventDefault,
+    stopPropagation,
+    DOCUMENT,
+    addEventListener,
+    removeEventListener,
+    isObject,
+    isFunction,
+    isString
+} from "./Tools";
 import Button from "./Button";
 import MaterialIcon from "./MaterialIcon";
 
@@ -31,7 +45,7 @@ const prepareSelected = (value) => {
                 map[obj] = obj;
                 return map;
             }, {});
-        else if (typeof value === 'object')
+        else if (isObject(value))
             result = value;
         else if (value)
             result = {[value]: value};
@@ -72,9 +86,7 @@ class AutocompleteSelect extends React.Component {
         that.randomId = getRandomId('acs-');
 
         const {data, getSelected} = props;
-        if (data && typeof data === "function") {
-            data(data => that.setState({data}));
-        }
+        isFunction(data) && data(data => that.setState({data}));
 
         getSelected && getSelected(() => Object.values(that.state.selected));
     }
@@ -176,7 +188,7 @@ class AutocompleteSelect extends React.Component {
                                        const f = filterValue.toLowerCase();
                                        if (filter) return filter(it, f);
 
-                                       let value = (typeof it === 'string' ? it : (it.name || it.label || '')).toLowerCase();
+                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase();
                                        return continuousIncludes(value, f);
                                    }}
                                    scroll={scroll}
@@ -215,7 +227,7 @@ class AutocompleteSelect extends React.Component {
 
                         {selectedMode === 'full' && selectedIds.map(id =>
                             <div className="value" key={id}>
-                                {React.createElement(selectedComponent, {...childProps, id, label: labels[id], onClick: setActive})}
+                                {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
                                 <div className="button remove" onClick={e => {
                                     stopPropagation(e);
                                     this.remove(id);
@@ -226,7 +238,7 @@ class AutocompleteSelect extends React.Component {
                         )}
                         {selectedMode === 'inline' && selectedIds.map(id =>
                             <React.Fragment key={id}>
-                                {React.createElement(selectedComponent, {...childProps, id, label: labels[id], onClick: setActive})}
+                                {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
                                 {id !== selectedIds[selectedIds.length - 1] && ', '}
                             </React.Fragment>
                         )}

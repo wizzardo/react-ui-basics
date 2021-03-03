@@ -2,7 +2,9 @@ import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './FilteredList.css'
 import Scrollable from "./Scrollable";
-import {classNames, orNoop, ref, stopPropagation} from "./Tools";
+import {classNames, orNoop, ref, stopPropagation, isFunction, isObject} from "./Tools";
+
+export const getLabel = (labels, id)=> isFunction(labels) ? labels(id) : labels[id]
 
 class FilteredList extends React.Component {
 
@@ -50,7 +52,7 @@ class FilteredList extends React.Component {
                 {(data || []).filter(id => id !== false && id != null).map(id => <ItemWrapper
                     id={id}
                     key={id}
-                    label={labels[id]}
+                    label={getLabel(labels, id)}
                     childComponent={childComponent}
                     childProps={childProps}
                     element={el => this.elements[id] = el}
@@ -60,7 +62,7 @@ class FilteredList extends React.Component {
                     }}
                     onMouseEnter={e => this.setState({selected: id})}
                     onMouseLeave={e => id === this.state.selected && this.setState({selected: -1})}
-                    className={classNames('child', this.state.selected === id && 'active', selected === id || (typeof selected === 'object' && selected[id]) && 'selected')}
+                    className={classNames('child', this.state.selected === id && 'active', selected === id || (isObject(selected) && selected[id]) && 'selected')}
                     classProvider={it => (this.hidden[id] = !filter(it)) && 'hidden'}
                 />)}
             </Scrollable>

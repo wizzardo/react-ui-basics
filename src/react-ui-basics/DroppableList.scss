@@ -1,0 +1,27 @@
+.DNDContainer {
+  .DroppableList {
+
+    .Draggable {
+      //transform: unset !important;
+      transform: unset;
+      transition: unset;
+      opacity: 1;
+
+      &.dragged {
+        transition: unset !important;
+      }
+    }
+
+    &.hover {
+      .Draggable {
+        transition: transform 0.2s ease-in;
+      }
+    }
+
+    &.resetting {
+      .Draggable {
+        transition: transform 0.1s ease-in;
+      }
+    }
+  }
+}

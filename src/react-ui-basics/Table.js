@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
 import Switch from "./Switch";
-import {Comparators, NOOP, classNames, preventDefault, stopPropagation} from "./Tools";
+import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 
 export const SORT_ASC = Comparators.SORT_ASC;
@@ -74,7 +74,7 @@ class Table extends Component {
                         className={classNames(disabled && disabled(item) && 'disabled', rowClassName && rowClassName(item))}>
                         {columns.filter(it => !!it).map((column, i) => {
                             const isEditing = editing && editing.id === item.id && editing.columnIndex === i;
-                            const editable = (typeof column.editable) === 'function' ? column.editable(item) : !!column.editable;
+                            const editable = isFunction(column.editable) ? column.editable(item) : !!column.editable;
                             return (
                                 <td key={i}
                                     className={classNames(editable ? 'editable' : 'ro', isEditing && 'editing', column.className)}
@@ -121,7 +121,7 @@ class Table extends Component {
                                             this.setState({editing: {...this.prepareEditing(item, column.field, i), value: !item[column.field]}}, this.onFinishEditing);
                                         }} value={item[column.field]}/>
                                     )}
-                                    {(isEditing || column.displayEditor) && (typeof column.editor) === 'function' && column.editor(item, this.cancelEditing, isEditing)}
+                                    {(isEditing || column.displayEditor) && isFunction(column.editor) && column.editor(item, this.cancelEditing, isEditing)}
                                     {!isEditing && !column.displayEditor && this.formatValue(item, column)}
                                 </td>
                             );
@@ -182,7 +182,7 @@ class Table extends Component {
             return;
 
         let value = editing.value;
-        if (typeof value === 'string')
+        if (isString(value))
             value = value.trim();
 
         if (value === editing.item[editing.field])

@@ -65,13 +65,18 @@ export const debounce = (func, delay) => {
     }
 };
 
+export const typeOf = (v) => typeof v;
+export const isFunction = (v) => typeOf(v) === 'function';
+export const isString = (v) => typeOf(v) === 'string';
+export const isObject = (v) => typeOf(v) === 'object';
+
 export const isDifferent = (a, b) => {
     if (a == null && b == null) return false;
     if (a == null || b == null) return true;
     if (a === b) return false;
 
-    const typeA = typeof a;
-    const typeB = typeof b;
+    const typeA = typeOf(a);
+    const typeB = typeOf(b);
     if (typeA !== typeB) {
         return true;
     }
@@ -146,8 +151,8 @@ export class Comparators {
         if (Array.isArray(field)) {
             const isOrderArray = Array.isArray(order);
             comparator = Comparators.chain(field.map((it, i) => Comparators.of(it, (isOrderArray && order[i]) || Comparators.SORT_ASC, data)));
-        } else if (typeof field === 'function') {
-            if (data && data[0] && typeof field(data[0]) === 'string') {
+        } else if (isFunction(field)) {
+            if (data && data[0] && isString(field(data[0]))) {
                 const collator = new Intl.Collator({sensitivity: 'base'});
                 comparator = (a, b) => {
                     return collator.compare(field(a), field(b));
@@ -158,7 +163,7 @@ export class Comparators {
                     const B = field(b);
                     return (A < B ? -1 : (A > B ? 1 : 0));
                 };
-        } else if (typeof field === 'string')
+        } else if (isString(field))
             comparator = Comparators.of(it => it[field], Comparators.SORT_ASC, data);
         else
             comparator = Comparators.of(it => it, Comparators.SORT_ASC, data);

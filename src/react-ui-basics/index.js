@@ -27,6 +27,8 @@ import * as ReadyListener from './ReadyListener'
 import TextField from "./TextField";
 import Table from "./Table";
 import ScrollableTable from "./ScrollableTable";
+import DroppableList from "./DroppableList";
+import DroppableHorizontalList from "./DroppableHorizontalList";
 
 export {
     Animated,
@@ -38,6 +40,8 @@ export {
     DNDContainer,
     DNDDraggable,
     DNDDroppable,
+    DroppableList,
+    DroppableHorizontalList,
     DropFileInput,
     Dropzone,
     FilteredList,

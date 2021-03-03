@@ -21,8 +21,7 @@
     text-decoration: none;
     color: lightblue; }
   #root .sb-show-main .FormUploadProgress {
-    -webkit-transition-delay: 0s !important;
-            transition-delay: 0s !important;
+    transition-delay: 0s !important;
     bottom: unset;
     right: unset; }
   #root .FloatingActionButton.fab-right-96 {
@@ -45,7 +44,6 @@
         border: none; }
       #root .AutocompleteSelect.menu > .selected .material-icons {
         color: #A6A6A6;
-        -webkit-transition: color 0.2s ease;
         transition: color 0.2s ease; }
       #root .AutocompleteSelect.menu > .selected .ItemWrapper.selected {
         padding-left: 15px;
@@ -53,7 +51,6 @@
     #root .AutocompleteSelect.menu.active .selected .material-icons {
       color: #333333; }
   #root .AnimatedHolder .animated {
-    -webkit-transition: all 1s ease;
     transition: all 1s ease; }
   #root .FormUploadProgress {
     max-width: 300px;
@@ -72,13 +69,9 @@
         background-color: #00bcd4;
         padding: 10px;
         border-radius: 4px;
-        -webkit-transition: -webkit-transform 200ms ease;
-        transition: -webkit-transform 200ms ease;
-        transition: transform 200ms ease;
-        transition: transform 200ms ease, -webkit-transform 200ms ease; }
+        transition: transform 200ms ease; }
       #root .DNDExample .Draggable.dragged .item {
-        -webkit-transform: rotate(10deg);
-                transform: rotate(10deg); }
+        transform: rotate(10deg); }
     #root .DNDExample .Droppable {
       background-color: #4ac263;
       display: inline-block;
@@ -104,7 +97,6 @@
   position: relative; }
 
 .animated {
-  -webkit-transition: opacity 250ms ease;
   transition: opacity 250ms ease;
   opacity: 0; }
   .animated.mounting, .animated.mounted {
@@ -131,11 +123,9 @@
   cursor: pointer;
   overflow: hidden;
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
   border-radius: 3px;
-  -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease; }
   .Button.flat {
     background-color: transparent; }
@@ -182,32 +172,21 @@
     position: absolute;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 100%;
-    -webkit-transform: scale(0);
-            transform: scale(0);
+    transform: scale(0);
     pointer-events: none;
-    -webkit-transition: opacity 0.2s ease-out;
     transition: opacity 0.2s ease-out; }
   .Button .ripple.show {
-    -webkit-animation: ripple .35s ease-out;
-            animation: ripple .35s ease-out; }
+    animation: ripple .35s ease-out; }
   .Button:active .ripple.showed {
     opacity: 1; }
   .Button .ripple.showed {
-    -webkit-transform: scale(2);
-            transform: scale(2);
+    transform: scale(2);
     opacity: 0; }
-
-@-webkit-keyframes ripple {
-  to {
-    -webkit-transform: scale(2);
-            transform: scale(2); } }
 
 @keyframes ripple {
   to {
-    -webkit-transform: scale(2);
-            transform: scale(2); } }
+    transform: scale(2); } }
   .Button.raised {
-    -webkit-transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
     .Button.raised:hover {
       box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25); }
@@ -229,10 +208,8 @@
   width: 56px;
   height: 56px;
   padding: 16px;
-  -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
   .Button.FloatingActionButton.raised {
-    -webkit-transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition: bottom 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
   .Button.FloatingActionButton.mini {
     width: 40px;
@@ -263,7 +240,6 @@
       border: 2px solid #252525;
       border-radius: 2px;
       cursor: pointer;
-      -webkit-transition: background .3s;
       transition: background .3s; }
   .Checkbox input[type="checkbox"] {
     outline: 0;
@@ -273,8 +249,7 @@
       background: #4AC263;
       border: none; }
     .Checkbox input[type="checkbox"]:checked + label:after {
-      -webkit-transform: rotate(-45deg);
-              transform: rotate(-45deg);
+      transform: rotate(-45deg);
       top: 6px;
       left: 4px;
       width: 12px;
@@ -327,13 +302,10 @@
   right: 0;
   bottom: 100%;
   overflow-y: scroll;
-  -webkit-transition: bottom 0ms linear;
   transition: bottom 0ms linear;
-  -webkit-transition-delay: 0.2s;
-          transition-delay: 0.2s; }
+  transition-delay: 0.2s; }
   .Modal.show {
-    -webkit-transition-delay: 0s;
-            transition-delay: 0s;
+    transition-delay: 0s;
     bottom: 0; }
   .Modal > .overlay {
     position: fixed;
@@ -341,7 +313,6 @@
     bottom: 100%;
     left: 0;
     right: 0;
-    -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0;
     background-color: black;
@@ -356,21 +327,15 @@
     font-size: 16px;
     padding: 0;
     opacity: 0;
-    -webkit-transition: opacity 0.25s ease, -webkit-transform 0.25s ease;
-    transition: opacity 0.25s ease, -webkit-transform 0.25s ease;
     transition: opacity 0.25s ease, transform 0.25s ease;
-    transition: opacity 0.25s ease, transform 0.25s ease, -webkit-transform 0.25s ease;
-    -webkit-transform: scaleY(0) translateY(-200px) translateX(-50%);
-            transform: scaleY(0) translateY(-200px) translateX(-50%);
-    -webkit-transform-origin: top;
-            transform-origin: top;
+    transform: scaleY(0) translateY(-200px) translateX(-50%);
+    transform-origin: top;
     position: absolute;
     border-radius: 2px;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); }
     .Modal > .content.show {
       opacity: 1;
-      -webkit-transform: scaleY(1) translateY(0px) translateX(-50%);
-              transform: scaleY(1) translateY(0px) translateX(-50%); }
+      transform: scaleY(1) translateY(0px) translateX(-50%); }
     .Modal > .content > .Scrollable {
       overflow: visible;
       max-height: 80vh; }
@@ -404,26 +369,17 @@
     pointer-events: none; }
 
 .DNDContainer .DroppableList .Draggable {
-  -webkit-transform: unset;
-          transform: unset;
-  -webkit-transition: unset;
+  transform: unset;
   transition: unset;
   opacity: 1; }
   .DNDContainer .DroppableList .Draggable.dragged {
-    -webkit-transition: unset !important;
     transition: unset !important; }
 
 .DNDContainer .DroppableList.hover .Draggable {
-  -webkit-transition: -webkit-transform 0.2s ease-in;
-  transition: -webkit-transform 0.2s ease-in;
-  transition: transform 0.2s ease-in;
-  transition: transform 0.2s ease-in, -webkit-transform 0.2s ease-in; }
+  transition: transform 0.2s ease-in; }
 
 .DNDContainer .DroppableList.resetting .Draggable {
-  -webkit-transition: -webkit-transform 0.1s ease-in;
-  transition: -webkit-transform 0.1s ease-in;
-  transition: transform 0.1s ease-in;
-  transition: transform 0.1s ease-in, -webkit-transform 0.1s ease-in; }
+  transition: transform 0.1s ease-in; }
 
 .ImageGallery {
   position: fixed;
@@ -434,13 +390,11 @@
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.01);
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
   .ImageGallery:focus {
     outline-width: 0px; }
   .ImageGallery.animated {
-    -webkit-transition: background-color 0.25s ease;
     transition: background-color 0.25s ease;
     opacity: 1; }
   .ImageGallery.mounting, .ImageGallery.mounted {
@@ -456,7 +410,6 @@
       max-width: 100%;
       min-width: 100%; }
     .ImageGallery .image.animated {
-      -webkit-transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
       transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease, opacity 0.25s ease;
       will-change: top, left, width, height, opacity; }
       .ImageGallery .image.animated.mounting, .ImageGallery .image.animated.mounted, .ImageGallery .image.animated.unmounting {
@@ -465,7 +418,6 @@
       text-align: center;
       overflow: hidden; }
     .ImageGallery .image.dragging {
-      -webkit-transition: none;
       transition: none;
       cursor: move; }
     .ImageGallery .image .close {
@@ -488,15 +440,12 @@
         .ImageGallery .image .spinner .SpinningProgress .line {
           stroke: #2196F3; }
   .ImageGallery .Button.animated {
-    -webkit-transition: all 0.25s ease;
     transition: all 0.25s ease;
     opacity: 0;
-    -webkit-transform: scale(0);
-            transform: scale(0); }
+    transform: scale(0); }
     .ImageGallery .Button.animated.mounted, .ImageGallery .Button.animated.mounting {
       opacity: 1;
-      -webkit-transform: scale(1);
-              transform: scale(1); }
+      transform: scale(1); }
   .ImageGallery .Button {
     color: white;
     background: rgba(0, 0, 0, 0.4); }
@@ -525,8 +474,7 @@
     position: absolute;
     bottom: 15px;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
     padding: 0 45px; }
     .ImageGallery .previews .viewport {
       overflow: hidden;
@@ -537,7 +485,6 @@
       display: flex;
       flex-flow: row nowrap;
       height: 100%;
-      -webkit-transition: left 0.25s ease;
       transition: left 0.25s ease; }
     .ImageGallery .previews .preview {
       position: relative;
@@ -562,7 +509,6 @@
           height: 3px;
           min-height: 3px;
           background-color: #4AC263;
-          -webkit-transition: all 0.2s ease;
           transition: all 0.2s ease;
           position: absolute; }
       .ImageGallery .previews .preview:after {
@@ -573,7 +519,6 @@
         bottom: 0;
         left: 0;
         background: rgba(0, 0, 0, 0.35);
-        -webkit-transition: background 0.2s ease;
         transition: background 0.2s ease; }
       .ImageGallery .previews .preview:hover:after {
         background: rgba(0, 0, 0, 0.1); }
@@ -607,11 +552,9 @@
     display: block;
     padding-top: 100%; }
   .SpinningProgress .circular {
-    -webkit-animation: rotate 2s linear infinite;
-            animation: rotate 2s linear infinite;
+    animation: rotate 2s linear infinite;
     height: 100%;
-    -webkit-transform-origin: center center;
-            transform-origin: center center;
+    transform-origin: center center;
     width: 100%;
     position: absolute;
     top: 0;
@@ -624,29 +567,11 @@
     stroke-width: 2px;
     stroke-dasharray: 1, 96;
     stroke-dashoffset: 0;
-    -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
-
-@-webkit-keyframes rotate {
-  100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg); } }
+    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
 
 @keyframes rotate {
   100% {
-    -webkit-transform: rotate(360deg);
-            transform: rotate(360deg); } }
-
-@-webkit-keyframes dash {
-  0% {
-    stroke-dasharray: 1, 96;
-    stroke-dashoffset: 0; }
-  50% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -17px; }
-  100% {
-    stroke-dasharray: 43, 96;
-    stroke-dashoffset: -53px; } }
+    transform: rotate(360deg); } }
 
 @keyframes dash {
   0% {
@@ -667,7 +592,6 @@
     stroke: black;
     stroke-linecap: square;
     fill: none;
-    -webkit-transition: stroke-dashoffset 0.2s ease;
     transition: stroke-dashoffset 0.2s ease; }
 
 .FormUploadProgress {
@@ -679,16 +603,14 @@
   background-color: rgba(255, 255, 255, 0.6);
   z-index: 2; }
   .FormUploadProgress.animated.mounting, .FormUploadProgress.animated.mounted {
-    -webkit-transition-delay: 500ms;
-            transition-delay: 500ms; }
+    transition-delay: 500ms; }
   .FormUploadProgress .wrapper {
     position: -webkit-sticky;
     position: sticky;
     top: 40%;
     margin-top: 40%;
     margin-left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
     display: flex;
     flex-flow: column;
     justify-content: center;
@@ -737,8 +659,7 @@
   align-items: stretch;
   overflow: hidden; }
   .Scrollable:hover > .scrollbar.auto {
-    -webkit-transition-delay: 0s;
-            transition-delay: 0s;
+    transition-delay: 0s;
     opacity: 1; }
   .Scrollable .viewport {
     overflow-y: scroll;
@@ -762,10 +683,8 @@
     right: 0px;
     top: 0px;
     width: 5px;
-    -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transition-delay: 0.5s;
-            transition-delay: 0.5s;
+    transition-delay: 0.5s;
     z-index: 1; }
     .Scrollable .scrollbar.auto, .Scrollable .scrollbar.hidden {
       opacity: 0; }
@@ -776,7 +695,6 @@
       right: 0px;
       top: 0px;
       -webkit-user-select: none;
-         -moz-user-select: none;
           -ms-user-select: none;
               user-select: none;
       will-change: top;
@@ -806,25 +724,12 @@
   min-width: 250px;
   min-height: 36px;
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
-
-@-webkit-keyframes clockwise {
-  0% {
-    -webkit-transform: rotate(-90deg); }
-  100% {
-    -webkit-transform: translateX(0px); } }
 
 @keyframes clockwise {
   0% {
     -webkit-transform: rotate(-90deg); }
-  100% {
-    -webkit-transform: translateX(0px); } }
-
-@-webkit-keyframes anticlockwise {
-  0% {
-    -webkit-transform: rotate(90deg); }
   100% {
     -webkit-transform: translateX(0px); } }
 
@@ -881,7 +786,6 @@
       font-size: 14px; }
   .AutocompleteSelect > .label {
     position: absolute;
-    -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
     font-family: Roboto, sans-serif;
     font-size: 14px;
@@ -889,7 +793,6 @@
     z-index: 1;
     cursor: text;
     -webkit-user-select: none;
-       -moz-user-select: none;
         -ms-user-select: none;
             user-select: none; }
     .AutocompleteSelect > .label.active {
@@ -907,7 +810,6 @@
       display: inline-block;
       margin-left: 5px;
       margin-bottom: 2px;
-      -webkit-transition: all 0.2s ease;
       transition: all 0.2s ease; }
   .AutocompleteSelect > .selected {
     margin-top: 8px;
@@ -942,7 +844,6 @@
         border-width: 5px 5px 0 5px;
         border-color: rgba(0, 0, 0, 0.5) transparent transparent transparent;
         display: inline-block;
-        -webkit-transition: all 0.2s ease;
         transition: all 0.2s ease;
         margin: 0px 17px 3px 5px; }
     .AutocompleteSelect > .selected.inline {
@@ -982,7 +883,6 @@
         position: absolute;
         top: 0px;
         left: 0px;
-        -webkit-transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         background-color: deepskyblue;
         color: white;
@@ -991,16 +891,14 @@
         flex-flow: row;
         justify-content: center;
         align-items: center;
-        -webkit-animation: anticlockwise 0.15s linear;
-                animation: anticlockwise 0.15s linear; }
+        animation: anticlockwise 0.15s linear; }
         .AutocompleteSelect > .selected > .value .button .material-icons {
           font-size: 22px; }
       .AutocompleteSelect > .selected > .value:hover .button {
         width: 30px;
         height: 30px;
         opacity: 1;
-        -webkit-animation: clockwise 0.15s linear;
-                animation: clockwise 0.15s linear;
+        animation: clockwise 0.15s linear;
         overflow: hidden;
         position: absolute; }
 
@@ -1014,7 +912,6 @@
     background: white;
     z-index: 4;
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    -webkit-transition: all 0.2s ease-out;
     transition: all 0.2s ease-out;
     top: 20px;
     opacity: 0;
@@ -1038,7 +935,6 @@
     padding-right: 15px;
     cursor: pointer;
     overflow: hidden;
-    -webkit-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 5px solid #4AC263;
     padding-left: 15px;
@@ -1074,10 +970,8 @@
     left: 0px;
     top: 16px;
     margin-top: -16px;
-    -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
     -webkit-user-select: none;
-       -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
     cursor: text; }
@@ -1103,15 +997,7 @@
       font-family: Roboto, sans-serif;
       color: rgba(0, 0, 0, 0.3);
       opacity: 1; }
-    .TextField > input::-moz-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
     .TextField > input:-ms-input-placeholder {
-      font-family: Roboto, sans-serif;
-      color: rgba(0, 0, 0, 0.3);
-      opacity: 1; }
-    .TextField > input::-ms-input-placeholder {
       font-family: Roboto, sans-serif;
       color: rgba(0, 0, 0, 0.3);
       opacity: 1; }
@@ -1129,7 +1015,6 @@
       height: 2px;
       min-height: 2px;
       background-color: #00bcd4;
-      -webkit-transition: all 0.2s ease;
       transition: all 0.2s ease;
       position: absolute; }
   .TextField > .error {
@@ -1140,7 +1025,6 @@
     color: #f44336;
     visibility: hidden;
     opacity: 0;
-    -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease; }
   .TextField.focused > label, .TextField.withValue > label {
     top: 4px;
@@ -1171,40 +1055,21 @@
   .TextField input:-webkit-autofill {
     -webkit-box-shadow: inset 0 0 0px 9999px white; }
 
-@-webkit-keyframes shake {
-  0%, 100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0); }
-  20%, 60% {
-    -webkit-transform: translateX(-5px);
-            transform: translateX(-5px); }
-  40%, 80% {
-    -webkit-transform: translateX(5px);
-            transform: translateX(5px); } }
-
 @keyframes shake {
   0%, 100% {
-    -webkit-transform: translateX(0);
-            transform: translateX(0); }
+    transform: translateX(0); }
   20%, 60% {
-    -webkit-transform: translateX(-5px);
-            transform: translateX(-5px); }
+    transform: translateX(-5px); }
   40%, 80% {
-    -webkit-transform: translateX(5px);
-            transform: translateX(5px); } }
+    transform: translateX(5px); } }
   .TextField .shake {
-    -webkit-animation-duration: .5s;
-            animation-duration: .5s;
-    -webkit-animation-fill-mode: both;
-            animation-fill-mode: both;
-    -webkit-animation-timing-function: ease-in-out;
-            animation-timing-function: ease-in-out;
-    -webkit-animation-name: shake;
-            animation-name: shake; }
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+    animation-name: shake; }
 
 .Snackbar {
-  -webkit-transform: translateX(-50%);
-          transform: translateX(-50%);
+  transform: translateX(-50%);
   overflow: hidden;
   background-color: #323232;
   padding: 14px 24px 14px 24px;
@@ -1218,7 +1083,6 @@
   flex-wrap: nowrap;
   align-items: center;
   opacity: 0;
-  -webkit-transition: bottom 0.25s ease, opacity 0.2s ease;
   transition: bottom 0.25s ease, opacity 0.2s ease;
   border-radius: 4px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); }
@@ -1255,7 +1119,6 @@
     font-weight: 500;
     text-align: left;
     -webkit-user-select: none;
-       -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
     margin: 0;
@@ -1269,9 +1132,7 @@
       margin: 0;
       outline: 0;
       top: 50%;
-      -webkit-transform: translate(0, -50%);
-              transform: translate(0, -50%);
-      -webkit-transition: all 0.3s ease;
+      transform: translate(0, -50%);
       transition: all 0.3s ease; }
     .Switch .switch-label:before {
       left: 1px;
@@ -1296,8 +1157,7 @@
     background-color: #A5D6A7; }
   .Switch .switch-input:checked + .switch-label:after {
     background-color: #4CAF50;
-    -webkit-transform: translate(80%, -50%);
-            transform: translate(80%, -50%); }
+    transform: translate(80%, -50%); }
   .Switch .switch-input:checked + .switch-label .toggle--on {
     display: inline-block; }
   .Switch .switch-input:checked + .switch-label .toggle--off {
@@ -1385,4 +1245,4 @@
   position: static; }
 
 
-/*# sourceMappingURL=main.css.map*/
+/*# sourceMappingURL=main.98309049.chunk.css.map*/

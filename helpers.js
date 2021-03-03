@@ -105,6 +105,20 @@ function _setPrototypeOf(o, p) {
     return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+    var reflect = Reflect;
+    if (_typeof(reflect) === "undefined" || !reflect.construct || reflect.construct.sham) return false;
+    if (_typeof(Proxy) === "function") return true;
+
+    try {
+        Boolean.prototype.valueOf.call(reflect.construct(Boolean, [], function () {
+        }));
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
 function _objectWithoutProperties(source, excluded) {
     if (source == null) return {};
     var target = {};
@@ -126,8 +140,22 @@ function _assertThisInitialized(self) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
 }
 
-function _possibleConstructorReturn(self, call) {
-    return call && (_typeof(call) === "object" || _typeof(call) === "function") ? call : _assertThisInitialized(self);
+var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+function _createSuper(Derived) {
+    return function _createSuperInternal() {
+        var Super = _getPrototypeOf(Derived), result;
+        var self = this;
+
+        if (hasNativeReflectConstruct) {
+            var NewTarget = _getPrototypeOf(self).constructor;
+            result = Reflect.construct(Super, arguments, NewTarget);
+        } else {
+            result = Super.apply(self, arguments);
+        }
+
+        return result && (_typeof(result) === "object" || _typeof(result) === "function") ? result : _assertThisInitialized(self);
+    };
 }
 
 var isArray = Array.isArray;
@@ -145,14 +173,12 @@ export {
     _assertThisInitialized as assertThisInitialized,
     _classCallCheck as classCallCheck,
     _createClass as createClass,
+    _createSuper as createSuper,
     _defineProperty as defineProperty,
     _extends as extends,
-    _getPrototypeOf as getPrototypeOf,
     _inherits as inherits,
     _objectSpread2 as objectSpread2,
     _objectWithoutProperties as objectWithoutProperties,
-    _possibleConstructorReturn as possibleConstructorReturn,
-    _setPrototypeOf as setPrototypeOf,
     _slicedToArray as slicedToArray,
     _toConsumableArray as toConsumableArray,
     _typeof as typeof

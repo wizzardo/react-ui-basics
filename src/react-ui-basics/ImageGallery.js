@@ -147,6 +147,55 @@ const ACTION_IMAGE_GALLERY_FULL_IMAGE_LOADED = ACTION_PREFIX + 'FULL_IMAGE_LOADE
 const ACTION_IMAGE_GALLERY_PREVIEW_LOADED = ACTION_PREFIX + 'PREVIEW_LOADED';
 
 export class Actions {
+    static replaceImages = images => (dispatch, getState) => {
+        const state = getState();
+        const length = images.length;
+        const nextState = {...state}
+        nextState.images = images.map(item => {
+            const image = state.images.find(it => it.url === item.url)
+            if (image)
+                return image
+
+            const it = {...item}
+            const el = it.el;
+            if (el) {
+                const rect = el.getBoundingClientRect();
+                const fromWidth = el.clientWidth;
+                const fromHeight = el.clientHeight;
+
+                it.fromLeftPx = toPx(rect.left);
+                it.fromTopPx = toPx(rect.top);
+                it.fromWidthPx = toPx(fromWidth);
+
+                let ratio = fromWidth / fromHeight;
+                calculatePosition(it, ratio, el.naturalWidth || el.width, el.naturalHeight || el.height, withPreviews ? previewsHeight : 0, embedded, container);
+            } else {
+                it.toLeft = 100;
+                it.toTop = 100;
+            }
+            if (!it.toWidth || !it.toHeight || !el)
+                Actions.loadPreview(it)(dispatch);
+            return it;
+        })
+        nextState.previews.width = min(length, 5) * previewWidth + min(length - 1, 4) * previewPadding;
+        nextState.previews.totalWidth = toPx(length * previewWidth + (length - 1) * previewPadding);
+        nextState.previews.images = nextState.images.map(item => {
+            const preview = state.previews.images.find(it => it.url === item.previewUrl)
+            if (preview)
+                return preview
+
+            const el = item.el;
+            if (!el)
+                return {};
+
+            let width = el.clientWidth;
+            let height = el.clientHeight;
+            return calculatePreview(width, height, el.src);
+        });
+
+        dispatch({type: ACTION_IMAGE_GALLERY_SHOW, data: nextState});
+    };
+
     static show = (gallery) => (dispatch) => {
         const images = gallery.images;
         const length = images.length;
@@ -359,8 +408,20 @@ class ImageGallery extends React.Component {
                     previous(UNDEFINED)
                 }, 250 + 100); // 250ms transition + 100ms to be sure it ended
             }
-            if (index() !== UNDEFINED && !props().images[index()].loaded) {
-                props().load(props().images[index()])
+
+            const indexValue = index() !== UNDEFINED ? index() : props().index;
+            const image = props().images[indexValue];
+            if (!image) {
+                const i = props().images.length - 1
+                if (i === -1) {
+                    if (prevProps.images !== props().images) {
+                        onClose()
+                    }
+                } else {
+                    scrollTo(i, UNDEFINED)
+                }
+            } else if (!image.loaded) {
+                props().load(image)
             }
         }
 
@@ -621,6 +682,10 @@ class ImageGallery extends React.Component {
                 scrollTo(0, indexValue)
         };
 
+        that.scrollTo = scrollTo;
+        that.left = left;
+        that.right = right;
+
         const animatedRoundButton = (show, className, onClick, icon) => (
             <Animated value={show}>
                 <Button className={className} onClick={onClick} round={true}>
@@ -799,6 +864,7 @@ export class ImageGalleryContainer extends React.Component {
         const that = this;
 
         that.state = IMAGE_GALLERY_REDUCER(null, {})
+        const getState = () => that.state;
 
         const dispatch = (action) => setTimeout(() => {
             // console.log('before action', action, that.state)
@@ -837,6 +903,9 @@ export class ImageGalleryContainer extends React.Component {
         const recalculate = that.recalculate = () => {
             Actions.recalculate()(dispatch)
         };
+        that.replaceImages = (images) => {
+            Actions.replaceImages(images)(dispatch, getState)
+        };
 
         that[render] = () => <ImageGallery ref={galleryRef} {...that.props} {...that.state} show={show} load={load} close={close} recalculate={recalculate}>
             {that.props.children}
@@ -844,6 +913,9 @@ export class ImageGalleryContainer extends React.Component {
 
         that[componentDidMount] = () => {
             props()[embedded] && show(props()[embedded])
+            that.scrollTo = galleryRef().scrollTo;
+            that.left = galleryRef().left;
+            that.right = galleryRef().right;
         }
         that[componentDidUpdate] = (prevProps, prevState) => {
             isDifferent(prevProps[embedded], props()[embedded]) && props()[embedded] && show(props()[embedded])

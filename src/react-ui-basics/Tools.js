@@ -108,7 +108,7 @@ export const isDifferent = (a, b) => {
         return r
     }
 
-    return false;
+    return true;
 };
 
 export const preventDefault = e => {

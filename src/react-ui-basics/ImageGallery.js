@@ -409,12 +409,16 @@ class ImageGallery extends React.Component {
                 }, 250 + 100); // 250ms transition + 100ms to be sure it ended
             }
 
+            const images = props().images;
+            if (!images)
+                return
+
             const indexValue = index() !== UNDEFINED ? index() : props().index;
-            const image = props().images[indexValue];
+            const image = images[indexValue];
             if (!image) {
-                const i = props().images.length - 1
+                const i = images.length - 1
                 if (i === -1) {
-                    if (prevProps.images !== props().images) {
+                    if (prevProps.images !== images) {
                         onClose()
                     }
                 } else {

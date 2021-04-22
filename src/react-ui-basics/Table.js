@@ -69,64 +69,15 @@ class Table extends Component {
                 </tr>
                 </thead>
                 <tbody>
-                {data.map(item => (item &&
-                    <tr key={toKey(item)} onClick={e => onRowClick(item)}
-                        className={classNames(disabled && disabled(item) && 'disabled', rowClassName && rowClassName(item))}>
-                        {columns.filter(it => !!it).map((column, i) => {
-                            const isEditing = editing && editing.id === item.id && editing.columnIndex === i;
-                            const editable = isFunction(column.editable) ? column.editable(item) : !!column.editable;
-                            return (
-                                <td key={i}
-                                    className={classNames(editable ? 'editable' : 'ro', isEditing && 'editing', column.className)}
-                                    onClick={!isEditing && editable ? () => this.setEditing(item, i, column.field) : NOOP}>
-                                    {(isEditing || column.displayEditor) && !column.editor && (
-                                        <TextField
-                                            value={column.preEditor ? column.preEditor(editing.value) : editing.value}
-                                            focused={true}
-                                            onBlur={this.cancelEditing}
-                                            onChange={this.handleInputChange}
-                                            onKeyDown={e => {
-                                                if (e.keyCode === 27/*escape*/) {
-                                                    preventDefault(e);
-                                                    this.cancelEditing();
-                                                }
-                                                if (e.keyCode === 13/*enter*/) {
-                                                    preventDefault(e);
-                                                    this.onFinishEditing();
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                    {(isEditing || column.displayEditor) && column.editor === 'Select' && (
-                                        <AutocompleteSelect
-                                            value={column.preEditor ? column.preEditor(editing.value) : editing.value}
-                                            data={column.editorData}
-                                            focused={true}
-                                            withArrow={false}
-                                            withFilter={false}
-                                            selectedMode={'inline'}
-                                            selectedComponent={column.editorSelectedComponent}
-                                            mode={column.multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
-                                            onChange={column.multiSelect && (column.onSelect ? (value => this.selectNewValue(column.onSelect(value))) : this.selectNewValue)}
-                                            onSelect={!column.multiSelect && (column.onSelect ? (value => this.selectNewValue(column.onSelect(value))) : this.selectNewValue)}
-                                            childComponent={column.editorChildCompononRowClickent}
-                                            onCancel={this.cancelEditing}
-                                            prefilter={column.prefilter}
-                                        />
-                                    )}
-                                    {(isEditing || column.displayEditor) && column.editor === 'Switch' && (
-                                        <Switch onClick={e => {
-                                            stopPropagation(e);
-                                            preventDefault(e);
-                                            this.setState({editing: {...this.prepareEditing(item, column.field, i), value: !item[column.field]}}, this.onFinishEditing);
-                                        }} value={item[column.field]}/>
-                                    )}
-                                    {(isEditing || column.displayEditor) && isFunction(column.editor) && column.editor(item, this.cancelEditing, isEditing)}
-                                    {!isEditing && !column.displayEditor && this.formatValue(item, column)}
-                                </td>
-                            );
-                        })}
-                    </tr>
+                {data.map(item => (<Row key={toKey(item)}
+                                        item={item}
+                                        disabled={disabled}
+                                        editing={editing && editing.id === item.id ? editing : null}
+                                        onClick={onRowClick}
+                                        className={rowClassName}
+                                        columns={columns}
+                                        editingContext={this}
+                    />
                 ))}
                 </tbody>
             </table>
@@ -152,15 +103,6 @@ class Table extends Component {
     setEditing = (item, columnIndex, field) => this.setState({editing: this.prepareEditing(item, field, columnIndex)});
 
     prepareEditing = (item, field, columnIndex) => ({id: item.id, value: item[field], columnIndex, item, field});
-
-    formatValue = (item, column) => {
-        const value = (column.value !== undefined) ? column.value : item[column.field];
-        if (column.formatter) {
-            return column.formatter(value, item, column.format)
-        } else {
-            return '' + value
-        }
-    };
 
     handleInputChange = (event) => {
         const value = this.extractValue(event);
@@ -204,6 +146,81 @@ class Table extends Component {
     }
 }
 
+const formatValue = (item, column) => {
+    const value = (column.value !== undefined) ? column.value : item[column.field];
+    if (column.formatter) {
+        return column.formatter(value, item, column.format)
+    } else {
+        return '' + value
+    }
+};
+
+const Row = React.memo(({item, disabled, editing, onClick, className, columns, editingContext}) => {
+    return <tr onClick={e => onClick(item)}
+               className={classNames(disabled && disabled(item) && 'disabled', className && (isFunction(className) ? className(item) : className))}>
+        {columns.filter(it => !!it).map((column, i) => {
+            const isEditing = editing && editing.id === item.id && editing.columnIndex === i;
+            const editable = isFunction(column.editable) ? column.editable(item) : !!column.editable;
+            return (
+                <td key={i}
+                    className={classNames(editable ? 'editable' : 'ro', isEditing && 'editing', column.className)}
+                    onClick={!isEditing && editable ? () => editingContext.setEditing(item, i, column.field) : NOOP}>
+                    {(isEditing || column.displayEditor) && !column.editor && (
+                        <TextField
+                            value={column.preEditor ? column.preEditor(editing.value) : editing.value}
+                            focused={true}
+                            onBlur={editingContext.cancelEditing}
+                            onChange={editingContext.handleInputChange}
+                            onKeyDown={e => {
+                                if (e.keyCode === 27/*escape*/) {
+                                    preventDefault(e);
+                                    editingContext.cancelEditing();
+                                }
+                                if (e.keyCode === 13/*enter*/) {
+                                    preventDefault(e);
+                                    editingContext.onFinishEditing();
+                                }
+                            }}
+                        />
+                    )}
+                    {(isEditing || column.displayEditor) && column.editor === 'Select' && (
+                        <AutocompleteSelect
+                            value={column.preEditor ? column.preEditor(editing.value) : editing.value}
+                            data={column.editorData}
+                            focused={true}
+                            withArrow={false}
+                            withFilter={false}
+                            selectedMode={'inline'}
+                            selectedComponent={column.editorSelectedComponent}
+                            mode={column.multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
+                            onChange={column.multiSelect && (column.onSelect ? (value => editingContext.selectNewValue(column.onSelect(value))) : editingContext.selectNewValue)}
+                            onSelect={!column.multiSelect && (column.onSelect ? (value => editingContext.selectNewValue(column.onSelect(value))) : editingContext.selectNewValue)}
+                            childComponent={column.editorChildCompononRowClickent}
+                            onCancel={editingContext.cancelEditing}
+                            prefilter={column.prefilter}
+                        />
+                    )}
+                    {(isEditing || column.displayEditor) && column.editor === 'Switch' && (
+                        <Switch onClick={e => {
+                            stopPropagation(e);
+                            preventDefault(e);
+                            editingContext.setState({
+                                editing: {
+                                    ...editingContext.prepareEditing(item, column.field, i),
+                                    value: !item[column.field]
+                                }
+                            }, editingContext.onFinishEditing);
+                        }} value={item[column.field]}/>
+                    )}
+                    {(isEditing || column.displayEditor) && isFunction(column.editor) && column.editor(item, editingContext.cancelEditing, isEditing)}
+                    {!isEditing && !column.displayEditor && formatValue(item, column)}
+                </td>
+            );
+        })}
+    </tr>
+    }
+)
+
 Table.defaultProps = {
     columns: [],
     onRowClick: NOOP,
@@ -215,7 +232,7 @@ if (window.isNotProductionEnvironment) {
         className: PropTypes.string,
         rowClassName: PropTypes.string,
         columns: PropTypes.arrayOf(PropTypes.shape({
-            header: PropTypes.string,
+            header: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
             className: PropTypes.string,
             sortable: PropTypes.bool,
             field: PropTypes.string,
@@ -228,6 +245,7 @@ if (window.isNotProductionEnvironment) {
         data: PropTypes.array,
         disabled: PropTypes.func,
         onRowClick: PropTypes.func,
+        onChange: PropTypes.func,
         toKey: PropTypes.func,
     };
 }

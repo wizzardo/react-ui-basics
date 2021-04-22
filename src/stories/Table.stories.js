@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import "./index.css"
 import Table from "../react-ui-basics/Table";
 import ScrollableTable from "../react-ui-basics/ScrollableTable";
@@ -8,20 +8,29 @@ export default {
     component: Table,
 };
 
-export const story1 = () => <Table
-    data={[...Array(50).keys()].map(i => ({column1: `value ${i}`, column2: `value ${i}`, column3: `value ${i}`}))}
-    columns={[
-        {
-            header: 'Column 1', field: 'column1',
-        },
-        {
-            header: 'Column 2 (not sortable)', sortable: false, field: 'column2',
-        },
-        {
-            header: 'Column 3 with formatter', field: 'column3', formatter: ((value) => value.toUpperCase())
-        },
-    ]}
-/>;
+export const story1 = () => {
+    const [data, setData] = useState([...Array(50).keys()].map(i => ({id: i, column1: `value ${i}`, column2: `value ${i}`, column3: `value ${i}`})))
+    return <Table
+        onChange={item => {
+            const newData = data;
+            newData[item.id] = item
+            setData(newData)
+        }}
+        data={[...Array(50).keys()]}
+        dataMapper={i=> data[i]}
+        columns={[
+            {
+                header: 'Column 1', field: 'column1', editable: true,
+            },
+            {
+                header: 'Column 2 (not sortable)', sortable: false, field: 'column2',
+            },
+            {
+                header: 'Column 3 with formatter', field: 'column3', formatter: ((value) => value.toUpperCase())
+            },
+        ]}
+    />;
+};
 story1.story = {
     name: 'basic',
 };

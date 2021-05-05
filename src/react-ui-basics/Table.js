@@ -230,7 +230,7 @@ Table.defaultProps = {
 if (window.isNotProductionEnvironment) {
     Table.propTypes = {
         className: PropTypes.string,
-        rowClassName: PropTypes.string,
+        rowClassName: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
         columns: PropTypes.arrayOf(PropTypes.shape({
             header: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
             className: PropTypes.string,

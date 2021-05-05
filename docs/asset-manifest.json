@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/wizzardo/react-ui-basics/static/css/main.98309049.chunk.css",
-    "main.js": "/wizzardo/react-ui-basics/main.d6f72951629c1b0b1345.bundle.js",
+    "main.js": "/wizzardo/react-ui-basics/main.fa11d7befe8e9b7c909e.bundle.js",
     "main.css.map": "/wizzardo/react-ui-basics/static/css/main.98309049.chunk.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.d6f72951629c1b0b1345.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.d6f72951629c1b0b1345.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.d6f72951629c1b0b1345.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.d6f72951629c1b0b1345.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.d6f72951629c1b0b1345.bundle.js.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.fa11d7befe8e9b7c909e.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.fa11d7befe8e9b7c909e.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.fa11d7befe8e9b7c909e.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.fa11d7befe8e9b7c909e.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.fa11d7befe8e9b7c909e.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "vendors~main.d6f72951629c1b0b1345.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.d6f72951629c1b0b1345.bundle.js.LICENSE.txt"
+    "vendors~main.fa11d7befe8e9b7c909e.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.fa11d7befe8e9b7c909e.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
-    "runtime~main.d6f72951629c1b0b1345.bundle.js",
-    "vendors~main.d6f72951629c1b0b1345.bundle.js",
+    "runtime~main.fa11d7befe8e9b7c909e.bundle.js",
+    "vendors~main.fa11d7befe8e9b7c909e.bundle.js",
     "static/css/main.98309049.chunk.css",
-    "main.d6f72951629c1b0b1345.bundle.js"
+    "main.fa11d7befe8e9b7c909e.bundle.js"
   ]
 }

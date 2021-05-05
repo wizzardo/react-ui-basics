@@ -53,6 +53,20 @@ export const continuousIncludes = (value, inc) => {
     return true;
 };
 
+const isArrayShallowEqual = (a, b) => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) {
+        return false;
+    }
+    let i = a.length - 1;
+    let result = true;
+    while (i >= 0 && (result = (a[i] === b[i]))) {
+        i--;
+    }
+    return result;
+}
+
 export const debounce = (func, delay) => {
     let inDebounce;
     return function () {
@@ -64,6 +78,20 @@ export const debounce = (func, delay) => {
         }, delay)
     }
 };
+
+export const memo = (func) => {
+    let prevArgs
+    let prevResult
+    return function () {
+        const context = this;
+        const args = arguments;
+        if (!isArrayShallowEqual(prevArgs, args)) {
+            prevArgs = args
+            prevResult = func.apply(context, args);
+        }
+        return prevResult
+    }
+}
 
 export const typeOf = (v) => typeof v;
 export const isFunction = (v) => typeOf(v) === 'function';
@@ -112,10 +140,10 @@ export const isDifferent = (a, b) => {
 };
 
 export const preventDefault = e => {
-     e && e.preventDefault();
+    e && e.preventDefault();
 };
 export const stopPropagation = e => {
-     e && e.stopPropagation();
+    e && e.stopPropagation();
 };
 
 export const setTimeout = function () {

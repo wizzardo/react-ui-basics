@@ -221,3 +221,11 @@ const addComparatorMethods = function (comparator) {
     comparator.and = (another) => Comparators.chain([comparator, another]);
     return comparator;
 };
+
+if (window.isNotProductionEnvironment) {
+    // will be removed in production build
+    // needed only to prevent bundler to remove 'unused' functions
+    window.tools = {
+        memo
+    }
+}

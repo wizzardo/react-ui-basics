@@ -17,7 +17,7 @@ import {
     removeEventListener,
     isObject,
     isFunction,
-    isString
+    isString, UNDEFINED
 } from "./Tools";
 import Button from "./Button";
 import MaterialIcon from "./MaterialIcon";
@@ -153,7 +153,11 @@ class AutocompleteSelect extends React.Component {
         } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
-        const {isActive, selected = {}, filterValue = '', errored} = this.state;
+        const {selected = {}, filterValue = '', errored} = this.state;
+        let {isActive} = this.state;
+        if (this.props.isActive !== UNDEFINED) {
+            isActive = this.props.isActive
+        }
         let {data = [], labels = {}} = this.props;
         if (this.state.data)
             data = this.state.data;

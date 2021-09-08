@@ -69,9 +69,12 @@
         background-color: #00bcd4;
         padding: 10px;
         border-radius: 4px;
-        transition: transform 200ms ease; }
+        transition: -webkit-transform 200ms ease;
+        transition: transform 200ms ease;
+        transition: transform 200ms ease, -webkit-transform 200ms ease; }
       #root .DNDExample .Draggable.dragged .item {
-        transform: rotate(10deg); }
+        -webkit-transform: rotate(10deg);
+                transform: rotate(10deg); }
     #root .DNDExample .Droppable {
       background-color: #4ac263;
       display: inline-block;
@@ -172,20 +175,29 @@
     position: absolute;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 100%;
-    transform: scale(0);
+    -webkit-transform: scale(0);
+            transform: scale(0);
     pointer-events: none;
     transition: opacity 0.2s ease-out; }
   .Button .ripple.show {
-    animation: ripple .35s ease-out; }
+    -webkit-animation: ripple .35s ease-out;
+            animation: ripple .35s ease-out; }
   .Button:active .ripple.showed {
     opacity: 1; }
   .Button .ripple.showed {
-    transform: scale(2);
+    -webkit-transform: scale(2);
+            transform: scale(2);
     opacity: 0; }
+
+@-webkit-keyframes ripple {
+  to {
+    -webkit-transform: scale(2);
+            transform: scale(2); } }
 
 @keyframes ripple {
   to {
-    transform: scale(2); } }
+    -webkit-transform: scale(2);
+            transform: scale(2); } }
   .Button.raised {
     transition: color 0.2s ease-out, background-color 0.2s ease-out, box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1); }
     .Button.raised:hover {
@@ -249,7 +261,8 @@
       background: #4AC263;
       border: none; }
     .Checkbox input[type="checkbox"]:checked + label:after {
-      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg);
       top: 6px;
       left: 4px;
       width: 12px;
@@ -327,15 +340,20 @@
     font-size: 16px;
     padding: 0;
     opacity: 0;
+    transition: opacity 0.25s ease, -webkit-transform 0.25s ease;
     transition: opacity 0.25s ease, transform 0.25s ease;
-    transform: scaleY(0) translateY(-200px) translateX(-50%);
-    transform-origin: top;
+    transition: opacity 0.25s ease, transform 0.25s ease, -webkit-transform 0.25s ease;
+    -webkit-transform: scaleY(0) translateY(-200px) translateX(-50%);
+            transform: scaleY(0) translateY(-200px) translateX(-50%);
+    -webkit-transform-origin: top;
+            transform-origin: top;
     position: absolute;
     border-radius: 2px;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3); }
     .Modal > .content.show {
       opacity: 1;
-      transform: scaleY(1) translateY(0px) translateX(-50%); }
+      -webkit-transform: scaleY(1) translateY(0px) translateX(-50%);
+              transform: scaleY(1) translateY(0px) translateX(-50%); }
     .Modal > .content > .Scrollable {
       overflow: visible;
       max-height: 80vh; }
@@ -369,17 +387,22 @@
     pointer-events: none; }
 
 .DNDContainer .DroppableList .Draggable {
-  transform: unset;
+  -webkit-transform: unset;
+          transform: unset;
   transition: unset;
   opacity: 1; }
   .DNDContainer .DroppableList .Draggable.dragged {
     transition: unset !important; }
 
 .DNDContainer .DroppableList.hover .Draggable {
-  transition: transform 0.2s ease-in; }
+  transition: -webkit-transform 0.2s ease-in;
+  transition: transform 0.2s ease-in;
+  transition: transform 0.2s ease-in, -webkit-transform 0.2s ease-in; }
 
 .DNDContainer .DroppableList.resetting .Draggable {
-  transition: transform 0.1s ease-in; }
+  transition: -webkit-transform 0.1s ease-in;
+  transition: transform 0.1s ease-in;
+  transition: transform 0.1s ease-in, -webkit-transform 0.1s ease-in; }
 
 .ImageGallery {
   position: fixed;
@@ -401,7 +424,6 @@
     background-color: rgba(0, 0, 0, 0.8); }
   .ImageGallery .image {
     position: absolute;
-    cursor: -webkit-grab;
     cursor: grab; }
     .ImageGallery .image .counter {
       display: none; }
@@ -442,10 +464,12 @@
   .ImageGallery .Button.animated {
     transition: all 0.25s ease;
     opacity: 0;
-    transform: scale(0); }
+    -webkit-transform: scale(0);
+            transform: scale(0); }
     .ImageGallery .Button.animated.mounted, .ImageGallery .Button.animated.mounting {
       opacity: 1;
-      transform: scale(1); }
+      -webkit-transform: scale(1);
+              transform: scale(1); }
   .ImageGallery .Button {
     color: white;
     background: rgba(0, 0, 0, 0.4); }
@@ -474,7 +498,8 @@
     position: absolute;
     bottom: 15px;
     left: 50%;
-    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
     padding: 0 45px; }
     .ImageGallery .previews .viewport {
       overflow: hidden;
@@ -552,9 +577,11 @@
     display: block;
     padding-top: 100%; }
   .SpinningProgress .circular {
-    animation: rotate 2s linear infinite;
+    -webkit-animation: rotate 2s linear infinite;
+            animation: rotate 2s linear infinite;
     height: 100%;
-    transform-origin: center center;
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
     width: 100%;
     position: absolute;
     top: 0;
@@ -567,11 +594,29 @@
     stroke-width: 2px;
     stroke-dasharray: 1, 96;
     stroke-dashoffset: 0;
-    animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
+    -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+            animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite; }
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
 
 @keyframes rotate {
   100% {
-    transform: rotate(360deg); } }
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg); } }
+
+@-webkit-keyframes dash {
+  0% {
+    stroke-dasharray: 1, 96;
+    stroke-dashoffset: 0; }
+  50% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -17px; }
+  100% {
+    stroke-dasharray: 43, 96;
+    stroke-dashoffset: -53px; } }
 
 @keyframes dash {
   0% {
@@ -605,12 +650,12 @@
   .FormUploadProgress.animated.mounting, .FormUploadProgress.animated.mounted {
     transition-delay: 500ms; }
   .FormUploadProgress .wrapper {
-    position: -webkit-sticky;
     position: sticky;
     top: 40%;
     margin-top: 40%;
     margin-left: 50%;
-    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
     display: flex;
     flex-flow: column;
     justify-content: center;
@@ -727,9 +772,21 @@
       -ms-user-select: none;
           user-select: none; }
 
+@-webkit-keyframes clockwise {
+  0% {
+    -webkit-transform: rotate(-90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
+
 @keyframes clockwise {
   0% {
     -webkit-transform: rotate(-90deg); }
+  100% {
+    -webkit-transform: translateX(0px); } }
+
+@-webkit-keyframes anticlockwise {
+  0% {
+    -webkit-transform: rotate(90deg); }
   100% {
     -webkit-transform: translateX(0px); } }
 
@@ -891,14 +948,16 @@
         flex-flow: row;
         justify-content: center;
         align-items: center;
-        animation: anticlockwise 0.15s linear; }
+        -webkit-animation: anticlockwise 0.15s linear;
+                animation: anticlockwise 0.15s linear; }
         .AutocompleteSelect > .selected > .value .button .material-icons {
           font-size: 22px; }
       .AutocompleteSelect > .selected > .value:hover .button {
         width: 30px;
         height: 30px;
         opacity: 1;
-        animation: clockwise 0.15s linear;
+        -webkit-animation: clockwise 0.15s linear;
+                animation: clockwise 0.15s linear;
         overflow: hidden;
         position: absolute; }
 
@@ -1055,21 +1114,40 @@
   .TextField input:-webkit-autofill {
     -webkit-box-shadow: inset 0 0 0px 9999px white; }
 
+@-webkit-keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
+  20%, 60% {
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
+  40%, 80% {
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
+
 @keyframes shake {
   0%, 100% {
-    transform: translateX(0); }
+    -webkit-transform: translateX(0);
+            transform: translateX(0); }
   20%, 60% {
-    transform: translateX(-5px); }
+    -webkit-transform: translateX(-5px);
+            transform: translateX(-5px); }
   40%, 80% {
-    transform: translateX(5px); } }
+    -webkit-transform: translateX(5px);
+            transform: translateX(5px); } }
   .TextField .shake {
-    animation-duration: .5s;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in-out;
-    animation-name: shake; }
+    -webkit-animation-duration: .5s;
+            animation-duration: .5s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+    -webkit-animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in-out;
+    -webkit-animation-name: shake;
+            animation-name: shake; }
 
 .Snackbar {
-  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
   overflow: hidden;
   background-color: #323232;
   padding: 14px 24px 14px 24px;
@@ -1132,7 +1210,8 @@
       margin: 0;
       outline: 0;
       top: 50%;
-      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       transition: all 0.3s ease; }
     .Switch .switch-label:before {
       left: 1px;
@@ -1157,7 +1236,8 @@
     background-color: #A5D6A7; }
   .Switch .switch-input:checked + .switch-label:after {
     background-color: #4CAF50;
-    transform: translate(80%, -50%); }
+    -webkit-transform: translate(80%, -50%);
+            transform: translate(80%, -50%); }
   .Switch .switch-input:checked + .switch-label .toggle--on {
     display: inline-block; }
   .Switch .switch-input:checked + .switch-label .toggle--off {
@@ -1245,4 +1325,4 @@
   position: static; }
 
 
-/*# sourceMappingURL=main.98309049.chunk.css.map*/
+/*# sourceMappingURL=main.bb55c438.chunk.css.map*/

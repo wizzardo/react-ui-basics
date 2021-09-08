@@ -183,6 +183,7 @@ class AutocompleteSelect extends React.Component {
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
 
         const list = <FilteredList className={classNames(isActive && 'visible')}
+                                   id={id}
                                    ref={ref('list', this)}
                                    filter={it => {
                                        if (!it) return false;

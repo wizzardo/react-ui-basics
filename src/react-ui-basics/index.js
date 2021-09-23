@@ -13,6 +13,7 @@ import FilteredList from "./FilteredList";
 import FloatingActionButton from "./FloatingActionButton";
 import FormUploadProgress from "./FormUploadProgress";
 import ImageGallery from "./ImageGallery";
+import {ImageGalleryContainer} from "./ImageGallery";
 import MaterialIcon from "./MaterialIcon";
 import Modal from "./Modal";
 import ModalMenu from "./ModalMenu";
@@ -48,6 +49,7 @@ export {
     FloatingActionButton,
     FormUploadProgress,
     ImageGallery,
+    ImageGalleryContainer,
     MaterialIcon,
     Modal,
     ModalMenu,

@@ -239,7 +239,7 @@ if (window.isNotProductionEnvironment) {
             formatter: PropTypes.func,
             editable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
             editor: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-            displayEditor: PropTypes.func,
+            displayEditor: PropTypes.bool,
             preEditor: PropTypes.func,
         })),
         data: PropTypes.array,

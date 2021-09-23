@@ -2,7 +2,6 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import cleanup from 'rollup-plugin-cleanup';
 import replace from 'rollup-plugin-replace';
-import {uglify} from 'rollup-plugin-uglify';
 import babel from 'rollup-plugin-babel';
 import json from 'rollup-plugin-json';
 import scss from 'rollup-plugin-scss';
@@ -92,12 +91,13 @@ export default {
                 // Stage 1
                 "@babel/plugin-proposal-export-default-from",
                 "@babel/plugin-proposal-logical-assignment-operators",
-                ["@babel/plugin-proposal-optional-chaining", {"loose": false}],
+                ["@babel/plugin-proposal-optional-chaining", {"loose": true}],
                 ["@babel/plugin-proposal-pipeline-operator", {"proposal": "minimal"}],
-                ["@babel/plugin-proposal-nullish-coalescing-operator", {"loose": false}],
+                ["@babel/plugin-proposal-nullish-coalescing-operator", {"loose": true}],
                 "@babel/plugin-proposal-do-expressions",
 
-                "@babel/plugin-proposal-class-properties",
+                ["@babel/plugin-proposal-private-property-in-object", {"loose": true}],
+                ["@babel/plugin-proposal-class-properties", {"loose": true}],
                 "@babel/plugin-syntax-dynamic-import",
 
                 // "transform-react-remove-prop-types",

@@ -29,6 +29,7 @@
 
   > .input {
     width: 100%;
+    position: relative;
   }
 
   .Scrollable {
@@ -120,6 +121,8 @@
     z-index: 1;
     cursor: text;
     user-select: none;
+    left: 4px;
+    top: 12px;
 
     &.active {
       font-size: 10px;

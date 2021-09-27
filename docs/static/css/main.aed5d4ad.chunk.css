@@ -985,6 +985,7 @@
 }
 .AutocompleteSelect > .input {
   width: 100%;
+  position: relative;
 }
 .AutocompleteSelect .Scrollable {
   padding-right: 0;
@@ -1055,6 +1056,8 @@
   -webkit-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  left: 4px;
+  top: 12px;
 }
 .AutocompleteSelect > .label.active {
   font-size: 10px;
@@ -1625,4 +1628,4 @@
 }
 
 
-/*# sourceMappingURL=main.11205c6e.chunk.css.map*/
+/*# sourceMappingURL=main.aed5d4ad.chunk.css.map*/

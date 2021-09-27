@@ -94,8 +94,7 @@ class AutocompleteSelect extends React.Component {
     componentDidMount() {
         addEventListener(DOCUMENT, 'mousedown', this.listener = (e) => {
             if (this.state.isActive && this.el && !this.el.contains(e.target)) {
-                this.setState({isActive: false});
-                this.onCancel();
+                this.onClickOutside()
             }
         })
         if (this.props.required) {
@@ -291,16 +290,27 @@ class AutocompleteSelect extends React.Component {
         )
     }
 
+    onClickOutside = () => {
+        const {allowCustom} = this.props;
+        const {filterValue} = this.state;
+        if(allowCustom && !!filterValue){
+            this.onSelect()
+        }
+
+        this.setState({isActive: false});
+
+        this.onCancel();
+    };
+
     onCancel = () => {
         orNoop(this.props.onCancel)()
     };
 
     onSelect = (selectedId) => {
-        const {mode, required, allowCustom, onSelect, onChange} = this.props;
-        const defaultValue = this.props.default;
+        const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
         const {filterValue, filter} = this.state;
 
-        if (selectedId == null && allowCustom && this.input.check())
+        if (selectedId == null && !!filterValue && allowCustom && !this.input.check())
             selectedId = filterValue;
 
 
@@ -320,22 +330,17 @@ class AutocompleteSelect extends React.Component {
 
         const errored = required && Object.keys(selected) === 0;
 
-        if (mode === MODE_MULTIPLE_MINI_INLINE) {
-            this.setState({
-                isActive: true,
-                selected: selected,
-                filterValue: isSelected ? '' : filter,
-                errored,
-            });
+        const isActive = mode === MODE_MULTIPLE_MINI_INLINE || (isMultipleSelect && isSelected)
 
-        } else {
-            this.setState({
-                isActive: isMultipleSelect || !isSelected,
-                selected: selected,
-                filterValue: isSelected ? '' : filter,
-                errored,
-            });
-        }
+        this.setState({
+            isActive: isActive,
+            selected: selected,
+            filterValue: isSelected ? '' : filter,
+            errored,
+        });
+
+        if (isActive && this.input)
+            this.input.getInput().focus()
 
         orNoop(onSelect)(selectedId);
         orNoop(onChange)(Object.values(selected));

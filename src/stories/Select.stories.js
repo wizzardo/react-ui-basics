@@ -1,6 +1,5 @@
 import React from 'react';
 import "./index.css"
-import Switch from "../react-ui-basics/Switch";
 import AutocompleteSelect, {MODE_MULTIPLE_AUTO} from "../react-ui-basics/AutocompleteSelect";
 import {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
 import Button from "../react-ui-basics/Button";

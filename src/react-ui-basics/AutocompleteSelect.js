@@ -308,7 +308,7 @@ class AutocompleteSelect extends React.Component {
 
     onSelect = (selectedId) => {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
-        const {filterValue, filter} = this.state;
+        const {filterValue} = this.state;
 
         if (selectedId == null && !!filterValue && allowCustom && !this.input.check())
             selectedId = filterValue;
@@ -335,7 +335,7 @@ class AutocompleteSelect extends React.Component {
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: isSelected ? '' : filter,
+            filterValue: isMultipleSelect ? '' : (allowCustom && selectedId === filterValue ? filterValue : ''),
             errored,
         });
 

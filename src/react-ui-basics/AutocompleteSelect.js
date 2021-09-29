@@ -118,10 +118,10 @@ class AutocompleteSelect extends React.Component {
             this.initSelected(this.props, this.state)
     }
 
-    initSelected = ({value, mode}, {filterValue = ''}) => {
+    initSelected = ({value, mode, allowCustom}, {filterValue = ''}) => {
         this.setState({
             selected: prepareSelected(value),
-            filterValue: isString(value) && !isMultipleSelect(mode) ? value : filterValue,
+            filterValue: allowCustom && isString(value) && !isMultipleSelect(mode) ? value : filterValue,
         });
     };
 

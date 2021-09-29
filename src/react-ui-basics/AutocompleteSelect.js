@@ -335,7 +335,7 @@ class AutocompleteSelect extends React.Component {
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: isMultipleSelect ? '' : (allowCustom && selectedId === filterValue ? filterValue : ''),
+            filterValue: isMultipleSelect ? '' : (allowCustom ? selectedId : ''),
             errored,
         });
 

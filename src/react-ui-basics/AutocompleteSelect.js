@@ -218,7 +218,7 @@ class AutocompleteSelect extends React.Component {
         />;
 
         return (
-            <div id={id} className={classNames('AutocompleteSelect', mode, className, withFilter ? 'withFilter' : 'withoutFilter', isActive && 'active', errored && 'errored')}
+            <div id={id} className={classNames('AutocompleteSelect', mode, isMultipleSelect(mode) && 'multi', className, withFilter ? 'withFilter' : 'withoutFilter', isActive && 'active', errored && 'errored')}
                  ref={ref('el', this)}>
                 {label && <label className={classNames(`label`, (hasSelected || filterValue) && 'active', hasSelected && 'hasSelected')}
                                  htmlFor={'f-' + id}
@@ -378,7 +378,8 @@ class AutocompleteSelect extends React.Component {
     remove = (id) => {
         let result = {
             ...this.state,
-            selected: {...this.state.selected}
+            selected: {...this.state.selected},
+            filterValue: '',
         };
         delete result.selected[id];
         this.setState(result);

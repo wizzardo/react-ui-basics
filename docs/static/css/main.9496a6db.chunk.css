@@ -985,6 +985,8 @@
 }
 .AutocompleteSelect > .input {
   width: 100%;
+}
+.AutocompleteSelect.multi > .input {
   position: relative;
 }
 .AutocompleteSelect .Scrollable {
@@ -1628,4 +1630,4 @@
 }
 
 
-/*# sourceMappingURL=main.aed5d4ad.chunk.css.map*/
+/*# sourceMappingURL=main.9496a6db.chunk.css.map*/

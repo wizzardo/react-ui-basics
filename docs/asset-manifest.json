@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/wizzardo/react-ui-basics/static/css/main.aed5d4ad.chunk.css",
-    "main.js": "/wizzardo/react-ui-basics/main.dead1002da87ce82bb54.bundle.js",
-    "main.css.map": "/wizzardo/react-ui-basics/static/css/main.aed5d4ad.chunk.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.dead1002da87ce82bb54.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.dead1002da87ce82bb54.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.dead1002da87ce82bb54.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.dead1002da87ce82bb54.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.dead1002da87ce82bb54.bundle.js.map",
+    "main.css": "/wizzardo/react-ui-basics/static/css/main.9496a6db.chunk.css",
+    "main.js": "/wizzardo/react-ui-basics/main.2e43ff0006db8bc2966d.bundle.js",
+    "main.css.map": "/wizzardo/react-ui-basics/static/css/main.9496a6db.chunk.css.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.2e43ff0006db8bc2966d.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.2e43ff0006db8bc2966d.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.2e43ff0006db8bc2966d.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.2e43ff0006db8bc2966d.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.2e43ff0006db8bc2966d.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "vendors~main.dead1002da87ce82bb54.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.dead1002da87ce82bb54.bundle.js.LICENSE.txt"
+    "vendors~main.2e43ff0006db8bc2966d.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.2e43ff0006db8bc2966d.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
-    "runtime~main.dead1002da87ce82bb54.bundle.js",
-    "vendors~main.dead1002da87ce82bb54.bundle.js",
-    "static/css/main.aed5d4ad.chunk.css",
-    "main.dead1002da87ce82bb54.bundle.js"
+    "runtime~main.2e43ff0006db8bc2966d.bundle.js",
+    "vendors~main.2e43ff0006db8bc2966d.bundle.js",
+    "static/css/main.9496a6db.chunk.css",
+    "main.2e43ff0006db8bc2966d.bundle.js"
   ]
 }

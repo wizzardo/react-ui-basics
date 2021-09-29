@@ -29,6 +29,9 @@
 
   > .input {
     width: 100%;
+  }
+
+  &.multi > .input {
     position: relative;
   }
 

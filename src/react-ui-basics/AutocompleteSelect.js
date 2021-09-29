@@ -304,9 +304,9 @@ class AutocompleteSelect extends React.Component {
     }
 
     onClickOutside = () => {
-        const {allowCustom} = this.props;
+        const {allowCustom, required} = this.props;
         const {filterValue} = this.state;
-        if(allowCustom && !!filterValue){
+        if (allowCustom && (!!filterValue || !required)) {
             this.onSelect()
         }
 
@@ -323,7 +323,7 @@ class AutocompleteSelect extends React.Component {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
         const {filterValue} = this.state;
 
-        if (selectedId == null && !!filterValue && allowCustom && !this.input.check())
+        if (selectedId == null && (!!filterValue || !required) && allowCustom && !this.input.check())
             selectedId = filterValue;
 
 
@@ -348,11 +348,9 @@ class AutocompleteSelect extends React.Component {
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: isMultiSelect ? '' : (allowCustom ? selectedId || filterValue : ''),
+            filterValue: isMultiSelect ? '' : (allowCustom ? selectedId || '' : ''),
             errored,
         });
-
-        console.log('filterValue',isMultiSelect ? '' : (allowCustom ? selectedId || filterValue : ''))
 
         if (isActive && this.input)
             this.input.getInput().focus()

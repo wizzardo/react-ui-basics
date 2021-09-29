@@ -10,7 +10,7 @@ export default {
 };
 
 export const story1 = () => <AutocompleteSelect
-    mode={MODE_MULTIPLE_AUTO}
+    // mode={MODE_MULTIPLE_AUTO}
     withArrow={false}
     value={"test"}
     allowCustom={true}

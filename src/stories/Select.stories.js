@@ -12,6 +12,8 @@ export default {
 export const story1 = () => <AutocompleteSelect
     mode={MODE_MULTIPLE_AUTO}
     withArrow={false}
+    value={"test"}
+    allowCustom={true}
     label={"Select value"}
     data={[...Array(100)].map((_, i) => `value #${i}`)}
 />;

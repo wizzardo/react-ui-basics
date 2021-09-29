@@ -69,6 +69,10 @@ const findParent = (el, tag) => {
     return null;
 }
 
+function isMultipleSelect(mode) {
+    return mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI || mode === MODE_MULTIPLE_MINI_INLINE;
+}
+
 class AutocompleteSelect extends React.Component {
 
     static propTypes = {
@@ -106,15 +110,19 @@ class AutocompleteSelect extends React.Component {
                 })
             }
         }
+        this.initSelected(this.props, this.state)
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.value !== prevProps.value)
-            this.initSelected(this.props)
+            this.initSelected(this.props, this.state)
     }
 
-    initSelected = ({value}) => {
-        this.setState({selected: prepareSelected(value)});
+    initSelected = ({value, mode}, {filterValue = ''}) => {
+        this.setState({
+            selected: prepareSelected(value),
+            filterValue: isString(value) && !isMultipleSelect(mode) ? value : filterValue,
+        });
     };
 
     componentWillUnmount() {
@@ -149,6 +157,7 @@ class AutocompleteSelect extends React.Component {
             scrollToValue,
             scroll,
             required,
+            allowCustom,
         } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
@@ -275,7 +284,11 @@ class AutocompleteSelect extends React.Component {
                                                       } else if (keyCode === 8/*backspace*/ || keyCode === 46/*delete*/) {
                                                           this.reset()
                                                       } else if (keyCode === 27/*esc*/) {
-                                                          this.setState({isActive: false, filterValue: ''});
+                                                          this.setState({
+                                                              isActive: false,
+                                                              filterValue: isMultipleSelect(mode) ? '' : (allowCustom ? filterValue : ''),
+                                                          });
+                                                          this.input.getInput().blur()
                                                           this.onCancel();
                                                       }
                                                       // console.log('key pressed:', e.keyCode)
@@ -315,14 +328,14 @@ class AutocompleteSelect extends React.Component {
 
 
         const isSelected = selectedId != null;
-        const isMultipleSelect = mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI || mode === MODE_MULTIPLE_MINI_INLINE;
+        const isMultiSelect = isMultipleSelect(mode);
 
         let selected = {...this.state.selected};
-        if (selected[selectedId] && (defaultValue || isMultipleSelect)) {
+        if (selected[selectedId] && (defaultValue || isMultiSelect)) {
             delete selected[selectedId];
             if (defaultValue && Object.keys(selected).length === 0)
                 selected[defaultValue] = defaultValue;
-        } else if (isSelected && (isMultipleSelect)) {
+        } else if (isSelected && (isMultiSelect)) {
             selected[selectedId] = selectedId;
         } else if (isSelected) {
             selected = {[selectedId]: selectedId};
@@ -330,14 +343,16 @@ class AutocompleteSelect extends React.Component {
 
         const errored = required && Object.keys(selected) === 0;
 
-        const isActive = mode === MODE_MULTIPLE_MINI_INLINE || (isMultipleSelect && isSelected)
+        const isActive = mode === MODE_MULTIPLE_MINI_INLINE || (isMultiSelect && isSelected)
 
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: isMultipleSelect ? '' : (allowCustom ? selectedId : ''),
+            filterValue: isMultiSelect ? '' : (allowCustom ? selectedId || filterValue : ''),
             errored,
         });
+
+        console.log('filterValue',isMultiSelect ? '' : (allowCustom ? selectedId || filterValue : ''))
 
         if (isActive && this.input)
             this.input.getInput().focus()
@@ -359,7 +374,7 @@ class AutocompleteSelect extends React.Component {
         orNoop(this.props.onSelect)(null);
         orNoop(this.props.onChange)([]);
 
-        this.initSelected(this.props);
+        this.initSelected(this.props, this.state);
     };
 
     remove = (id) => {

@@ -13,6 +13,7 @@ class FilteredList extends React.Component {
         labels: {},
         selected: {},
         inline: false,
+        selectSingle: true,
         filter: () => true,
     };
 
@@ -75,14 +76,18 @@ class FilteredList extends React.Component {
     };
 
     selected = () => {
-        if (this.state.selected === -1 || this.hidden[this.state.selected]) {
+        const {selected: value} = this.state;
+        const {selectSingle} = this.props;
+
+
+        if (value === -1 || this.hidden[value]) {
             let filtered = this.list.filter(id => !this.hidden[id]);
-            if (filtered.length === 1)
+            if (selectSingle && filtered.length === 1)
                 return filtered[0];
 
             return null;
         } else {
-            return this.state.selected;
+            return value;
         }
     };
 

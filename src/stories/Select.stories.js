@@ -1,6 +1,6 @@
 import React from 'react';
 import "./index.css"
-import AutocompleteSelect, {MODE_MULTIPLE_AUTO} from "../react-ui-basics/AutocompleteSelect";
+import AutocompleteSelect, {MODE_INLINE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI_INLINE} from "../react-ui-basics/AutocompleteSelect";
 import {SCROLLBAR_MODE_HIDDEN} from "../react-ui-basics/Scrollable";
 import Button from "../react-ui-basics/Button";
 
@@ -10,10 +10,7 @@ export default {
 };
 
 export const story1 = () => <AutocompleteSelect
-    // mode={MODE_MULTIPLE_AUTO}
     withArrow={false}
-    value={"test"}
-    allowCustom={true}
     label={"Select value"}
     data={[...Array(100)].map((_, i) => `value #${i}`)}
 />;
@@ -46,4 +43,28 @@ export const story2 = () => <AutocompleteSelect className="menu"
 />;
 story2.story = {
     name: 'menu',
+};
+
+
+export const story3 = () => <AutocompleteSelect
+    mode={MODE_MULTIPLE_AUTO}
+    withArrow={false}
+    inlineSelected={true}
+    label={"Select value"}
+    data={[...Array(100)].map((_, i) => `value #${i}`)}
+/>;
+story3.story = {
+    name: 'multiselect inlined',
+};
+
+
+export const story4 = () => <AutocompleteSelect
+    withArrow={false}
+    allowCustom={true}
+    value={"test"}
+    label={"Select value"}
+    data={[...Array(100)].map((_, i) => `value #${i}`)}
+/>;
+story4.story = {
+    name: 'with custom values',
 };

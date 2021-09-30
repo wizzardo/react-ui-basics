@@ -32,9 +32,9 @@ export const MODE_MINI = 'mini';
 export const MODE_MULTIPLE_MINI_INLINE = 'multiple-mini-inline';
 
 
-const DummyChild = ({id, label, dataConsumer}) => {
+const DummyChild = ({id, label, dataConsumer, onClick}) => {
     orNoop(dataConsumer)(label || id);
-    return <div className={`DummyChild`}>{label || id}</div>
+    return <div className={`DummyChild`} onClick={onClick}>{label || id}</div>
 };
 
 const prepareSelected = (value) => {
@@ -158,6 +158,7 @@ class AutocompleteSelect extends React.Component {
             scroll,
             required,
             allowCustom,
+            inlineSelected,
         } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
@@ -203,6 +204,7 @@ class AutocompleteSelect extends React.Component {
                                        let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase();
                                        return continuousIncludes(value, f);
                                    }}
+                                   selectSingle={!allowCustom}
                                    scroll={scroll}
                                    inline={isInline}
                                    nextProvider={ref('next', this)}
@@ -219,18 +221,32 @@ class AutocompleteSelect extends React.Component {
 
         return (
             <div id={id}
-                 className={classNames('AutocompleteSelect', mode, isMultipleSelect(mode) && 'multi', className, withFilter ? 'withFilter' : 'withoutFilter', isActive && 'active', errored && 'errored')}
+                 className={classNames(
+                     'AutocompleteSelect',
+                     mode,
+                     isMultipleSelect(mode) && 'multi',
+                     className,
+                     withFilter ? 'withFilter' : 'withoutFilter',
+                     isActive && 'active',
+                     errored && 'errored',
+                     inlineSelected && 'inlineSelected',
+                     hasSelected && 'hasSelected',
+                 )}
                  ref={ref('el', this)}>
                 {label && <label className={classNames(`label`, (hasSelected || filterValue) && 'active', hasSelected && 'hasSelected')}
                                  htmlFor={'f-' + id}
-                                 onClick={() => mode === MODE_MULTIPLE_MINI_INLINE && toggle()}
+                                 onClick={() => {
+                                     if (mode === MODE_MULTIPLE_MINI_INLINE || !isActive) {
+                                         toggle();
+                                     }
+                                 }}
                 >
                     {label}
                     {required && ' *'}
                     {withArrow && <span className="arrow"/>}
                 </label>}
 
-                {(!isActive || mode === MODE_MULTIPLE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE_AUTO || !withFilter) && hasSelected && (
+                {(!isActive || mode === MODE_MULTIPLE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE_AUTO || !withFilter) && !inlineSelected && hasSelected && (
                     <div
                         className={classNames('selected',
                             !label && 'nolabel',
@@ -261,6 +277,27 @@ class AutocompleteSelect extends React.Component {
                         </Button>}
                     </div>
                 )}
+
+                {inlineSelected && hasSelected && <>
+                    {selectedMode === 'full' && selectedIds.map(id =>
+                        <div className="value" key={id}>
+                            {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
+                            <div className="button remove" onClick={e => {
+                                stopPropagation(e);
+                                this.remove(id);
+                            }}>
+                                <MaterialIcon icon="close"/>
+                            </div>
+                        </div>
+                    )}
+                    {selectedMode === 'inline' && selectedIds.map(id =>
+                        <React.Fragment key={id}>
+                            {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
+                            {id !== selectedIds[selectedIds.length - 1] && ', '}
+                        </React.Fragment>
+                    )}
+                </>}
+
                 {(isActive || (!hasSelected && mode !== MODE_MULTIPLE_MINI_INLINE) || mode === MODE_MULTIPLE || (mode === MODE_MULTIPLE_AUTO && selectedIds.length > 1) || mode === MODE_INLINE_MULTIPLE) && (
                     <div className={`input`}>
                         {withFilter && <TextField autoComplete="off" id={'f-' + id}
@@ -322,16 +359,22 @@ class AutocompleteSelect extends React.Component {
 
     onSelect = (selectedId) => {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
-        const {filterValue} = this.state;
+        const {filterValue, selected: currentSelection} = this.state;
 
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
             selectedId = filterValue;
 
-
-        const isSelected = selectedId != null;
         const isMultiSelect = isMultipleSelect(mode);
 
-        let selected = {...this.state.selected};
+        if (!selectedId && isMultiSelect) {
+            selectedId = null;
+        }
+
+        // debugger
+
+        const isSelected = selectedId != null;
+
+        let selected = {...currentSelection};
         if (selected[selectedId] && (defaultValue || isMultiSelect)) {
             delete selected[selectedId];
             if (defaultValue && Object.keys(selected).length === 0)

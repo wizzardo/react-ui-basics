@@ -990,10 +990,6 @@
   padding-right: 0;
   min-width: 100%;
 }
-.AutocompleteSelect .selected.full .DummyChild {
-  padding-left: 35px;
-  padding-right: 10px;
-}
 .AutocompleteSelect.inline-multiple > .label {
   top: -12px;
 }
@@ -1135,7 +1131,29 @@
   margin-left: -10px;
   margin-right: -10px;
 }
-.AutocompleteSelect > .selected > .value {
+.AutocompleteSelect.inlineSelected {
+  flex-flow: row wrap;
+  justify-content: flex-start;
+}
+.AutocompleteSelect.inlineSelected.hasSelected {
+  padding-top: 7px;
+}
+.AutocompleteSelect.inlineSelected > .label {
+  width: 100%;
+  height: 100%;
+}
+.AutocompleteSelect.inlineSelected > .label.active {
+  z-index: 0;
+}
+.AutocompleteSelect.inlineSelected .input {
+  width: unset;
+  flex-basis: 50px;
+  flex-grow: 1;
+}
+.AutocompleteSelect.inlineSelected > .value:nth-child(2) {
+  margin-top: 7px;
+}
+.AutocompleteSelect.inlineSelected > .value, .AutocompleteSelect > .selected > .value {
   cursor: pointer;
   margin: 5px 10px 5px 0px;
   display: inline-flex;
@@ -1149,7 +1167,11 @@
   font-size: 14px;
   color: #1e252d;
 }
-.AutocompleteSelect > .selected > .value .button {
+.AutocompleteSelect.inlineSelected > .value .DummyChild, .AutocompleteSelect > .selected > .value .DummyChild {
+  padding-left: 35px;
+  padding-right: 10px;
+}
+.AutocompleteSelect.inlineSelected > .value .button, .AutocompleteSelect > .selected > .value .button {
   cursor: pointer;
   min-width: 30px;
   width: 30px;
@@ -1169,10 +1191,10 @@
   -webkit-animation: anticlockwise 0.15s linear;
           animation: anticlockwise 0.15s linear;
 }
-.AutocompleteSelect > .selected > .value .button .material-icons {
+.AutocompleteSelect.inlineSelected > .value .button .material-icons, .AutocompleteSelect > .selected > .value .button .material-icons {
   font-size: 22px;
 }
-.AutocompleteSelect > .selected > .value:hover .button {
+.AutocompleteSelect.inlineSelected > .value:hover .button, .AutocompleteSelect > .selected > .value:hover .button {
   width: 30px;
   height: 30px;
   opacity: 1;
@@ -1199,7 +1221,7 @@
   border-radius: 2px;
 }
 .FilteredList.popup.visible {
-  top: 36px;
+  top: 100%;
   opacity: 1;
   visibility: visible;
 }
@@ -1627,4 +1649,4 @@
 }
 
 
-/*# sourceMappingURL=main.92ef504f.chunk.css.map*/
+/*# sourceMappingURL=main.cd871044.chunk.css.map*/

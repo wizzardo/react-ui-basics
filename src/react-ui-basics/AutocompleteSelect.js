@@ -215,11 +215,11 @@ class AutocompleteSelect extends React.Component {
                                    selected={selected}
                                    childComponent={childComponent}
                                    childProps={childProps}
-                                   data={data}
+                                   data={[filterValue, ...data]}
                                    labels={labels}
         />;
 
-        return (
+        return (<>
             <div id={id}
                  className={classNames(
                      'AutocompleteSelect',
@@ -307,6 +307,7 @@ class AutocompleteSelect extends React.Component {
                                                   label={inputLabel}
                                                   onChange={this.onChange}
                                                   onFocus={e => this.setState({isActive: true})}
+                                                  onBlur={e => this.setState({isActive: false})}
                                                   check={this.props.filterCheck}
                                                   onKeyDown={e => {
                                                       const keyCode = e.keyCode;
@@ -319,7 +320,14 @@ class AutocompleteSelect extends React.Component {
                                                       } else if (keyCode === 13/*enter*/) {
                                                           preventDefault(e);
                                                           this.onSelect(this.getSelected())
-                                                      } else if (keyCode === 8/*backspace*/ || keyCode === 46/*delete*/) {
+                                                      } else if (keyCode === 9/*tab*/) {
+                                                          this.onSelect(this.getSelected())
+                                                      } else if (keyCode === 8/*backspace*/) {
+                                                          if (!filterValue && (selectedIds.length !==0)) {
+                                                              this.remove(selectedIds[selectedIds.length-1]);
+                                                          }
+                                                          this.reset()
+                                                      } else if (keyCode === 46/*delete*/) {
                                                           this.reset()
                                                       } else if (keyCode === 27/*esc*/) {
                                                           this.setState({
@@ -333,11 +341,13 @@ class AutocompleteSelect extends React.Component {
                                                   }}
                         />}
                         {!withFilter && inputLabel && <label>{inputLabel}</label>}
-                        {(mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE) && list}
+                        {false && (mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE) && list}
                     </div>
                 )}
-                {!(mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE) && list}
+                {false && !(mode === MODE_MULTIPLE_MINI_INLINE || mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE) && list}
             </div>
+              {list}
+            </>
         )
     }
 

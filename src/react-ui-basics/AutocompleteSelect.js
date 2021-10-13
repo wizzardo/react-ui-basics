@@ -299,7 +299,7 @@ class AutocompleteSelect extends React.Component {
                 </>}
 
                 {(isActive || (!hasSelected && mode !== MODE_MULTIPLE_MINI_INLINE) || mode === MODE_MULTIPLE || (mode === MODE_MULTIPLE_AUTO && selectedIds.length > 1) || mode === MODE_INLINE_MULTIPLE) && (
-                    <div className={`input`}>
+                    <div className={`input`} data-value={filterValue}>
                         {withFilter && <TextField autoComplete="off" id={'f-' + id}
                                                   ref={ref('input', this)}
                                                   focused={isActive}

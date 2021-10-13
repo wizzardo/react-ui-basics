@@ -1150,6 +1150,20 @@
   flex-basis: 50px;
   flex-grow: 1;
 }
+.AutocompleteSelect.inlineSelected .input::after {
+  content: attr(data-value);
+  white-space: pre;
+  font: inherit;
+  min-width: 2px;
+  border: 0;
+  margin: 0;
+  outline: 0;
+  float: left;
+  display: inline-block;
+  margin-top: -24px;
+  font-size: 14px;
+  padding: 2px;
+}
 .AutocompleteSelect.inlineSelected > .value:nth-child(2) {
   margin-top: 7px;
 }
@@ -1649,4 +1663,4 @@
 }
 
 
-/*# sourceMappingURL=main.cd871044.chunk.css.map*/
+/*# sourceMappingURL=main.aeb2d2d8.chunk.css.map*/

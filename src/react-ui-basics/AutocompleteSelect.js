@@ -215,7 +215,7 @@ class AutocompleteSelect extends React.Component {
                                    selected={selected}
                                    childComponent={childComponent}
                                    childProps={childProps}
-                                   data={allowCustom ? [filterValue, ...data] : data}
+                                   data={(allowCustom && !data.includes(filterValue)) ? [filterValue, ...data] : data}
                                    labels={labels}
         />;
 

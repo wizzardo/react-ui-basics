@@ -235,6 +235,7 @@
 
       &::after {
         content: attr(data-value);
+        visibility: hidden;
         white-space: pre;
         font: inherit;
         min-width: 2px;

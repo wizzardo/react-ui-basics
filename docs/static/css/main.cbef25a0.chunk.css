@@ -1152,6 +1152,7 @@
 }
 .AutocompleteSelect.inlineSelected .input::after {
   content: attr(data-value);
+  visibility: hidden;
   white-space: pre;
   font: inherit;
   min-width: 2px;
@@ -1662,4 +1663,4 @@
 }
 
 
-/*# sourceMappingURL=main.297d3f3d.chunk.css.map*/
+/*# sourceMappingURL=main.cbef25a0.chunk.css.map*/

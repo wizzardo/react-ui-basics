@@ -322,8 +322,8 @@ class AutocompleteSelect extends React.Component {
                                                       } else if (keyCode === 9/*tab*/) {
                                                           this.onSelect(this.getSelected())
                                                       } else if (keyCode === 8/*backspace*/) {
-                                                          if (!filterValue && (selectedIds.length !==0) && isMultipleSelect(mode)) {
-                                                              this.remove(selectedIds[selectedIds.length-1]);
+                                                          if (!filterValue && (selectedIds.length !== 0) && isMultipleSelect(mode)) {
+                                                              this.remove(selectedIds[selectedIds.length - 1]);
                                                           }
                                                           this.reset()
                                                       } else if (keyCode === 46/*delete*/) {

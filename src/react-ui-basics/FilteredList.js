@@ -4,7 +4,7 @@ import './FilteredList.css'
 import Scrollable from "./Scrollable";
 import {classNames, orNoop, ref, stopPropagation, isFunction, isObject} from "./Tools";
 
-export const getLabel = (labels, id)=> isFunction(labels) ? labels(id) : labels[id]
+export const getLabel = (labels, id) => isFunction(labels) ? labels(id) : labels[id]
 
 class FilteredList extends React.Component {
 
@@ -42,7 +42,11 @@ class FilteredList extends React.Component {
 
     updateList = (props) => {
         const {data} = props;
+        const {selected} = this.state;
         this.list = data || [];
+
+        if (!this.list.includes(selected))
+            this.setState({selected: -1})
     };
 
     render() {

@@ -190,6 +190,8 @@ class AutocompleteSelect extends React.Component {
         };
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
+        const filterValueTrimmed = filterValue.trim();
+        const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion.toLowerCase().trim() !== filterValueTrimmed.toLowerCase())] : data;
 
         const list = <FilteredList className={classNames(isActive && 'visible')}
                                    ref={ref('list', this)}
@@ -198,10 +200,10 @@ class AutocompleteSelect extends React.Component {
                                        if (prefilter && !prefilter(it)) return false;
                                        if (!filterValue) return true;
 
-                                       const f = filterValue.toLowerCase();
+                                       const f = filterValueTrimmed.toLowerCase();
                                        if (filter) return filter(it, f);
 
-                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase();
+                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase().trim();
                                        return continuousIncludes(value, f);
                                    }}
                                    selectSingle={!allowCustom}
@@ -215,7 +217,7 @@ class AutocompleteSelect extends React.Component {
                                    selected={selected}
                                    childComponent={childComponent}
                                    childProps={childProps}
-                                   data={(allowCustom && !data.includes(filterValue)) ? [filterValue, ...data] : data}
+                                   data={dataFiltered}
                                    labels={labels}
         />;
 
@@ -438,9 +440,7 @@ class AutocompleteSelect extends React.Component {
 
     onChange = (event) => {
         const value = event.target.value;
-        const { allowCustom } = this.props;
         this.setState({filterValue: value});
-        if (allowCustom) this.reset();
     }
 }
 

@@ -96,8 +96,8 @@ class TextField extends PureComponent {
         that[componentDidUpdate] = () => {
             if (props().value !== inputRef().value)
                 check();
-            const {focused} = props(),
-            i = inputRef();
+            const { focused } = props(),
+                i = inputRef();
             focused && i.focus();
         };
         that.check = check;

@@ -46,7 +46,7 @@ export const continuousIncludes = (value, inc) => {
     const length = inc.length;
     let from = -1;
     for (let i = 0; i < length; i++) {
-        from = value.indexOf(inc[i], from+1);
+        from = value.indexOf(inc[i], from + 1);
         if (from === -1)
             return false
     }

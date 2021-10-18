@@ -191,7 +191,7 @@ class AutocompleteSelect extends React.Component {
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
         const filterValueTrimmed = filterValue.trim();
-        const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion.toLowerCase().trim() !== filterValueTrimmed.toLowerCase())] : data;
+        const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
 
         const list = <FilteredList className={classNames(isActive && 'visible')}
                                    ref={ref('list', this)}
@@ -370,7 +370,7 @@ class AutocompleteSelect extends React.Component {
         const {filterValue, selected: currentSelection} = this.state;
 
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
-            selectedId = filterValue;
+            selectedId = filterValue.trim();
 
         const isMultiSelect = isMultipleSelect(mode);
 

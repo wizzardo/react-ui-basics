@@ -190,6 +190,8 @@ class AutocompleteSelect extends React.Component {
         };
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
+        const filterValueTrimmed = filterValue.trim();
+        const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
 
         const list = <FilteredList className={classNames(isActive && 'visible')}
                                    ref={ref('list', this)}
@@ -198,10 +200,10 @@ class AutocompleteSelect extends React.Component {
                                        if (prefilter && !prefilter(it)) return false;
                                        if (!filterValue) return true;
 
-                                       const f = filterValue.toLowerCase();
+                                       const f = filterValueTrimmed.toLowerCase();
                                        if (filter) return filter(it, f);
 
-                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase();
+                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase().trim();
                                        return continuousIncludes(value, f);
                                    }}
                                    selectSingle={!allowCustom}
@@ -215,7 +217,7 @@ class AutocompleteSelect extends React.Component {
                                    selected={selected}
                                    childComponent={childComponent}
                                    childProps={childProps}
-                                   data={(allowCustom && !data.includes(filterValue)) ? [filterValue, ...data] : data}
+                                   data={dataFiltered}
                                    labels={labels}
         />;
 
@@ -300,7 +302,7 @@ class AutocompleteSelect extends React.Component {
 
                 {(isActive || (!hasSelected && mode !== MODE_MULTIPLE_MINI_INLINE) || mode === MODE_MULTIPLE || (mode === MODE_MULTIPLE_AUTO && selectedIds.length > 1) || mode === MODE_INLINE_MULTIPLE) && (
                     <div className={`input`} data-value={filterValue}>
-                        {withFilter && <TextField autoComplete="off" id={'f-' + id}
+                        {withFilter && <TextField autoComplete="new-password" id={'f-' + id}
                                                   ref={ref('input', this)}
                                                   focused={isActive}
                                                   value={filterValue}
@@ -368,7 +370,7 @@ class AutocompleteSelect extends React.Component {
         const {filterValue, selected: currentSelection} = this.state;
 
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
-            selectedId = filterValue;
+            selectedId = filterValue.trim();
 
         const isMultiSelect = isMultipleSelect(mode);
 

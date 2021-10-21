@@ -1,6 +1,8 @@
 import {UNDEFINED} from "../Tools";
 
 export const createProxy = (target) => {
+    if(!target)
+        return target
     if (target.__isProxy)
         return target;
 
@@ -49,7 +51,7 @@ export const createProxy = (target) => {
                 return null
 
             const value = target[prop];
-            if (typeof value === 'object') {
+            if (value && typeof value === 'object') {
                 !innerProxies && (innerProxies = {})
                 return innerProxies[prop] = createProxy(value)
             }
@@ -60,9 +62,11 @@ export const createProxy = (target) => {
             // console.log('set', {target, prop, newval})
             if (!changedValue) changedValue = Array.isArray(target) ? [...target] : {...target}
 
-            if (typeof newval === 'object') {
+            if (newval && typeof newval === 'object') {
                 !innerProxies && (innerProxies = {})
                 innerProxies[prop] = newval = createProxy(newval)
+            } else {
+                innerProxies && (delete innerProxies[prop])
             }
             changedValue[prop] = newval
             // console.log('changedValue', changedValue)

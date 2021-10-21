@@ -7,6 +7,7 @@ import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventL
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
+import {MODE_DEFAULT} from "./AutocompleteSelect";
 
 let listenerRef;
 let zIndex = 100;
@@ -27,6 +28,10 @@ const addListener = (modal, listener) => {
 };
 
 class Modal extends PureComponent {
+
+    static defaultProps = {
+        closeIcon: <MaterialIcon icon="close"/>,
+    };
 
     constructor(properties) {
         super(properties);
@@ -65,7 +70,7 @@ class Modal extends PureComponent {
             addEventListener(overlay(), transitionend, listener);
         };
         that[render] = () => {
-            const {className, top, container = Modal.defaultContainer, children, closeIcon = 'close'} = props();
+            const {className, top, container = Modal.defaultContainer, children, closeIcon} = props();
             const menu = getMenu();
             const show = isShow();
             const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={el} onClick={shouldClose}>
@@ -81,7 +86,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <MaterialIcon icon={closeIcon}/>
+                        {closeIcon}
                     </Button>
                 </div>
             </div>;

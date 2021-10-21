@@ -34,6 +34,14 @@ it('test proxy delete property', () => {
     expect(p.bake()).toEqual({});
 });
 
+it('test proxy set null', () => {
+    const user = {name: 'Bob'};
+    const p = createProxy(user);
+    p.name = null;
+    expect(user).toEqual({name: 'Bob'});
+    expect(p.bake()).toEqual({name: null});
+});
+
 it('test proxy inner properties access noop', () => {
     const user = {name: 'Bob', hobbies: ['chess']};
     const p = createProxy(user);
@@ -53,7 +61,7 @@ it('test proxy change inner properties', () => {
     p.hobbies.push('poker');
 
     expect(user).toEqual({name: 'Bob', hobbies: ['chess']});
-    expect(p.bake()).toEqual({name: 'Bob', hobbies:['chess', 'poker']});
+    expect(p.bake()).toEqual({name: 'Bob', hobbies: ['chess', 'poker']});
 });
 
 it('test proxy change inner properties 2', () => {
@@ -63,5 +71,15 @@ it('test proxy change inner properties 2', () => {
     p.hobbies = [...p.hobbies, 'poker'];
 
     expect(user).toEqual({name: 'Bob', hobbies: ['chess']});
-    expect(p.bake()).toEqual({name: 'Bob', hobbies:['chess', 'poker']});
+    expect(p.bake()).toEqual({name: 'Bob', hobbies: ['chess', 'poker']});
+});
+
+it('test proxy change inner property to null', () => {
+    const user = {name: 'Bob', hobbies: ['chess']};
+    const p = createProxy(user);
+
+    p.hobbies = null;
+
+    expect(user).toEqual({name: 'Bob', hobbies: ['chess']});
+    expect(p.bake()).toEqual({name: 'Bob', hobbies: null});
 });

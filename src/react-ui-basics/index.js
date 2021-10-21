@@ -30,6 +30,7 @@ import Table from "./Table";
 import ScrollableTable from "./ScrollableTable";
 import DroppableList from "./DroppableList";
 import DroppableHorizontalList from "./DroppableHorizontalList";
+import * as StoreTools from "./store/Store";
 
 export {
     Animated,
@@ -64,4 +65,5 @@ export {
     ReadyListener,
     Table,
     TextField,
+    StoreTools,
 };

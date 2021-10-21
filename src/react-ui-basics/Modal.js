@@ -65,7 +65,7 @@ class Modal extends PureComponent {
             addEventListener(overlay(), transitionend, listener);
         };
         that[render] = () => {
-            const {className, top, container = Modal.defaultContainer, children} = props();
+            const {className, top, container = Modal.defaultContainer, children, closeIcon = 'close'} = props();
             const menu = getMenu();
             const show = isShow();
             const modal = <div className={classNames(`Modal`, className, show && 'show')} ref={el} onClick={shouldClose}>
@@ -81,7 +81,7 @@ class Modal extends PureComponent {
                     }))}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
-                        <MaterialIcon icon={'close'}/>
+                        <MaterialIcon icon={closeIcon}/>
                     </Button>
                 </div>
             </div>;

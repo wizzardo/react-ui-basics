@@ -138,6 +138,7 @@ class AutocompleteSelect extends React.Component {
         scrollToValue: false,
         mode: MODE_DEFAULT,
         selectedMode: 'full',
+        removeIcon: 'close',
     };
 
     render() {
@@ -159,6 +160,7 @@ class AutocompleteSelect extends React.Component {
             required,
             allowCustom,
             inlineSelected,
+            removeIcon,
         } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
@@ -263,7 +265,7 @@ class AutocompleteSelect extends React.Component {
                                     stopPropagation(e);
                                     this.remove(id);
                                 }}>
-                                    <MaterialIcon icon="close"/>
+                                    <MaterialIcon icon={removeIcon}/>
                                 </div>
                             </div>
                         )}
@@ -275,7 +277,7 @@ class AutocompleteSelect extends React.Component {
                         )}
                         {!label && withArrow && <span className="arrow"/>}
                         {withReset && <Button className="reset" raised={false} onClick={this.clean}>
-                            <MaterialIcon icon="close"/>
+                            <MaterialIcon icon={removeIcon}/>
                         </Button>}
                     </div>
                 )}
@@ -288,7 +290,7 @@ class AutocompleteSelect extends React.Component {
                                 stopPropagation(e);
                                 this.remove(id);
                             }}>
-                                <MaterialIcon icon="close"/>
+                                <MaterialIcon icon={removeIcon}/>
                             </div>
                         </div>
                     )}

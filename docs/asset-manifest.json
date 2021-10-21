@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/wizzardo/react-ui-basics/static/css/main.cbef25a0.chunk.css",
-    "main.js": "/wizzardo/react-ui-basics/main.d8829e849f2ab1210789.bundle.js",
+    "main.js": "/wizzardo/react-ui-basics/main.98181e133441923f510a.bundle.js",
     "main.css.map": "/wizzardo/react-ui-basics/static/css/main.cbef25a0.chunk.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.d8829e849f2ab1210789.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.d8829e849f2ab1210789.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.d8829e849f2ab1210789.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.d8829e849f2ab1210789.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.d8829e849f2ab1210789.bundle.js.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.98181e133441923f510a.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.98181e133441923f510a.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.98181e133441923f510a.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.98181e133441923f510a.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.98181e133441923f510a.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "vendors~main.d8829e849f2ab1210789.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.d8829e849f2ab1210789.bundle.js.LICENSE.txt"
+    "vendors~main.98181e133441923f510a.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.98181e133441923f510a.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
-    "runtime~main.d8829e849f2ab1210789.bundle.js",
-    "vendors~main.d8829e849f2ab1210789.bundle.js",
+    "runtime~main.98181e133441923f510a.bundle.js",
+    "vendors~main.98181e133441923f510a.bundle.js",
     "static/css/main.cbef25a0.chunk.css",
-    "main.d8829e849f2ab1210789.bundle.js"
+    "main.98181e133441923f510a.bundle.js"
   ]
 }

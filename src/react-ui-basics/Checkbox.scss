@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "./global.scss";
 
 $checkedColor: #4AC263;
@@ -56,10 +57,10 @@ $checkMarkSize: $size - 2*$padding;
       + label:after {
         transform: rotate(-45deg);
 
-        top: ($size / 2) - ($checkMarkSize / 4) - $size/10 + 1;
+        top: math.div($size, 2) - math.div($checkMarkSize, 4) - math.div($size, 10) + 1;
         left: $padding;
         width: $checkMarkSize;
-        height: $checkMarkSize / 2;
+        height: math.div($checkMarkSize, 2);
 
         border: $checkMarkWidth solid $checkMarkColor;
         border-top-style: none;

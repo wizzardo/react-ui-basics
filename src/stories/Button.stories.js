@@ -16,6 +16,8 @@ export const story1 = () => <React.Fragment>
     &nbsp;&nbsp;&nbsp;&nbsp;
     <Button className={'blue'}>blue</Button>
     &nbsp;&nbsp;&nbsp;&nbsp;
+    <Button className={'red'}>red</Button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
     <Button className={'black'}>black</Button>
     <br/>
     <br/>

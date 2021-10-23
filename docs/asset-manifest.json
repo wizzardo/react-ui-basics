@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/wizzardo/react-ui-basics/static/css/main.cbef25a0.chunk.css",
-    "main.js": "/wizzardo/react-ui-basics/main.b7bb3cf892927ea4f75c.bundle.js",
-    "main.css.map": "/wizzardo/react-ui-basics/static/css/main.cbef25a0.chunk.css.map",
-    "main.js.map": "/wizzardo/react-ui-basics/main.b7bb3cf892927ea4f75c.bundle.js.map",
-    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.b7bb3cf892927ea4f75c.bundle.js",
-    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.b7bb3cf892927ea4f75c.bundle.js.map",
-    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.b7bb3cf892927ea4f75c.bundle.js",
-    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.b7bb3cf892927ea4f75c.bundle.js.map",
+    "main.css": "/wizzardo/react-ui-basics/static/css/main.17f088b0.chunk.css",
+    "main.js": "/wizzardo/react-ui-basics/main.a433fc6790a0c58ee52a.bundle.js",
+    "main.css.map": "/wizzardo/react-ui-basics/static/css/main.17f088b0.chunk.css.map",
+    "main.js.map": "/wizzardo/react-ui-basics/main.a433fc6790a0c58ee52a.bundle.js.map",
+    "runtime~main.js": "/wizzardo/react-ui-basics/runtime~main.a433fc6790a0c58ee52a.bundle.js",
+    "runtime~main.js.map": "/wizzardo/react-ui-basics/runtime~main.a433fc6790a0c58ee52a.bundle.js.map",
+    "vendors~main.js": "/wizzardo/react-ui-basics/vendors~main.a433fc6790a0c58ee52a.bundle.js",
+    "vendors~main.js.map": "/wizzardo/react-ui-basics/vendors~main.a433fc6790a0c58ee52a.bundle.js.map",
     "iframe.html": "/wizzardo/react-ui-basics/iframe.html",
-    "vendors~main.b7bb3cf892927ea4f75c.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.b7bb3cf892927ea4f75c.bundle.js.LICENSE.txt"
+    "vendors~main.a433fc6790a0c58ee52a.bundle.js.LICENSE.txt": "/wizzardo/react-ui-basics/vendors~main.a433fc6790a0c58ee52a.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
-    "runtime~main.b7bb3cf892927ea4f75c.bundle.js",
-    "vendors~main.b7bb3cf892927ea4f75c.bundle.js",
-    "static/css/main.cbef25a0.chunk.css",
-    "main.b7bb3cf892927ea4f75c.bundle.js"
+    "runtime~main.a433fc6790a0c58ee52a.bundle.js",
+    "vendors~main.a433fc6790a0c58ee52a.bundle.js",
+    "static/css/main.17f088b0.chunk.css",
+    "main.a433fc6790a0c58ee52a.bundle.js"
   ]
 }

@@ -172,25 +172,25 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 .Button.green {
-  background-color: #4AC263;
+  background-color: #43a047;
   color: white;
 }
 .Button.green:hover {
-  background-color: #3db556;
+  background-color: #3b8e3f;
 }
 .Button.blue {
-  background-color: #61a0b2;
+  background-color: #039be5;
   color: white;
 }
 .Button.blue:hover {
-  background-color: #5295a8;
+  background-color: #038acc;
 }
 .Button.red {
-  background-color: #F44336;
+  background-color: #e53935;
   color: white;
 }
 .Button.red:hover {
-  background-color: #f32c1e;
+  background-color: #e2231e;
 }
 .Button.black {
   background-color: #1e252d;
@@ -238,6 +238,20 @@
 .Button:active .ripple.showed {
   opacity: 1;
 }
+.Button:focus .ripple.focused {
+  opacity: 1;
+  transition: opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-animation: resize 1.25s ease-out infinite;
+          animation: resize 1.25s ease-out infinite;
+  -webkit-animation-delay: 0.2s;
+          animation-delay: 0.2s;
+  -webkit-animation-direction: alternate;
+          animation-direction: alternate;
+}
 .Button .ripple.showed {
   -webkit-transform: scale(2);
           transform: scale(2);
@@ -253,6 +267,18 @@
   to {
     -webkit-transform: scale(2);
             transform: scale(2);
+  }
+}
+@-webkit-keyframes resize {
+  to {
+    -webkit-transform: scale(0.9);
+            transform: scale(0.9);
+  }
+}
+@keyframes resize {
+  to {
+    -webkit-transform: scale(0.9);
+            transform: scale(0.9);
   }
 }
 .Button.raised {
@@ -1663,4 +1689,4 @@
 }
 
 
-/*# sourceMappingURL=main.cbef25a0.chunk.css.map*/
+/*# sourceMappingURL=main.17f088b0.chunk.css.map*/

@@ -117,10 +117,6 @@ class Scrollable extends PureComponent {
                 if (!scrolling)
                     return;
 
-                if (e.buttons === 0) {
-                    reset();
-                }
-
                 if (scrolling === 'v') {
                     viewport.scrollTop += (e.clientY - lastY) * ratio;
                     lastY = e.clientY;

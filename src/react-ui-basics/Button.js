@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
-import {classNames, DOCUMENT, addEventListener, createRef} from "./Tools";
+import {classNames, DOCUMENT, addEventListener, createRef, orNoop} from "./Tools";
 import PropTypes from "prop-types";
 import {PureComponent, render, stateGS, props} from "./ReactConstants";
 
@@ -36,8 +36,24 @@ class Button extends PureComponent {
             });
         };
 
+        const onFocus = e => {
+            orNoop(props(that).onFocus)(e)
+            if (rippleClassName() === 'show')
+                return
+
+            const rect = el().getBoundingClientRect();
+            const style = ripple().style;
+
+            let size = Math.max(rect.width, rect.height) * 0.8
+            style.height = style.width = size + 'px';
+            style.top = (rect.height / 2 - size / 2) + 'px';
+            style.left = (rect.width / 2 - size / 2) + 'px';
+
+            rippleClassName('focused');
+        }
+
         that[render] = () => {
-            const {children, type, className, onClick, flat, raised = !flat, round, style, disabled, onFocus} = props(that);
+            const {children, type, className, onClick, flat, raised = !flat, round, style, disabled} = props(that);
             return (
                 <button className={classNames('Button',
                     className,
@@ -61,7 +77,7 @@ class Button extends PureComponent {
     }
 }
 
-if(window.isNotProductionEnvironment) {
+if (window.isNotProductionEnvironment) {
     Button.propTypes = {
         flat: PropTypes.bool,
         raised: PropTypes.bool,

@@ -36,29 +36,29 @@
   }
 
   &.green {
-    background-color: #4AC263;
+    background-color: #43a047;
     color: white;
 
     &:hover {
-      background-color: darken(#4AC263, 5%);
+      background-color: darken(#43a047, 5%);
     }
   }
 
   &.blue {
-    background-color: #61a0b2;
+    background-color: #039be5;
     color: white;
 
     &:hover {
-      background-color: darken(#61a0b2, 5%);
+      background-color: darken(#039be5, 5%);
     }
   }
 
   &.red {
-    background-color: #F44336;
+    background-color: #e53935;
     color: white;
 
     &:hover {
-      background-color: darken(#F44336, 5%);
+      background-color: darken(#e53935, 5%);
     }
   }
 
@@ -117,6 +117,15 @@
     opacity: 1;
   }
 
+  &:focus .ripple.focused {
+    opacity: 1;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    transform: scale(1);
+    animation: resize 1.25s ease-out infinite;
+    animation-delay: 0.2s;
+    animation-direction: alternate;
+  }
+
   .ripple.showed {
     transform: scale(2);
     opacity: 0;
@@ -125,6 +134,12 @@
   @keyframes ripple {
     to {
       transform: scale(2);
+    }
+  }
+
+  @keyframes resize {
+    to {
+      transform: scale(0.9);
     }
   }
 

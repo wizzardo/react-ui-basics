@@ -110,15 +110,12 @@ class Scrollable extends PureComponent {
             const reset = () => {
                 removeEventListener(WINDOW, 'mouseup', reset);
                 removeEventListener(WINDOW, 'mousemove', moveListener);
+                viewport.style.scrollBehavior = ''
                 scrolling = false;
             };
             const moveListener = (e) => {
                 if (!scrolling)
                     return;
-
-                if (e.buttons === 0) {
-                    reset();
-                }
 
                 if (scrolling === 'v') {
                     viewport.scrollTop += (e.clientY - lastY) * ratio;
@@ -132,6 +129,7 @@ class Scrollable extends PureComponent {
                 lastY = e.clientY;
                 scrolling = 'v';
                 ratio = scrollHeightOf(viewport) / offsetHeightOf(viewport);
+                viewport.style.scrollBehavior = 'unset'
 
                 addEventListener(WINDOW, 'mouseup', reset);
                 addEventListener(WINDOW, 'mousemove', moveListener);
@@ -143,6 +141,7 @@ class Scrollable extends PureComponent {
                 lastX = e.clientX;
                 scrolling = 'h';
                 ratioH = scrollWidthOf(viewport) / offsetWidthOf(viewport);
+                viewport.style.scrollBehavior = 'unset'
 
                 addEventListener(WINDOW, 'mouseup', reset);
                 addEventListener(WINDOW, 'mousemove', moveListener);

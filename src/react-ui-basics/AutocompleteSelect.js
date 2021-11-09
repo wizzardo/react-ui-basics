@@ -443,6 +443,7 @@ class AutocompleteSelect extends React.Component {
     onChange = (event) => {
         const value = event.target.value;
         this.setState({filterValue: value});
+        this.props.onFilterInputChange?.(value);
     }
 }
 

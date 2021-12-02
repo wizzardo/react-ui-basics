@@ -41,10 +41,10 @@ class Table extends Component {
                 c = Comparators.inverse(c)
 
             data.sort(c || Comparators.of(sortBy, sortOrder, data));
-            this.setState({data}, () => {
-                orNoop(this.props.onSortChange)(sortBy, sortOrder)
-            })
         }
+        this.setState({data}, () => {
+            orNoop(this.props.onSortChange)(sortBy, sortOrder)
+        })
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
 import Switch from "./Switch";
-import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString} from "./Tools";
+import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 
 export const SORT_ASC = Comparators.SORT_ASC;
@@ -30,9 +30,17 @@ class Table extends Component {
     };
 
     setData = (data) => {
-        const {sortBy, sortOrder} = this.state;
-        sortBy && data.sort(Comparators.of(sortBy, sortOrder, data));
-        this.setState({data})
+        const {sortBy, sortOrder, comparator} = this.state;
+        if (sortBy) {
+            let c = comparator
+            if(c && sortOrder === SORT_DESC)
+                c = Comparators.inverse(c)
+
+            data.sort(c || Comparators.of(sortBy, sortOrder, data));
+            this.setState({data}, () => {
+                orNoop(this.props.onSortChange)(sortBy, sortOrder)
+            })
+        }
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -52,7 +60,7 @@ class Table extends Component {
                     {columns.filter(it => !!it).map((column, i) => {
                         const sortable = column.sortable || column.sortable == null;
                         return (
-                            <th key={i} onClick={e => sortable && this.sort(e, column.field)}>
+                            <th key={i} onClick={e => sortable && this.sort(e, column.field, column.comparator)}>
                                 <div className={classNames('hidden', sortable && 'sortable', sortBy === column.field && 'active')}>
                                     {column.header}
                                     {column.header && sortBy === column.field && sortOrder === SORT_ASC && (<MaterialIcon icon={'keyboard_arrow_up'}/>)}
@@ -137,12 +145,13 @@ class Table extends Component {
         this.props.onChange(updated, this.cancelEditing)
     };
 
-    sort = (e, sortBy) => {
+    sort = (e, sortBy, comparator) => {
         preventDefault(e);
-        if (this.state.sortBy === sortBy)
-            this.setState({sortOrder: this.state.sortOrder === SORT_ASC ? SORT_DESC : SORT_ASC}, () => this.setData(this.state.data));
-        else
-            this.setState({sortOrder: SORT_ASC, sortBy}, () => this.setData(this.state.data));
+        this.setState({
+            sortOrder: this.state.sortBy === sortBy && this.state.sortOrder === SORT_ASC ? SORT_DESC : SORT_ASC,
+            comparator,
+            sortBy
+        }, () => this.setData(this.state.data));
     }
 }
 
@@ -237,6 +246,7 @@ if (window.isNotProductionEnvironment) {
             sortable: PropTypes.bool,
             field: PropTypes.string,
             formatter: PropTypes.func,
+            comparator: PropTypes.func,
             editable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
             editor: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
             displayEditor: PropTypes.bool,
@@ -245,6 +255,7 @@ if (window.isNotProductionEnvironment) {
         data: PropTypes.array,
         disabled: PropTypes.func,
         onRowClick: PropTypes.func,
+        onSortChange: PropTypes.func,
         onChange: PropTypes.func,
         toKey: PropTypes.func,
     };

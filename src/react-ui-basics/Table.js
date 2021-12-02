@@ -22,8 +22,12 @@ class Table extends Component {
     }
 
     componentDidMount() {
-        const {sortBy, sortOrder = SORT_ASC} = this.props;
-        this.setState({sortBy, sortOrder}, () => this.setData(this.props.data));
+        const {sortBy, sortOrder = SORT_ASC, columns} = this.props;
+        this.setState({
+            sortBy,
+            sortOrder,
+            comparator: columns.find(it => it.field === sortBy)?.comparator
+        }, () => this.setData(this.props.data));
 
         this.updateHeaders();
         this.updateHeadersInterval = setInterval(this.updateHeaders, 1000)

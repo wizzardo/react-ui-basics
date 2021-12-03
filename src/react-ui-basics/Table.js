@@ -48,8 +48,16 @@ class Table extends Component {
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.data !== prevProps.data) {
-            this.setData(this.props.data)
+        const {sortBy, sortOrder, columns, data} = this.props;
+        if (sortBy !== prevProps.sortBy || sortOrder !== prevProps.sortOrder) {
+            this.setState({
+                sortBy,
+                sortOrder: sortOrder || SORT_ASC,
+                comparator: columns.find(it => it.field === sortBy)?.comparator
+            }, () => this.setData(data));
+
+        } else if (data !== prevProps.data) {
+            this.setData(data)
         }
         this.updateHeaders();
     };

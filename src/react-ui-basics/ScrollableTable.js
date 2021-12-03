@@ -16,7 +16,7 @@ class ScrollableTable extends PureComponent {
 
         that[render] = () => {
             return <div className={`ScrollableTable`}>
-                <Scrollable ref={scrollableRef}>
+                <Scrollable ref={scrollableRef} {...props(that).scrollableProps}>
                     <Table {...props(that)}/>
                 </Scrollable>
             </div>;

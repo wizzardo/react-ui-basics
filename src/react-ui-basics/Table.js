@@ -35,6 +35,7 @@ class Table extends Component {
 
     setData = (data) => {
         const {sortBy, sortOrder, comparator} = this.state;
+        data = [...data];
         if (sortBy) {
             let c = comparator
             if(c && sortOrder === SORT_DESC)

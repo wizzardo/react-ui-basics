@@ -46,7 +46,7 @@ class DroppableList extends Component {
                 it.createPositionListener = (e, style) => {
                     const offsetTop = e.pageY;
                     return e => {
-                        e.pageY && (style.transform = 'translateY(' + (e.pageY - offsetTop) + 'px)');
+                        e.pageY && (style.transform = 'translateY(' + (e.pageY - offsetTop - that.scrollDiff) + 'px)');
                     };
                 };
                 it.initDraggedStyles = NOOP;
@@ -78,10 +78,17 @@ class DroppableList extends Component {
                 };
                 draggables[getProps(it).id] = it;
             })
+
+            orNoop(props().provideScrollListener)(e => {
+                if (!dragging)
+                    return
+
+                that.scrollDiff = that.scroll - orNoop(props().getScrollPosition)() || 0;
+            })
         };
 
         const onHover = (e, draggable) => {
-            const y = e.pageY - that.scrollOffsetY;
+            const y = e.pageY - that.scrollOffsetY - that.scrollDiff;
             const transformUp = 'translateY(' + draggable.height + 'px)';
             const transformDown = 'translateY(-' + draggable.height + 'px)';
             list.forEach((id, i) => {
@@ -116,6 +123,8 @@ class DroppableList extends Component {
             dropped = false;
             oldIndex = list.indexOf(getProps(draggable).id);
             that.scrollOffsetY = e.pageY - e.clientY;
+            that.scroll = orNoop(props().getScrollPosition)() || 0;
+            that.scrollDiff = 0;
 
             list.forEach((id) => {
                 draggables[id].bounds = draggables[id].element.getBoundingClientRect();

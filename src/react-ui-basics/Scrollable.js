@@ -22,6 +22,7 @@ const offsetHeightOf = createFieldGetter('offsetHeight');
 const offsetWidthOf = createFieldGetter('offsetWidth');
 const styleOf = createFieldGetter('style');
 const scrollBarModeOf = createFieldGetter('scrollBarMode');
+const onScroll = createFieldGetter('onScroll');
 const horizontalScrollBarModeOf = createFieldGetter('horizontalScrollBarMode');
 
 class Scrollable extends PureComponent {
@@ -74,6 +75,7 @@ class Scrollable extends PureComponent {
             let lastX = 0;
             let ratio = 0;
             let ratioH = 0;
+            const onScrollListener = onScroll(props())
 
             viewport.onscroll = (e) => {
                 const scrollHeight = scrollHeightOf(viewport);
@@ -106,6 +108,8 @@ class Scrollable extends PureComponent {
                 } else {
                     scrolledToTop = false;
                 }
+
+                onScrollListener && onScrollListener(e)
             };
             const reset = () => {
                 removeEventListener(WINDOW, 'mouseup', reset);
@@ -326,6 +330,8 @@ class Scrollable extends PureComponent {
 
         that[componentDidUpdate] = (prevProps) => {
             if (scrollBarModeOf(props()) !== scrollBarModeOf(prevProps))
+                init();
+            else if (onScroll(props()) !== onScroll(prevProps))
                 init();
         };
 

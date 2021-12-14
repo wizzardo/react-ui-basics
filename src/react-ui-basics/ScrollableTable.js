@@ -5,6 +5,7 @@ import Scrollable from "./Scrollable";
 import "./ScrollableTable.css";
 import {props, render, PureComponent} from "./ReactConstants";
 import {createRef} from "./Tools";
+import PropTypes from "prop-types";
 
 class ScrollableTable extends PureComponent {
 
@@ -26,3 +27,7 @@ class ScrollableTable extends PureComponent {
 }
 
 export default ScrollableTable
+
+if (window.isNotProductionEnvironment) {
+    ScrollableTable.propTypes = Table.propTypes;
+}

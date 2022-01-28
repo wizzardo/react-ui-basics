@@ -3,10 +3,11 @@ import ReactCreateElement from './ReactCreateElement';
 import './FilteredList.css'
 import Scrollable from "./Scrollable";
 import {classNames, orNoop, ref, stopPropagation, isFunction, isObject} from "./Tools";
+import {PureComponent} from "./ReactConstants";
 
 export const getLabel = (labels, id) => isFunction(labels) ? labels(id) : labels[id]
 
-class FilteredList extends React.Component {
+class FilteredList extends PureComponent {
 
     static defaultProps = {
         data: [],

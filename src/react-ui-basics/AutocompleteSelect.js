@@ -17,10 +17,11 @@ import {
     removeEventListener,
     isObject,
     isFunction,
-    isString, UNDEFINED
+    isString, UNDEFINED, memo
 } from "./Tools";
 import Button from "./Button";
 import MaterialIcon from "./MaterialIcon";
+import {PureComponent} from "./ReactConstants";
 
 export const MODE_DEFAULT = 'default';
 export const MODE_INLINE = 'inline';
@@ -73,7 +74,7 @@ function isMultipleSelect(mode) {
     return mode === MODE_MULTIPLE || mode === MODE_MULTIPLE_AUTO || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI || mode === MODE_MULTIPLE_MINI_INLINE;
 }
 
-class AutocompleteSelect extends React.Component {
+class AutocompleteSelect extends PureComponent {
 
     static propTypes = {
         mode: PropTypes.oneOf([MODE_DEFAULT, MODE_INLINE, MODE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI, MODE_MULTIPLE_MINI_INLINE, MODE_INLINE_MULTIPLE, MODE_MINI])
@@ -141,6 +142,18 @@ class AutocompleteSelect extends React.Component {
         removeIcon: <MaterialIcon icon="close"/>,
     };
 
+    createFilter = memo((prefilter, filterValue, filterValueTrimmed, filter) => it => {
+            if (!it) return false;
+            if (prefilter && !prefilter(it)) return false;
+            if (!filterValue) return true;
+
+            if (filter) return filter(it, filterValueTrimmed);
+
+            let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase().trim();
+            return continuousIncludes(value, filterValueTrimmed);
+        }
+    )
+
     render() {
         const {
             childComponent,
@@ -195,34 +208,7 @@ class AutocompleteSelect extends React.Component {
         const filterValueTrimmed = filterValue.trim();
         const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
 
-        const list = <FilteredList className={classNames(isActive && 'visible')}
-                                   ref={ref('list', this)}
-                                   filter={it => {
-                                       if (!it) return false;
-                                       if (prefilter && !prefilter(it)) return false;
-                                       if (!filterValue) return true;
-
-                                       const f = filterValueTrimmed.toLowerCase();
-                                       if (filter) return filter(it, f);
-
-                                       let value = (isString(it) ? it : (it.name || it.label || '')).toLowerCase().trim();
-                                       return continuousIncludes(value, f);
-                                   }}
-                                   selectSingle={!allowCustom}
-                                   scroll={scroll}
-                                   inline={isInline}
-                                   nextProvider={ref('next', this)}
-                                   prevProvider={ref('prev', this)}
-                                   selectedProvider={ref('getSelected', this)}
-                                   resetProvider={ref('reset', this)}
-                                   onSelect={this.onSelect}
-                                   selected={selected}
-                                   childComponent={childComponent}
-                                   childProps={childProps}
-                                   data={dataFiltered}
-                                   labels={labels}
-        />;
-
+        const filterFunction = this.createFilter(prefilter, filterValue, filterValueTrimmed.toLowerCase(), filter)
         return (
             <div id={id}
                  className={classNames(
@@ -346,7 +332,24 @@ class AutocompleteSelect extends React.Component {
                         {!withFilter && inputLabel && <label>{inputLabel}</label>}
                     </div>
                 )}
-                {list}
+
+                <FilteredList className={classNames(isActive && 'visible')}
+                              ref={ref('list', this)}
+                              filter={filterFunction}
+                              selectSingle={!allowCustom}
+                              scroll={scroll}
+                              inline={isInline}
+                              nextProvider={ref('next', this)}
+                              prevProvider={ref('prev', this)}
+                              selectedProvider={ref('getSelected', this)}
+                              resetProvider={ref('reset', this)}
+                              onSelect={this.onSelect}
+                              selected={selected}
+                              childComponent={childComponent}
+                              childProps={childProps}
+                              data={dataFiltered}
+                              labels={labels}
+                />
             </div>
         )
     }

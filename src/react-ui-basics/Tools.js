@@ -19,7 +19,10 @@ export const orNoop = f => f || NOOP;
 
 export const getRandomId = (prefix) => prefix + Math.random();
 
-export const ref = (name, component) => (it) => component[name] = it;
+export const ref = (name, component) => {
+    const refKey = "__" + name;
+    return component[refKey] || (component[refKey] = (it) => component[name] = it)
+};
 
 export const createRef = () => {
     const ref = function () {

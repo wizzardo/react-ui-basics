@@ -5,6 +5,7 @@ import replace from 'rollup-plugin-replace';
 import babel from 'rollup-plugin-babel';
 import json from 'rollup-plugin-json';
 import scss from 'rollup-plugin-scss';
+import typescript from '@rollup/plugin-typescript';
 import pkg from './package.json';
 
 const env = process.env.NODE_ENV || 'production';
@@ -96,7 +97,7 @@ export default {
                 ["@babel/plugin-proposal-nullish-coalescing-operator", {"loose": true}],
                 "@babel/plugin-proposal-do-expressions",
 
-                ["@babel/plugin-proposal-private-methods", { "loose": true }],
+                ["@babel/plugin-proposal-private-methods", {"loose": true}],
                 ["@babel/plugin-proposal-private-property-in-object", {"loose": true}],
                 ["@babel/plugin-proposal-class-properties", {"loose": true}],
                 "@babel/plugin-syntax-dynamic-import",
@@ -104,6 +105,7 @@ export default {
                 // "transform-react-remove-prop-types",
             ],
         }),
+        typescript(),
         // (isProd && uglify()),
         replace({
             'process.env.NODE_ENV': JSON.stringify(env),

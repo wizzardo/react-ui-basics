@@ -26,8 +26,8 @@ export const ref = (name, component) => {
 
 export const createRef = () => {
     const ref = function () {
-        arguments.length > 0 && (ref.v = arguments[0]);
-        return ref.v;
+        arguments.length > 0 && (ref['v'] = arguments[0]);
+        return ref['v'];
     };
     return ref;
 };
@@ -149,7 +149,7 @@ export const stopPropagation = e => {
     e && e.stopPropagation();
 };
 
-export const setTimeout = function () {
+export const setTimeout = function (callback: (...args: any[]) => void, ms?: number, ...args: any[]) {
     return WINDOW.setTimeout.apply(WINDOW, arguments);
 };
 export const clearTimeout = (id) => {
@@ -184,7 +184,7 @@ export class Comparators {
             comparator = Comparators.chain(field.map((it, i) => Comparators.of(it, (isOrderArray && order[i]) || Comparators.SORT_ASC, data)));
         } else if (isFunction(field)) {
             if (data && data[0] && isString(field(data[0]))) {
-                const collator = new Intl.Collator({sensitivity: 'base'});
+                const collator = new Intl.Collator('default', {sensitivity: 'base'});
                 comparator = (a, b) => {
                     return collator.compare(field(a), field(b));
                 }
@@ -225,10 +225,10 @@ const addComparatorMethods = function (comparator) {
     return comparator;
 };
 
-if (window.isNotProductionEnvironment) {
+if (window['isNotProductionEnvironment']) {
     // will be removed in production build
     // needed only to prevent bundler to remove 'unused' functions
-    window.tools = {
+    window['tools'] = {
         memo
     }
 }

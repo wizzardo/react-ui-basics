@@ -1,6 +1,5 @@
 import React from 'react';
 import "./index.css"
-import {withKnobs, select, boolean, text} from '@storybook/addon-knobs';
 import Button from "../react-ui-basics/Button";
 import FloatingActionButton from "../react-ui-basics/FloatingActionButton";
 
@@ -69,16 +68,24 @@ export const story2 = () => <React.Fragment>
 story2.story = {name: 'floating action button'};
 
 
-export const knobs = () => (
-    <Button
-        className={select('color', ['green', 'blue', 'red', 'black', 'gray'], 'green')}
-        raised={boolean('raised', true)}
-        round={boolean('round', false)}
-        flat={boolean('flat', false)}
-        disabled={boolean('disabled', false)}
-    >{text('label', 'Button')}</Button>
+export const knobs = (args) => (
+    <Button {...args}>{args.label}</Button>
 );
 
-knobs.story = {
-    decorators: [withKnobs],
+knobs.args = {
+    color: ['green', 'blue', 'red', 'black', 'gray'],
+    raised: true,
+    round: false,
+    flat: false,
+    disabled: false,
+    label: 'Button',
 };
+
+knobs.argTypes = {
+    color: {
+        control: {
+            type: 'select',
+        },
+    },
+};
+knobs.story = {name: 'knobs'};

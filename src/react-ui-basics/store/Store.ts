@@ -2,10 +2,10 @@ import {useEffect, useState} from "react";
 import {createProxy} from "./ProxyTools";
 
 interface Stores {
-    [indexedDB: number]: any
+    [index: number]: any
 }
 
-let STORE: Stores = {}
+let STORES: Stores = {}
 let COUNTER = 0
 
 export class Store<T> {
@@ -14,25 +14,25 @@ export class Store<T> {
     private initialState: T
     private index: number
 
-    constructor(initialState: T, name: string) {
+    constructor(initialState: T, name?: string) {
         let that = this;
         that.name = name;
         that.initialState = initialState;
         const index = COUNTER++;
         that.index = index;
-        STORE[index] = initialState
+        STORES[index] = initialState
     }
 
-    get = (): T => STORE[this.index]
-    set = (mutator: (T) => T) => {
-        const proxy = createProxy(STORE[this.index]);
+    get = (): T => STORES[this.index]
+    set = (mutator: (oldState: T) => T) => {
+        const proxy = createProxy(STORES[this.index]);
         mutator(proxy)
-        STORE[this.index] = proxy.bake()
+        STORES[this.index] = proxy.bake()
         this.listeners.forEach(fn => fn())
     }
 
     reset = () => {
-        STORE[this.index] = this.initialState
+        STORES[this.index] = this.initialState
     }
 
     subscribe = (fn: () => void) => {
@@ -49,21 +49,28 @@ export class Store<T> {
 export default Store;
 
 export function getGlobalState() {
-    return STORE
+    return STORES
 }
 
 export function resetGlobalState() {
-    STORE = {}
+    STORES = {}
 }
 
 export function replaceGlobalState(state) {
-    STORE = state
+    STORES = state
 }
 
 
-const defaultSelector = store => store;
+export type Selector<T, R> = (t: T) => R;
 
-export const useStore = <T, R>(store: Store<T>, selector: (T) => R = defaultSelector) => {
+export const defaultSelector = <T>(store: T): T => store;
+
+export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>): R
+export function useStore<T>(store: Store<T>, selector?: undefined): T
+export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
+    if (!selector)
+        selector = (defaultSelector as Selector<T, R>)
+
     const [state, setState] = useState(selector(store.get()))
 
     const updateState = () => {
@@ -76,4 +83,4 @@ export const useStore = <T, R>(store: Store<T>, selector: (T) => R = defaultSele
     })
 
     return state
-};
+}

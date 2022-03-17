@@ -20,9 +20,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "declaration": true,
-    "declarationDir": "build/types",
+    "declarationDir": "build",
     "sourceMap": true,
-    "outDir": "build/dist"
+    "outDir": "build"
   },
   "include": [
     "src"

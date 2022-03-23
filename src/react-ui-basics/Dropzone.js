@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from "prop-types";
 import ReactCreateElement from './ReactCreateElement';
 import './Dropzone.css'
-import {classNames, setOf, preventDefault, stopPropagation, UNDEFINED} from "./Tools";
+import {classNames, setOf, preventDefault, stopPropagation, UNDEFINED, createRef} from "./Tools";
 import {propsGetter, PureComponent, render, stateGS} from "./ReactConstants";
 
 const toArray = (o) => {
@@ -78,6 +78,8 @@ class Dropzone extends PureComponent {
             prevent(e)
         };
 
+        const inputRef = createRef()
+
         that[render] = () => {
             const {children, className, disabled, clickable, multiple, droppable, overlayLabel, accept} = props();
 
@@ -92,7 +94,15 @@ class Dropzone extends PureComponent {
                         {overlayLabel}
                     </div>
                 </div>}
-                {!disabled && clickable && <input className={'file'} type="file" accept={accept} multiple={!!multiple} onChange={onDrop}/>}
+                {!disabled && clickable && <input className={'file'}
+                                                  ref={inputRef}
+                                                  type="file"
+                                                  accept={accept}
+                                                  multiple={!!multiple}
+                                                  onClick={() => {
+                                                      inputRef().value = '';
+                                                  }}
+                                                  onChange={onDrop}/>}
                 {children}
             </div>
         }

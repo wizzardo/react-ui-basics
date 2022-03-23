@@ -15,7 +15,7 @@ export function classNames() {
 export const NOOP = () => {
 };
 
-export const orNoop = f => f || NOOP;
+export const orNoop = <T>(f: (...a: any) => T) => f || NOOP;
 
 export const getRandomId = (prefix) => prefix + Math.random();
 

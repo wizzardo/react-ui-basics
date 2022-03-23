@@ -24,10 +24,14 @@ export class Store<T> {
     }
 
     get = (): T => STORES[this.index]
-    set = (mutator: (oldState: T) => T) => {
+    set = (mutator: (oldState: T) => T | void) => {
         const proxy = createProxy(STORES[this.index]);
-        mutator(proxy)
-        STORES[this.index] = proxy.bake()
+        const result = mutator(proxy);
+        if (!result || result === proxy)
+            STORES[this.index] = proxy.bake()
+        else
+            STORES[this.index] = result
+
         this.listeners.forEach(fn => fn())
     }
 

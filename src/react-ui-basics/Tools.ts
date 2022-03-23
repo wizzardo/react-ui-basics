@@ -2,11 +2,11 @@ var global = global || window;
 export const WINDOW = global;
 export const DOCUMENT = WINDOW.document;
 
-export function classNames() {
+export function classNames(...classes: Array<string|number|boolean|null>) {
     const filtered = [];
-    const length = arguments.length;
+    const length = classes.length;
     for (let i = 0; i < length; i++) {
-        let it = arguments[i];
+        let it = classes[i];
         !!it && filtered.push(it);
     }
     return filtered.join(' ');

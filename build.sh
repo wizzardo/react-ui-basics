@@ -6,6 +6,9 @@ cp package.json build/
 cp src/react-ui-basics/*.css build/
 
 cp build/_virtual/_rollupPluginBabelHelpers.js ./
+cp -R build/src/react-ui-basics/* build/
+rm -rf build/src
+rm -rf build/node_modules
 
 if ! md5sum -c helpers.md5; then
     echo 'helpers updated, please check the changes'
@@ -15,11 +18,4 @@ fi
 cp helpers.js build/_virtual/_rollupPluginBabelHelpers.js
 # md5sum build/_virtual/_rollupPluginBabelHelpers.js > helpers.md5
 
-
-sed -i.bak "s/window.isNotProductionEnvironment/process.env.NODE_ENV !== 'production'/g" build/*.js
-sed -i.bak "s/window.isNotProductionEnvironment/process.env.NODE_ENV !== 'production'/g" build/router/*.js
-sed -i.bak "s/window\['isNotProductionEnvironment'\]/process.env.NODE_ENV !== 'production'/g" build/*.js
-sed -i.bak "s/window\['isNotProductionEnvironment'\]/process.env.NODE_ENV !== 'production'/g" build/router/*.js
-
-rm build/*.bak
-rm build/router/*.bak
+node replace.js

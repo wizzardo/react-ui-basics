@@ -1,6 +1,6 @@
 {
   "name": "react-ui-basics",
-  "version": "0.0.149",
+  "version": "0.0.155",
   "description": "",
   "module": "index.js",
   "_main": "index.cjs.js",
@@ -17,7 +17,8 @@
   "peerDependencies": {
     "prop-types": "^15.7.2",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "tslib": "^2.3.1"
   },
   "scripts": {
     "preinstall": "",

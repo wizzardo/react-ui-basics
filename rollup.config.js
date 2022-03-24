@@ -75,6 +75,8 @@ export default {
             namedExports: {
                 'node_modules/react/index.js': ['Children', 'Component', 'PropTypes', 'createElement', 'PureComponent'],
                 'node_modules/react-dom/index.js': ['render'],
+                'node_modules/react/jsx-runtime.js': ['jsxs', 'jsx'],
+                'node_modules/tslib/tslib.es6.js': ['__spreadArray', '__extends','__assign'],
             },
         }),
         babel({

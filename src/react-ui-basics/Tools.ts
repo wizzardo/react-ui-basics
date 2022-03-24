@@ -155,7 +155,7 @@ export const setTimeout = function (callback: (...args: any[]) => void, ms?: num
 export const clearTimeout = (id) => {
     WINDOW.clearTimeout(id);
 };
-export const setInterval = function () {
+export const setInterval = function (callback: (...args: any[]) => void, ms?: number, ...args: any[]) {
     return WINDOW.setInterval.apply(WINDOW, arguments);
 };
 export const clearInterval = (id) => {

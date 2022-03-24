@@ -24,12 +24,13 @@ export const ref = (name, component) => {
     return component[refKey] || (component[refKey] = (it) => component[name] = it)
 };
 
-export const createRef = () => {
-    const ref = function () {
-        arguments.length > 0 && (ref['v'] = arguments[0]);
-        return ref['v'];
+export const createRef = (initialValue?: any) => {
+    let v = initialValue;
+    return function (value?: any) {
+        if (value != UNDEFINED)
+            v = value
+        return v;
     };
-    return ref;
 };
 
 export const setOf = (list) => (list || []).reduce((map, key) => {

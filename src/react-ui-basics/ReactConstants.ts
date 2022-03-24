@@ -1,13 +1,14 @@
 import React from 'react';
 
 const EMPTY = {};
-export const props = that => that.props;
-export const propsGetter = that => () => props(that);
-export const state = that => that.state || EMPTY;
-export const setState = (that, data, cb) => {
+export const props: <P>(that: React.Component<P>) => P = that => that.props;
+export const propsGetter: <P>(that: React.Component<P>) => (() => P) = that => () => props(that);
+// @ts-ignore //ignore incompatible casting EMPTY to S
+export const state: <P, S>(that: React.Component<P, S>) => S = that => that.state || EMPTY;
+export const setState = (that, data, cb?) => {
     that.setState(data, cb);
 };
-export const stateFieldSetter = (that, key, cb) => (value, cb2) => {
+export const stateFieldSetter = (that, key, cb?) => (value, cb2?) => {
     setState(that, {[key]: value}, cb2 || cb);
 };
 export const stateGS = (that) => {

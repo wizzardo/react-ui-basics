@@ -5,7 +5,7 @@ import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./Autocomple
 import Switch from "./Switch";
 import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
-import {componentDidUpdate, componentWillUnmount, render, PureComponent} from "./ReactConstants";
+import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, state} from "./ReactConstants";
 
 export const SORT_ASC = Comparators.SORT_ASC;
 export const SORT_DESC = Comparators.SORT_DESC;
@@ -73,9 +73,9 @@ export interface TableState<T> {
 
 class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
-    constructor(props) {
-        super(props);
-        this.state = {};
+    constructor(properties) {
+        super(properties);
+        const props = propsGetter(this);
 
         const headers = createRef();
         let updateHeadersInterval = 0;
@@ -88,24 +88,22 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             }
         };
 
-        const cancelEditing = () => this.setState({editing: false});
+        const cancelEditing = () => {
+            this.setState({editing: false});
+        };
 
         const setEditing = (item, columnIndex, field) => {
             this.setState({editing: {id: item.id, value: item[field], columnIndex, item, field}});
         };
 
-        const extractValue = (event) => {
-            const target = event.target;
-            return target.type === 'checkbox' ? target.checked : target.value;
-        };
-
         const handleInputChange = (event) => {
-            const value = extractValue(event);
-            this.setState({editing: {...this.state.editing, value}});
+            const target = event.target;
+            const value = target.type === 'checkbox' ? target.checked : target.value;
+            this.setState({editing: {...state(this).editing, value}});
         };
 
         const onFinishEditing = () => {
-            const editing = this.state.editing;
+            const editing = state(this).editing;
             if (editing.value === null)
                 return;
 
@@ -120,16 +118,16 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                 ...editing.item,
                 [editing.field]: value
             };
-            this.props.onChange(updated, cancelEditing)
+            props().onChange(updated, cancelEditing)
         };
 
         const setValue = (value) => {
-            this.setState({editing: {...this.state.editing, value}}, onFinishEditing);
+            this.setState({editing: {...state(this).editing, value}}, onFinishEditing);
         };
 
 
         const setData = (data) => {
-            const {sortBy, sortOrder, comparator} = this.state;
+            const {sortBy, sortOrder, comparator} = state(this);
             data = [...data];
             if (sortBy) {
                 let c = comparator
@@ -139,21 +137,21 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                 data.sort(c || Comparators.of(sortBy, sortOrder, data));
             }
             this.setState({data}, () => {
-                orNoop(this.props.onSortChange)(sortBy, sortOrder)
+                orNoop(props().onSortChange)(sortBy, sortOrder)
             })
         };
 
         const sort = (e, sortBy, comparator) => {
             preventDefault(e);
             this.setState({
-                sortOrder: this.state.sortBy === sortBy && this.state.sortOrder === SORT_ASC ? SORT_DESC : SORT_ASC,
+                sortOrder: state(this).sortBy === sortBy && state(this).sortOrder === SORT_ASC ? SORT_DESC : SORT_ASC,
                 comparator,
                 sortBy
-            }, () => setData(this.state.data));
+            }, () => setData(state(this).data));
         }
 
-        this.componentDidMount = () => {
-            const {sortBy, sortOrder = SORT_ASC, columns} = this.props;
+        this[componentDidMount] = () => {
+            const {sortBy, sortOrder = SORT_ASC, columns} = props();
             this.setState({
                 sortBy,
                 sortOrder,
@@ -165,7 +163,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
 
         this[componentDidUpdate] = (prevProps, prevState, snapshot) => {
-            const {sortBy, sortOrder, columns, data} = this.props;
+            const {sortBy, sortOrder, columns, data} = props();
             if (sortBy !== prevProps.sortBy || sortOrder !== prevProps.sortOrder) {
                 this.setState({
                     sortBy,
@@ -180,8 +178,8 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
 
         this[render] = () => {
-            const {columns = [], onRowClick = NOOP, disabled, className, rowClassName, toKey = getId} = this.props;
-            const {sortBy, sortOrder, data = [], editing} = this.state;
+            const {columns = [], onRowClick = NOOP, disabled, className, rowClassName, toKey = getId} = props();
+            const {sortBy, sortOrder, data = [], editing} = state(this);
             return (
                 <table className={classNames(`Table`, className)}>
                     <thead>

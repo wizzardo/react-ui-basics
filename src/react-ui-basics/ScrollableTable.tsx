@@ -1,13 +1,19 @@
 import React from 'react';
-import ReactCreateElement from './ReactCreateElement';
-import Table from "./Table";
+import Table, {TableProps, TableState} from "./Table";
 import Scrollable from "./Scrollable";
 import "./ScrollableTable.css";
 import {props, render, PureComponent} from "./ReactConstants";
 import {createRef} from "./Tools";
-import PropTypes from "prop-types";
 
-class ScrollableTable extends PureComponent {
+export interface WithScrollable {
+    getScrollable: () => Scrollable
+}
+
+export interface ScrollableTableProps<T> extends TableProps<T> {
+    scrollableProps?: any
+}
+
+class ScrollableTable<T> extends PureComponent<ScrollableTableProps<T>, TableState<T>> implements WithScrollable {
 
     constructor(properties) {
         super(properties);
@@ -24,10 +30,10 @@ class ScrollableTable extends PureComponent {
         }
         that.getScrollable = () => scrollableRef()
     }
+
+    getScrollable(): Scrollable {
+        return undefined;
+    }
 }
 
 export default ScrollableTable
-
-if (window.isNotProductionEnvironment) {
-    ScrollableTable.propTypes = Table.propTypes;
-}

@@ -60,5 +60,7 @@ ls('build', file => {
     data = data.replace(`;\nimport`, `;\nimport {toConsumableArray as __toConsumableArray} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
     data = data.replaceAll(`__spreadArray([], `, `__toConsumableArray(`)
 
+    data = data.replace(/[a-zA-Z]+\.prototype\.[a-zA-Z]+\s+=\s+function\s*\([a-zA-Z0-9\s,_]*\)\s*\{\s+return undefined;\s*\};/m, ``)
+
     fs.writeFileSync(file, data, {encoding: "utf8",})
 })

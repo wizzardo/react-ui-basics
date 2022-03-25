@@ -10,8 +10,6 @@ class Button extends PureComponent {
         super(properties);
 
         const that = this;
-        that.state = {};
-
         const el = createRef();
         const ripple = createRef();
 

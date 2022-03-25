@@ -3,6 +3,7 @@ import AutocompleteSelect from "./AutocompleteSelect";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import CircleProgress from "./CircleProgress";
+import * as CommonFields from "./CommonFields";
 import Dialog from "./Dialog";
 import DNDContainer from "./DNDContainer";
 import DNDDraggable from "./DNDDraggable";
@@ -38,6 +39,7 @@ export {
     Button,
     Checkbox,
     CircleProgress,
+    CommonFields,
     Dialog,
     DNDContainer,
     DNDDraggable,

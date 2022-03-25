@@ -19,3 +19,4 @@ cp helpers.js build/_virtual/_rollupPluginBabelHelpers.js
 # md5sum build/_virtual/_rollupPluginBabelHelpers.js > helpers.md5
 
 node replace.js
+node replaceAccessors.js

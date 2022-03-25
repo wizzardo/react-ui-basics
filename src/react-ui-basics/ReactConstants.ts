@@ -11,9 +11,9 @@ export const setState = (that, data, cb?) => {
 export const stateFieldSetter = (that, key, cb?) => (value, cb2?) => {
     setState(that, {[key]: value}, cb2 || cb);
 };
-export const stateGS = (that) => {
-    !that.sfc && (that.sfc = 0);
-    const key = '_' + (that.sfc++);
+export const stateGS: ((that: React.Component) => (v?, cb?) => any) = (that) => {
+    !that['sfc'] && (that['sfc'] = 0);
+    const key = '_' + (that['sfc']++);
     const setter = stateFieldSetter(that, key);
     const result = function () {
         return !arguments.length ? state(that)[key] : setter.apply(null, arguments);
@@ -35,6 +35,8 @@ export const componentDidUpdate = 'componentDidUpdate';
 export const render = 'render';
 export const children = 'children';
 export const className = 'className';
+export const onClick = 'onClick';
+export const onChange = 'onChange';
 export const PureComponent = React.PureComponent;
 
-export default [componentDidMount, componentWillUnmount, componentDidUpdate, render, children, className]
+export default [componentDidMount, componentWillUnmount, componentDidUpdate, render, children, className, onClick, onChange]

@@ -51,15 +51,17 @@ const ls = async (path, cb) => {
         // })
 
 
-        const fieldRegExp = new RegExp(`(\\b[a-zA-Z_0-9$]+(?:\\([a-zA-Z_0-9$]*\\)|\\[[a-zA-Z_0-9$]*\\])?)\\.([a-zA-Z_0-9]+)\\b([\\s*/|+-]*=)?`, 'dg')
+        const fieldRegExp = new RegExp(`(\\b[a-zA-Z_0-9$]+(?:\\([a-zA-Z_0-9$]*\\)|\\[[a-zA-Z_0-9$]*\\])?)\\.([a-zA-Z_0-9]+)\\b([\\s*/|+-]*==?)?`, 'dg')
         let find
         while (find = fieldRegExp.exec(data)) {
             if (!fieldStats[find[2]])
                 fieldStats[find[2]] = {r: 0, w: 0}
-            fieldStats[find[2]][!find[3] ? 'r' : 'w']++;
 
-            if(!find[3] && fields.includes(find[2])){
-                data = data.substring(0, find.index) + `__${find[2]}(${find[1]})` + data.substring(find.index + find[0].length)
+            const ro = !find[3] || find[3].trim() === '=='
+            fieldStats[find[2]][ro ? 'r' : 'w']++;
+
+            if (ro && fields.includes(find[2])) {
+                data = data.substring(0, find.index) + `__${find[2]}(${find[1]})` + data.substring(find.indices[2][1])
             }
             debugger
         }

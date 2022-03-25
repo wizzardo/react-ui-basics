@@ -5,7 +5,7 @@ import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./Autocomple
 import Switch from "./Switch";
 import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
-import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, state} from "./ReactConstants";
+import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs} from "./ReactConstants";
 
 export const SORT_ASC = Comparators.SORT_ASC;
 export const SORT_DESC = Comparators.SORT_DESC;
@@ -68,7 +68,6 @@ export interface TableState<T> {
     sortBy?: string,
     comparator?: Comparator,
     data?: T[],
-    editing?: any,
 }
 
 class Table<T> extends Component<TableProps<T>, TableState<T>> {
@@ -88,22 +87,24 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             }
         };
 
+        const [editingState, dataState, sortByState, sortOrderState, comparatorState] = stateGSs(this, 5);
+
         const cancelEditing = () => {
-            this.setState({editing: false});
+            editingState(false)
         };
 
         const setEditing = (item, columnIndex, field) => {
-            this.setState({editing: {id: item.id, value: item[field], columnIndex, item, field}});
+            editingState({id: item.id, value: item[field], columnIndex, item, field})
         };
 
         const handleInputChange = (event) => {
             const target = event.target;
             const value = target.type === 'checkbox' ? target.checked : target.value;
-            this.setState({editing: {...state(this).editing, value}});
+            editingState({...editingState(), value});
         };
 
         const onFinishEditing = () => {
-            const editing = state(this).editing;
+            const editing = editingState();
             if (editing.value === null)
                 return;
 
@@ -122,13 +123,15 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
 
         const setValue = (value) => {
-            this.setState({editing: {...state(this).editing, value}}, onFinishEditing);
+            editingState({...editingState(), value}, onFinishEditing)
         };
 
 
-        const setData = (data) => {
-            const {sortBy, sortOrder, comparator} = state(this);
-            data = [...data];
+        const setData = (data, sortBy?, sortOrder?, comparator?) => {
+            data = data ? [...data] : [];
+            sortBy = sortBy || sortByState()
+            sortOrder = sortOrder || sortOrderState()
+            comparator = comparator || comparatorState()
             if (sortBy) {
                 let c = comparator
                 if (c && sortOrder === SORT_DESC)
@@ -136,28 +139,23 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
                 data.sort(c || Comparators.of(sortBy, sortOrder, data));
             }
-            this.setState({data}, () => {
+            sortOrderState(sortOrder)
+            comparatorState(comparator)
+            sortByState(sortBy)
+            dataState(data, () => {
                 orNoop(props().onSortChange)(sortBy, sortOrder)
             })
         };
 
         const sort = (e, sortBy, comparator) => {
             preventDefault(e);
-            this.setState({
-                sortOrder: state(this).sortBy === sortBy && state(this).sortOrder === SORT_ASC ? SORT_DESC : SORT_ASC,
-                comparator,
-                sortBy
-            }, () => setData(state(this).data));
+            const sortOrder = sortByState() === sortBy && sortOrderState() === SORT_ASC ? SORT_DESC : SORT_ASC;
+            setData(dataState(), sortBy, sortOrder, comparator)
         }
 
         this[componentDidMount] = () => {
             const {sortBy, sortOrder = SORT_ASC, columns} = props();
-            this.setState({
-                sortBy,
-                sortOrder,
-                comparator: columns.find(it => it.field === sortBy)?.comparator
-            }, () => setData(this.props.data));
-
+            setData(dataState(), sortBy, sortOrder, columns.find(it => it.field === sortBy)?.comparator)
             updateHeaders();
             updateHeadersInterval = setInterval(updateHeaders, 1000)
         };
@@ -165,12 +163,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         this[componentDidUpdate] = (prevProps, prevState, snapshot) => {
             const {sortBy, sortOrder, columns, data} = props();
             if (sortBy !== prevProps.sortBy || sortOrder !== prevProps.sortOrder) {
-                this.setState({
-                    sortBy,
-                    sortOrder: sortOrder || SORT_ASC,
-                    comparator: columns.find(it => it.field === sortBy)?.comparator
-                }, () => setData(data));
-
+                setData(dataState(), sortBy, sortOrder || SORT_ASC, columns.find(it => it.field === sortBy)?.comparator)
             } else if (data !== prevProps.data) {
                 setData(data)
             }
@@ -179,7 +172,10 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
         this[render] = () => {
             const {columns = [], onRowClick = NOOP, disabled, className, rowClassName, toKey = getId} = props();
-            const {sortBy, sortOrder, data = [], editing} = state(this);
+            const sortBy = sortByState()
+            const sortOrder = sortOrderState()
+            const editing = editingState();
+            const data = dataState() || [];
             return (
                 <table className={classNames(`Table`, className)}>
                     <thead>
@@ -231,11 +227,8 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
 const formatValue: (<T>(item: T, column: TableColumn<T>) => string | ReactElement) = (item, column) => {
     const value = item[column.field];
-    if (column.formatter) {
-        return (column.formatter as ((value?: any, item?: any, format?: string) => ReactElement))(value, item, column.format)
-    } else {
-        return '' + value
-    }
+    const formatter = column.formatter;
+    return formatter ? (formatter as ((value?: any, item?: any, format?: string) => ReactElement))(value, item, column.format) : '' + value;
 };
 
 interface TableColumnSelect extends TableColumn<any> {

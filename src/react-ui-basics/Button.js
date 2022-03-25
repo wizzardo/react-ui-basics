@@ -16,7 +16,7 @@ class Button extends PureComponent {
         const rippleClassName = stateGS(that);
 
         const onMouseDown = (e) => {
-            if (!this.props.withRipple) return;
+            if (!props(that).withRipple) return;
 
             const rect = el().getBoundingClientRect();
             const rippleElement = ripple();

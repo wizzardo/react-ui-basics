@@ -36,3 +36,5 @@ export const render = 'render';
 export const children = 'children';
 export const className = 'className';
 export const PureComponent = React.PureComponent;
+
+export default [componentDidMount, componentWillUnmount, componentDidUpdate, render, children, className]

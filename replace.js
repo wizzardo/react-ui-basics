@@ -44,13 +44,6 @@ ls('build', file => {
     data = data.replace(/import \{[ __a-zA-Z,]+\} from 'tslib';/, ``)
 
     let parts = file.split('/');
-    data = data.replace(`;\nimport`, `;\nimport {children as __children} from "${parts.length === 3 ? './.' : ''}./ReactConstants";\nimport`)
-    data = data.replaceAll(`children:`, `[__children]:`)
-    data = data.replaceAll(/\.children\b/g, `[__children]`)
-
-    data = data.replace(`;\nimport`, `;\nimport {className as __className} from "${parts.length === 3 ? './.' : ''}./ReactConstants";\nimport`)
-    data = data.replaceAll(`className:`, `[__className]:`)
-    data = data.replaceAll(/\.className\b/g, `[__className]`)
 
     data = data.replace(`;\nimport`, `;\nimport {inherits as __inherits} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
     data = data.replaceAll(`__extends`, `__inherits`)

@@ -137,7 +137,9 @@ class Animated extends PureComponent {
         };
 
         that[componentDidUpdate] = () => {
-            const _props = props(that),
+            const p = props;
+            const t = that;
+            const _props = p(t)||props(that),
                 _state = state(that),
                 {
                     [value]: v,

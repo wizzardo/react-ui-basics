@@ -7,7 +7,6 @@ import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventL
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
 import PropTypes from "prop-types";
-import {MODE_DEFAULT} from "./AutocompleteSelect";
 
 let listenerRef;
 let zIndex = 100;

@@ -33,6 +33,12 @@ export const createRef = (initialValue?: any) => {
     };
 };
 
+export const createAccessor = (field: string) => (o: any, value?: any) => {
+    if (value != UNDEFINED)
+        o[field] = value;
+    return o[field];
+}
+
 export const setOf = (list) => (list || []).reduce((map, key) => {
     map[key] = true;
     return map;

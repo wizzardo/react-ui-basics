@@ -39,35 +39,45 @@ const ls = async (path, cb) => {
         if (file.endsWith('ReactConstants.js')) {
             return
         }
+        if (file.endsWith('CommonFields.js')) {
+            return
+        }
 
         let parts = file.split('/');
         let data = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'});
-        data = data.replace(`;\nimport`, `;\nimport {${fields.map(it => `${it} as __${it}`).join(', ')}} from "${parts.length === 3 ? './.' : ''}./CommonFields";\nimport`)
-        fields.forEach(it => {
-            data = data.replaceAll(new RegExp(`\\.${it}\\b`, 'g'), `[__${it}]`)
-        })
+        data = `import {${fields.map(it => `${it} as __${it}`).join(', ')}} from "${parts.length === 3 ? './.' : ''}./CommonFields";\n` + data
+        // fields.forEach(it => {
+        //     data = data.replaceAll(new RegExp(`\\.${it}\\b`, 'g'), `[__${it}]`)
+        // })
 
-        fs.writeFileSync(file, data, {encoding: "utf8",})
 
-        const fieldRegExp = new RegExp(`\\.([a-zA-Z_0-9]+)\\b`, 'g')
+        const fieldRegExp = new RegExp(`(\\b[a-zA-Z_0-9$]+(?:\\([a-zA-Z_0-9$]*\\)|\\[[a-zA-Z_0-9$]*\\])?)\\.([a-zA-Z_0-9]+)\\b([\\s*/|+-]*=)?`, 'dg')
         let find
         while (find = fieldRegExp.exec(data)) {
-            if (!fieldStats[find[1]])
-                fieldStats[find[1]] = 0
-            fieldStats[find[1]]++;
+            if (!fieldStats[find[2]])
+                fieldStats[find[2]] = {r: 0, w: 0}
+            fieldStats[find[2]][!find[3] ? 'r' : 'w']++;
+
+            if(!find[3] && fields.includes(find[2])){
+                data = data.substring(0, find.index) + `__${find[2]}(${find[1]})` + data.substring(find.index + find[0].length)
+            }
             debugger
         }
+
+        fs.writeFileSync(file, data, {encoding: "utf8",})
     })
 
     debugger
-    Object.keys(fieldStats).sort((a, b) => fieldStats[a] - fieldStats[b]).forEach(k => {
+    Object.keys(fieldStats).sort((a, b) => fieldStats[a].r - fieldStats[b].r).forEach(k => {
         if (k.length <= 3)
             return
-        if (k === 'func' || k === 'bool' || k === 'string' || k === 'number' || k === 'element' || k === 'defaultProps' || k === 'propTypes' || k === 'NODE_ENV')
+        if (k === 'func' || k === 'bool' || k === 'string' || k === 'number' || k === 'element' || k === 'defaultProps' || k === 'oneOfType' || k === 'propTypes' || k === 'NODE_ENV')
             return
-        if (!fieldStats[k] || fieldStats[k] < 10)
+        if (!fieldStats[k] || fieldStats[k].r < 5)
             return
 
-        console.log(k, fieldStats[k])
+        const prefix = fields.includes(k) ? '' : '  '
+
+        console.log(prefix + k, fieldStats[k])
     })
 })()

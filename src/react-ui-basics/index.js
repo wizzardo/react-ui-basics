@@ -24,6 +24,7 @@ import Size from "./Size";
 import Snackbar from "./Snackbar";
 import SpinningProgress from "./SpinningProgress";
 import Switch from "./Switch";
+import ReactConstants from './ReactConstants'
 import ReactCreateElement from './ReactCreateElement'
 import * as ReadyListener from './ReadyListener'
 import TextField from "./TextField";
@@ -63,6 +64,7 @@ export {
     Snackbar,
     SpinningProgress,
     Switch,
+    ReactConstants,
     ReactCreateElement,
     ReadyListener,
     Table,

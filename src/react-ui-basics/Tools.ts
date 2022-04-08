@@ -2,7 +2,7 @@ var global = global || window;
 export const WINDOW = global;
 export const DOCUMENT = WINDOW.document;
 
-export function classNames(...classes: Array<string|number|boolean|null>) {
+export function classNames(...classes: Array<string | number | boolean | null | void>) {
     const filtered = [];
     const length = classes.length;
     for (let i = 0; i < length; i++) {
@@ -34,9 +34,7 @@ export const createRef = (initialValue?: any) => {
 };
 
 export const createAccessor = (field: string) => (o: any, value?: any) => {
-    if (value != UNDEFINED)
-        o[field] = value;
-    return o[field];
+    return !o ? null : value != UNDEFINED ? o[field] = value : o[field]
 }
 
 export const setOf = (list) => (list || []).reduce((map, key) => {

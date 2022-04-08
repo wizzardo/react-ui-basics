@@ -3,7 +3,7 @@ import './Table.css'
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
 import Switch from "./Switch";
-import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval} from "./Tools";
+import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval, createAccessor} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs} from "./ReactConstants";
 
@@ -88,6 +88,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
 
         const [editingState, dataState, sortByState, sortOrderState, comparatorState] = stateGSs(this, 5);
+        const comparatorGetter = createAccessor('comparator');
 
         const cancelEditing = () => {
             editingState(false)
@@ -155,7 +156,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
         this[componentDidMount] = () => {
             const {sortBy, sortOrder = SORT_ASC, columns} = props();
-            setData(dataState(), sortBy, sortOrder, columns.find(it => it.field === sortBy)?.comparator)
+            setData(dataState(), sortBy, sortOrder, comparatorGetter(columns.find(it => it.field === sortBy)))
             updateHeaders();
             updateHeadersInterval = setInterval(updateHeaders, 1000)
         };
@@ -163,7 +164,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         this[componentDidUpdate] = (prevProps, prevState, snapshot) => {
             const {sortBy, sortOrder, columns, data} = props();
             if (sortBy !== prevProps.sortBy || sortOrder !== prevProps.sortOrder) {
-                setData(dataState(), sortBy, sortOrder || SORT_ASC, columns.find(it => it.field === sortBy)?.comparator)
+                setData(dataState(), sortBy, sortOrder || SORT_ASC, comparatorGetter(columns.find(it => it.field === sortBy)))
             } else if (data !== prevProps.data) {
                 setData(data)
             }
@@ -183,7 +184,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                         {columns.filter(it => !!it).map((column, i) => {
                             const sortable = column.sortable || column.sortable == null;
                             return (
-                                <th key={i} onClick={e => sortable && sort(e, column.field, column.comparator)}>
+                                <th key={i} onClick={e => sortable && sort(e, column.field, comparatorGetter(column))}>
                                     <div className={classNames('hidden', sortable && 'sortable', sortBy === column.field && 'active')}>
                                         {column.header}
                                         {column.header && sortBy === column.field && sortOrder === SORT_ASC && (<MaterialIcon icon={'keyboard_arrow_up'}/>)}
@@ -231,12 +232,12 @@ const formatValue: (<T>(item: T, column: TableColumn<T>) => string | ReactElemen
     return formatter ? (formatter as ((value?: any, item?: any, format?: string) => ReactElement))(value, item, column.format) : '' + value;
 };
 
-interface TableColumnSelect extends TableColumn<any> {
+export interface TableColumnSelect extends TableColumn<any> {
     editorData?: any,
-    editorSelectedComponent?: any,
     multiSelect?: any,
     onSelect?: any,
-    editorChildCompononRowClickent?: any,
+    editorSelectedComponent?: any,
+    editorChildCompononent?: any,
     prefilter?: any,
 }
 
@@ -285,7 +286,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 mode={(column as TableColumnSelect).multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
                                 onChange={(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => setValue((column as TableColumnSelect).onSelect(value))) : setValue)}
                                 onSelect={!(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => setValue((column as TableColumnSelect).onSelect(value))) : setValue)}
-                                childComponent={(column as TableColumnSelect).editorChildCompononRowClickent}
+                                childComponent={(column as TableColumnSelect).editorChildCompononent}
                                 onCancel={cancelEditing}
                                 prefilter={(column as TableColumnSelect).prefilter}
                             />

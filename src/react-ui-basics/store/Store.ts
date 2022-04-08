@@ -82,6 +82,7 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
     };
 
     useEffect(() => {
+        updateState()
         store.subscribe(updateState)
         return () => store.unsubscribe(updateState)
     })

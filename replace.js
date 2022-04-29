@@ -44,7 +44,11 @@ ls('build', file => {
     data = data.replace(/import \{[ __a-zA-Z,]+\} from 'tslib';/, ``)
 
     let parts = file.split('/');
-
+    if (fs.existsSync(file.replace('.js', '.css'))) {
+        let css = file.replace('.js', '.css');
+        css = css.substring(css.lastIndexOf('/') + 1)
+        data = data.replace(`;\nimport`, `;\nimport './${css}';\nimport`)
+    }
     data = data.replace(`;\nimport`, `;\nimport {inherits as __inherits} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
     data = data.replaceAll(`__extends`, `__inherits`)
 

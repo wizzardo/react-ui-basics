@@ -32,7 +32,10 @@ export interface RowProps<T> {
     setEditing: (t: T, i: number, field: string) => void,
 }
 
-export type Formatter<T, V> = ((value?: V, item?: T, format?: string) => ReactElement) | ((value: V, item: T) => ReactElement) | ((value: V) => ReactElement);
+export type Formatter<T, V> =
+    ((value?: V, item?: T, format?: string) => ReactElement | string)
+    | ((value: V, item: T) => ReactElement | string)
+    | ((value: V) => ReactElement | string);
 
 export interface TableColumn<T> {
     field?: string,
@@ -155,8 +158,8 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         }
 
         this[componentDidMount] = () => {
-            const {sortBy, sortOrder = SORT_ASC, columns} = props();
-            setData(dataState(), sortBy, sortOrder, comparatorGetter(columns.find(it => it.field === sortBy)))
+            const {sortBy, sortOrder = SORT_ASC, columns, data} = props();
+            setData(data, sortBy, sortOrder, comparatorGetter(columns.find(it => it.field === sortBy)))
             updateHeaders();
             updateHeadersInterval = setInterval(updateHeaders, 1000)
         };

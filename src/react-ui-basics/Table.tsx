@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Component, ReactElement} from 'react';
+import React, {ChangeEvent, Component, ReactElement, SyntheticEvent} from 'react';
 import './Table.css'
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
@@ -22,7 +22,7 @@ export interface RowProps<T> {
     item: T,
     disabled?: (t: T) => boolean,
     editing,
-    onClick?: (t: T) => void,
+    onClick?: (t: T, e: SyntheticEvent) => void,
     className?: string | ((e: T) => string),
     columns: TableColumn<T>[],
     cancelEditing: () => void,
@@ -58,7 +58,7 @@ export interface TableProps<T> {
     sortOrder?: SortOrder
     sortBy?: string,
     onSortChange?: (sortBy: string, sortOrder: SortOrder) => void,
-    onRowClick?: (t: T) => void,
+    onRowClick?: (t: T, e: SyntheticEvent) => void,
     disabled?: (t: T) => boolean,
     toKey?: (t: T) => number | string,
     onChange?: (t: T, cancel: () => void) => void,
@@ -247,7 +247,7 @@ export interface TableColumnSelect extends TableColumn<any> {
 class Row<T> extends PureComponent<RowProps<T>> {
     render() {
         let {item, disabled, editing, onClick, className, columns, setEditing, cancelEditing, onFinishEditing, handleInputChange, setValue} = this.props;
-        return <tr onClick={e => onClick(item)}
+        return <tr onClick={e => onClick(item, e)}
                    className={classNames(
                        disabled && disabled(item) && 'disabled',
                        className && (isFunction(className) ? (className as (t: T) => string)(item) : className as string))

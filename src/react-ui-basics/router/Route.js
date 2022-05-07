@@ -34,17 +34,17 @@ const createUrlMatcher = path => {
             else if (variableNameIndex !== -1) {
                 let variable = segment.substring(variableNameIndex + 1);
                 let regex = null
+                if (variable.indexOf('?') !== -1)
+                    variable = variable.substring(0, variable.indexOf('?'));
                 if (variable.indexOf('(') !== -1) {
                     let regexStart = variable.indexOf('(');
                     regex = new RegExp(variable.substring(regexStart))
                     variable = variable.substring(0, regexStart);
                 }
-                if (variable.indexOf('?') !== -1)
-                    variable = variable.substring(0, variable.indexOf('?'));
 
                 const prefix = variableNameIndex && segment.substring(0, variableNameIndex);
                 matcher = (p, params) => {
-                    if (regex && !p.match(regex))
+                    if (regex && !!p && !p.match(regex))
                         return false
 
                     if (!p && !optionals[i])

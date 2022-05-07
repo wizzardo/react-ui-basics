@@ -114,3 +114,21 @@ it('test call onToggle', () => {
     expect(wrapper).toHaveHTML('<div></div>');
     expect(onToggleMatches).toBe(false);
 });
+
+it('renders path with variable and regex', () => {
+    pushLocation('/123');
+    const WithVariable = ({id}) => <div>{id}</div>;
+    expect(mount(<Route path="/:id([0-9]+)">
+        <WithVariable/>
+    </Route>)).toContainReact(<div>123</div>);
+});
+
+it('do not render if regex does not match ', () => {
+    pushLocation('/test');
+    const WithVariable = ({id}) => <div>{id}</div>;
+    expect(mount(<div>
+        <Route path="/:id([0-9]+)">
+            <WithVariable/>
+        </Route>
+    </div>)).toHaveHTML('<div></div>');
+});

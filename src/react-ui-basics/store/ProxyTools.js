@@ -27,7 +27,7 @@ export const createProxy = (target) => {
                         return changedValue
 
                     if (innerProxies) {
-                        const result = changedValue || {...target};
+                        const result = changedValue || (Array.isArray(target) ? [...target] : {...target});
 
                         for (let key in innerProxies) {
                             result[key] = innerProxies[key].bake()

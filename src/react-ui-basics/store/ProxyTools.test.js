@@ -83,3 +83,13 @@ it('test proxy change inner property to null', () => {
     expect(user).toEqual({name: 'Bob', hobbies: ['chess']});
     expect(p.bake()).toEqual({name: 'Bob', hobbies: null});
 });
+
+it('test proxy change inner properties 3', () => {
+    const user = {name: 'Bob', hobbies: [{name: 'chess'}]};
+    const p = createProxy(user);
+
+    p.hobbies[0].name = 'poker';
+
+    expect(user).toEqual({name: 'Bob', hobbies: [{name: 'chess'}]});
+    expect(p.bake()).toEqual({name: 'Bob', hobbies: [{name: 'poker'}]});
+});

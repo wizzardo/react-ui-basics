@@ -89,14 +89,21 @@ class TextField extends PureComponent {
         that[componentDidMount] = () => {
             const {focused, input} = props(),
                 i = inputRef();
-            isWithValue(!!i.value);
+            let hasValue = !!i.value;
+            isWithValue(hasValue);
+
+            !hasValue && setTimeout(() => {
+                let matches = i.matches(':-internal-autofill-selected');
+                matches && isWithValue(matches)
+            }, 100)
+
             focused && i.focus();
             orNoop(input)(i);
         };
         that[componentDidUpdate] = () => {
             if (props().value !== inputRef().value)
                 check();
-            const { focused } = props(),
+            const {focused} = props(),
                 i = inputRef();
             focused && i.focus();
         };

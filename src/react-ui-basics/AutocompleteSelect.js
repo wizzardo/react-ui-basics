@@ -373,6 +373,7 @@ class AutocompleteSelect extends PureComponent {
     onSelect = (selectedId) => {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
         const {filterValue, selected: currentSelection} = this.state;
+        const {labels = {}} = this.props;
 
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
             selectedId = filterValue.trim();
@@ -402,10 +403,23 @@ class AutocompleteSelect extends PureComponent {
 
         const isActive = mode === MODE_MULTIPLE_MINI_INLINE || (isMultiSelect && isSelected)
 
+        let customValue = '';
+        if (allowCustom && selectedId) {
+            let label
+            if (isFunction(labels))
+                label = labels(selectedId)
+            else
+                label = labels[selectedId]
+
+            if (label && isString(label))
+                customValue = label
+        }
+
+        let filterValueWithCustom = isMultiSelect ? '' : customValue;
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: isMultiSelect ? '' : (allowCustom ? selectedId || '' : ''),
+            filterValue: filterValueWithCustom,
             errored,
         });
 

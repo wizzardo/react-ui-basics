@@ -38,7 +38,7 @@ export const createAccessor = (field: string) => (o: any, value?: any) => {
 }
 
 export const setOf = (list) => (list || []).reduce((map, key) => {
-    map[key] = true;
+    map[key] = TRUE;
     return map;
 }, {});
 
@@ -56,19 +56,18 @@ export const continuousIncludes = (value, inc) => {
     for (let i = 0; i < length; i++) {
         from = value.indexOf(inc[i], from + 1);
         if (from === -1)
-            return false
+            return FALSE
     }
-    return true;
+    return TRUE;
 };
 
 const isArrayShallowEqual = (a, b) => {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (a.length !== b.length) {
-        return false;
-    }
+    if (a === b) return TRUE;
+    if (a == null || b == null) return FALSE;
+    if (a.length !== b.length) return FALSE;
+
     let i = a.length - 1;
-    let result = true;
+    let result = TRUE;
     while (i >= 0 && (result = (a[i] === b[i]))) {
         i--;
     }
@@ -101,50 +100,43 @@ export const memo = (func) => {
     }
 }
 
+export const constructorOf = (v) => v && v.constructor;
 export const typeOf = (v) => typeof v;
 export const isFunction = (v) => typeOf(v) === 'function';
 export const isString = (v) => typeOf(v) === 'string';
 export const isObject = (v) => typeOf(v) === 'object';
 
+const FALSE = false;
+const TRUE = true;
+
 export const isDifferent = (a, b) => {
-    if (a == null && b == null) return false;
-    if (a == null || b == null) return true;
-    if (a === b) return false;
+    if (a === null && b === null) return FALSE;
+    if (a === null || b === null) return TRUE;
+    if (a === b) return FALSE;
 
-    const typeA = typeOf(a);
-    const typeB = typeOf(b);
-    if (typeA !== typeB) {
-        return true;
+    const constructorA = constructorOf(a);
+    const constructorB = constructorOf(b);
+    if (constructorA !== constructorB) {
+        return TRUE;
     }
 
-    if (Array.isArray(a)) {
-        if (a.length !== b.length) {
-            return true;
+    let i;
+    if (constructorA === Array) {
+        if ((i = a.length) === b.length) {
+            while (i-- && !isDifferent(a[i], b[i])) {
+            }
         }
-        let i = a.length - 1;
-        let result = false;
-        while (i >= 0 && !(result = isDifferent(a[i], b[i]))) {
-            i--;
-        }
-        return result;
-    }
-
-    if (typeA === 'object') {
+    } else if (constructorA === Object) {
         const keysA = Object.keys(a);
         const keysB = Object.keys(b);
-        if (keysA.length !== keysB.length) {
-            return true;
+        if ((i = keysA.length) === keysB.length) {
+            let key;
+            while (i-- && ((key = keysA[i]) in b) && !isDifferent(a[key], b[key])) {
+            }
         }
-
-        let j = keysA.length - 1;
-        let r = false;
-        while (j >= 0 && !(r = keysA[j] !== keysB[j]) && !(r = isDifferent(a[keysA[j]], b[keysB[j]]))) {
-            j--;
-        }
-        return r
     }
 
-    return true;
+    return i !== -1;
 };
 
 export const preventDefault = e => {

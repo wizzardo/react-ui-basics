@@ -871,11 +871,12 @@ export class ImageGalleryContainer extends React.Component {
         const getState = () => that.state;
 
         const dispatch = (action) => setTimeout(() => {
-            // console.log('before action', action, that.state)
-            const state = IMAGE_GALLERY_REDUCER(that.state, action);
-            // console.log('after action', action, state)
-            if (state !== that.state)
-                that.setState(state)
+            that.setState(state => {
+                // console.log('before action', action, state)
+                state = IMAGE_GALLERY_REDUCER(state, action);
+                // console.log('after action', action, state)
+                return state;
+            })
         }, 0)
 
         const props = propsGetter(that)

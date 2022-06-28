@@ -3,7 +3,7 @@ import './Table.css'
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
 import Switch from "./Switch";
-import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval, createAccessor} from "./Tools";
+import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval, createAccessor, UNDEFINED} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs} from "./ReactConstants";
 
@@ -19,6 +19,7 @@ const editorSelect = 'Select'
 const editorSwitch = 'Switch'
 
 export interface RowProps<T> {
+    i: number,
     item: T,
     disabled?: (t: T) => boolean,
     editing,
@@ -29,7 +30,11 @@ export interface RowProps<T> {
     onFinishEditing: () => void,
     handleInputChange: (e: ChangeEvent) => void,
     setValue: (v: any) => void,
-    setEditing: (t: T, i: number, field: string) => void,
+    setEditing: (t: T, i: number, value?: any) => void,
+    onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseEnter?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseLeave?: (e: SyntheticEvent, row: number, column: number) => void,
 }
 
 export type Formatter<T, V> =
@@ -37,9 +42,13 @@ export type Formatter<T, V> =
     | ((value: V, item: T) => ReactElement | string)
     | ((value: V) => ReactElement | string);
 
+export type CellClassName<T> = (item: T, field: string, row: number, column: number) => string;
+export type ColumnClassName<T> = string | CellClassName<T>
+
 export interface TableColumn<T> {
     field?: string,
-    className?: string,
+    className?: ColumnClassName<T>,
+    onClick?: (e: SyntheticEvent, startEditing: () => void, item: T, field: string, row: number, column: number) => void,
     comparator?: Comparator,
     header?: string | ReactElement,
     sortable?: boolean,
@@ -63,6 +72,10 @@ export interface TableProps<T> {
     toKey?: (t: T) => number | string,
     onChange?: (t: T, cancel: () => void) => void,
     rowClassName?: string | ((t: T) => string),
+    onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseEnter?: (e: SyntheticEvent, row: number, column: number) => void,
+    onMouseLeave?: (e: SyntheticEvent, row: number, column: number) => void,
 }
 
 
@@ -74,6 +87,9 @@ export interface TableState<T> {
 }
 
 class Table<T> extends Component<TableProps<T>, TableState<T>> {
+    startEditing: (item, columnIndex, value?) => void;
+    finishEditing: () => void;
+    isEditing: () => boolean;
 
     constructor(properties) {
         super(properties);
@@ -97,9 +113,13 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             editingState(false)
         };
 
-        const setEditing = (item, columnIndex, field) => {
-            editingState({id: item.id, value: item[field], columnIndex, item, field})
+        const setEditing = (item, columnIndex, value) => {
+            const {columns} = props()
+            const field = columns[columnIndex].field
+            editingState({id: item.id, value: (value != null ? value : item[field]), columnIndex, item, field})
         };
+        this.startEditing = setEditing
+        this.isEditing = () => !!editingState()
 
         const handleInputChange = (event) => {
             const target = event.target;
@@ -109,7 +129,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
 
         const onFinishEditing = () => {
             const editing = editingState();
-            if (editing.value === null)
+            if (!editing || editing.value === null)
                 return;
 
             let value = editing.value;
@@ -125,6 +145,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             };
             props().onChange(updated, cancelEditing)
         };
+        this.finishEditing = onFinishEditing
 
         const setValue = (value) => {
             editingState({...editingState(), value}, onFinishEditing)
@@ -175,7 +196,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
 
         this[render] = () => {
-            const {columns = [], onRowClick = NOOP, disabled, className, rowClassName, toKey = getId} = props();
+            const {columns = [], onRowClick = NOOP, disabled, className, rowClassName, toKey = getId, onMouseDown, onMouseUp, onMouseEnter, onMouseLeave} = props();
             const sortBy = sortByState()
             const sortOrder = sortOrderState()
             const editing = editingState();
@@ -204,18 +225,24 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                     </tr>
                     </thead>
                     <tbody>
-                    {data.map(item => (<Row key={toKey(item)}
-                                            item={item}
-                                            disabled={disabled}
-                                            editing={editing && editing.id === toKey(item) ? editing : null}
-                                            onClick={onRowClick}
-                                            className={rowClassName}
-                                            columns={columns}
-                                            setEditing={setEditing}
-                                            cancelEditing={cancelEditing}
-                                            onFinishEditing={onFinishEditing}
-                                            handleInputChange={handleInputChange}
-                                            setValue={setValue}
+                    {data.map((item, i) => (<Row
+                            key={toKey(item)}
+                            i={i}
+                            item={item}
+                            disabled={disabled}
+                            editing={editing && editing.id === toKey(item) ? editing : null}
+                            onClick={onRowClick}
+                            className={rowClassName}
+                            columns={columns}
+                            setEditing={setEditing}
+                            cancelEditing={cancelEditing}
+                            onFinishEditing={onFinishEditing}
+                            handleInputChange={handleInputChange}
+                            setValue={setValue}
+                            onMouseDown={onMouseDown}
+                            onMouseUp={onMouseUp}
+                            onMouseEnter={onMouseEnter}
+                            onMouseLeave={onMouseLeave}
                         />
                     ))}
                     </tbody>
@@ -246,22 +273,40 @@ export interface TableColumnSelect extends TableColumn<any> {
 
 class Row<T> extends PureComponent<RowProps<T>> {
     render() {
-        let {item, disabled, editing, onClick, className, columns, setEditing, cancelEditing, onFinishEditing, handleInputChange, setValue} = this.props;
+        let {item, i, disabled, editing, onClick, className, columns, setEditing, cancelEditing, onFinishEditing, handleInputChange, setValue, onMouseDown, onMouseEnter, onMouseUp, onMouseLeave} = this.props;
         return <tr onClick={e => onClick(item, e)}
                    className={classNames(
                        disabled && disabled(item) && 'disabled',
                        className && (isFunction(className) ? (className as (t: T) => string)(item) : className as string))
                    }>
-            {columns.filter(it => !!it).map((column, i) => {
-                const isEditing = editing && editing.columnIndex === i;
+            {columns.filter(it => !!it).map((column, j) => {
+                const isEditing = editing && editing.columnIndex === j;
                 const editable = isFunction(column.editable) ? (column.editable as ((t: T) => boolean))(item) : !!column.editable;
+                const startEditing = !isEditing && editable ? () => setEditing(item, j) : NOOP;
+                const onClick = (!!column.onClick ? (e) => column.onClick(e, startEditing, item, column.field, i, j) : startEditing)
+
+                let displayEditor = isEditing || column.displayEditor;
+                let value =  item[column.field];
+                if(editing) {
+                    value = editing.value != null ? editing.value : value;
+                    value = column.preEditor ? column.preEditor(value) : value
+                }
                 return (
-                    <td key={i}
-                        className={classNames(editable ? 'editable' : 'ro', isEditing && 'editing', column.className)}
-                        onClick={!isEditing && editable ? () => setEditing(item, i, column.field) : NOOP}>
-                        {(isEditing || column.displayEditor) && !column.editor && (
+                    <td key={j}
+                        onMouseDown={onMouseDown ? (e) => onMouseDown(e, i, j) : UNDEFINED}
+                        onMouseUp={onMouseUp ? (e) => onMouseUp(e, i, j) : UNDEFINED}
+                        onMouseEnter={onMouseEnter ? (e) => onMouseEnter(e, i, j) : UNDEFINED}
+                        onMouseLeave={onMouseLeave ? (e) => onMouseLeave(e, i, j) : UNDEFINED}
+                        className={classNames(
+                            editable ? 'editable' : 'ro',
+                            isEditing && 'editing',
+                            isString(column.className) && (column.className as string),
+                            isFunction(column.className) && (column.className as CellClassName<T>)(item, column.field, i, j),
+                        )}
+                        onClick={onClick}>
+                        {displayEditor && !column.editor && (
                             <TextField
-                                value={column.preEditor ? column.preEditor(editing.value) : editing.value}
+                                value={value}
                                 focused={true}
                                 onBlur={cancelEditing}
                                 onChange={handleInputChange}
@@ -277,9 +322,9 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 }}
                             />
                         )}
-                        {(isEditing || column.displayEditor) && column.editor === editorSelect && (
+                        {displayEditor && column.editor === editorSelect && (
                             <AutocompleteSelect
-                                value={column.preEditor ? column.preEditor(editing.value) : editing.value}
+                                value={value}
                                 data={(column as TableColumnSelect).editorData}
                                 focused={true}
                                 withArrow={false}
@@ -294,14 +339,14 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 prefilter={(column as TableColumnSelect).prefilter}
                             />
                         )}
-                        {(isEditing || column.displayEditor) && column.editor === editorSwitch && (
+                        {displayEditor && column.editor === editorSwitch && (
                             <Switch onClick={e => {
                                 stopPropagation(e);
                                 preventDefault(e);
-                                setValue(!item[column.field])
-                            }} value={item[column.field]}/>
+                                setValue(!value)
+                            }} value={value}/>
                         )}
-                        {(isEditing || column.displayEditor) && isFunction(column.editor)
+                        {displayEditor && isFunction(column.editor)
                             && (column.editor as ((t: T, cancel: () => void, isEditing: boolean) => ReactElement))(item, cancelEditing, isEditing)}
                         {!isEditing && !column.displayEditor && formatValue(item, column)}
                     </td>

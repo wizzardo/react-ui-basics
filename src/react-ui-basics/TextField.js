@@ -93,8 +93,11 @@ class TextField extends PureComponent {
             isWithValue(hasValue);
 
             !hasValue && setTimeout(() => {
-                let matches = i.matches(':-internal-autofill-selected');
-                matches && isWithValue(matches)
+                try {
+                    let matches = i.matches(':-internal-autofill-selected');
+                    matches && isWithValue(matches)
+                } catch (ignored) {
+                }
             }, 100)
 
             focused && i.focus();

@@ -9,7 +9,6 @@ cp build/_virtual/_rollupPluginBabelHelpers.js ./
 cp -R build/src/react-ui-basics/* build/
 rm -rf build/src
 rm -rf build/node_modules
-rm build/*.map
 
 if ! md5sum -c helpers.md5; then
     echo 'helpers updated, please check the changes'

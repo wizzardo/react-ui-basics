@@ -159,10 +159,10 @@ export const clearInterval = (id) => {
     WINDOW.clearInterval(id);
 };
 export const requestAnimationFrame = (cb) => WINDOW.requestAnimationFrame(cb);
-export const addEventListener = (el, type, listener, options) => {
+export const addEventListener = (el, type, listener, options?) => {
     el && el.addEventListener(type, listener, options);
 };
-export const removeEventListener = (el, type, listener, options) => {
+export const removeEventListener = (el, type, listener, options?) => {
     el && el.removeEventListener(type, listener, options);
 };
 

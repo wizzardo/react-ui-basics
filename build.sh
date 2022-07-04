@@ -7,7 +7,8 @@ cp src/react-ui-basics/*.css build/
 
 cp build/_virtual/_rollupPluginBabelHelpers.js ./
 cp -R build/src/react-ui-basics/* build/
-rm -rf build/src
+rm -rf build/src/*
+cp -R src/react-ui-basics/* build/src
 rm -rf build/node_modules
 
 if ! md5sum -c helpers.md5; then

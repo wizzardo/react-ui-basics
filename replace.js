@@ -63,3 +63,15 @@ ls('build', file => {
 
     fs.writeFileSync(file, data, {encoding: "utf8",})
 })
+
+ls('build', file => {
+    if (!file.endsWith('.js.map'))
+        return
+
+    let data = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'});
+    data = data.replace(`"../../../src/react-ui-basics`, `"./src`)
+    data = data.replace(`"../../../src/src/react-ui-basics`, `"./src`)
+    data = data.replace(`"../../../../src/react-ui-basics`, `"../src`)
+    data = data.replace(`"../../../../src/src/react-ui-basics`, `"../src`)
+    fs.writeFileSync(file, data, {encoding: "utf8",})
+})

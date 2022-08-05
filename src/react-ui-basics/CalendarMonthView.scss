@@ -1,0 +1,25 @@
+.CalendarMonthView {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+
+  > .row {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .days {
+    flex-grow: 1;
+    position: relative;
+  }
+
+  .day, .header {
+    flex-grow: 1;
+    flex-basis: 1px;
+  }
+
+  .day {
+    height: 100%;
+  }
+
+}

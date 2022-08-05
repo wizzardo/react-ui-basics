@@ -1,0 +1,77 @@
+@import "./global.scss";
+
+.Tabs {
+  $main-size: 16px;
+
+  display: block;
+  padding: $main-size;
+  background: #fff;
+
+  .visible {
+    position: relative;
+    opacity: 1;
+    height: auto;
+    transition: opacity .5s ease-out 0.25s;
+  }
+  .hidden {
+    left: 0;
+    top: 0;
+    position: absolute;
+    opacity: 0;
+    transition: opacity .25s ease-out 0s, transform 1ms linear 0.25s;
+    transform: scale(0);
+  }
+
+  .contents {
+    position: relative;
+  }
+
+  .selector {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 10px;
+    display: flex;
+    flex-flow: row nowrap;
+    position: relative;
+
+    .tab {
+      display: block;
+      height: $main-size*2;
+      line-height: $main-size*2;
+      padding: 0px 16px;
+      text-align: center;
+      background: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      color: black;
+      font-size: 14px;
+      white-space: nowrap;
+
+      &.active {
+        color: $colorBlue;
+      }
+    }
+
+    a:first-child {
+      border-top-left-radius: 2px;
+    }
+    a:last-of-type {
+      border-top-right-radius: 2px;
+    }
+  }
+
+  .highlighter {
+    position: absolute;
+    z-index: 10;
+    bottom: 0;
+    height: 2px;
+    background: $colorBlue;
+    width: 1px;
+    transform: translateX(0);
+    transform-origin: top left;
+    display: block;
+    left: 0;
+    transition: transform .23s ease-out;
+  }
+
+}

@@ -29,7 +29,7 @@ export interface RowProps<T> {
     cancelEditing: () => void,
     onFinishEditing: () => void,
     handleInputChange: (e: ChangeEvent) => void,
-    setValue: (v: any) => void,
+    setValue: (v: any, t: T, field: String) => void,
     setEditing: (t: T, i: number, value?: any) => void,
     onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
@@ -147,8 +147,8 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         };
         this.finishEditing = onFinishEditing
 
-        const setValue = (value) => {
-            editingState({...editingState(), value}, onFinishEditing)
+        const setValue = (value, item, field) => {
+            editingState({item, field, value}, onFinishEditing)
         };
 
 
@@ -332,8 +332,12 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 selectedMode={'inline'}
                                 selectedComponent={(column as TableColumnSelect).editorSelectedComponent}
                                 mode={(column as TableColumnSelect).multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
-                                onChange={(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => setValue((column as TableColumnSelect).onSelect(value))) : setValue)}
-                                onSelect={!(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => setValue((column as TableColumnSelect).onSelect(value))) : setValue)}
+                                onChange={(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => {
+                                    setValue((column as TableColumnSelect).onSelect(value), item, column.field);
+                                }) : value => setValue(value, item, column.field))}
+                                onSelect={!(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => {
+                                    setValue((column as TableColumnSelect).onSelect(value), item, column.field);
+                                }) : value => setValue(value, item, column.field))}
                                 childComponent={(column as TableColumnSelect).editorChildCompononent}
                                 onCancel={cancelEditing}
                                 prefilter={(column as TableColumnSelect).prefilter}
@@ -343,7 +347,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                             <Switch onClick={e => {
                                 stopPropagation(e);
                                 preventDefault(e);
-                                setValue(!value)
+                                setValue(!value, item, column.field)
                             }} value={value}/>
                         )}
                         {displayEditor && isFunction(column.editor)

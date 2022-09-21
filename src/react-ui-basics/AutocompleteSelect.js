@@ -373,7 +373,7 @@ class AutocompleteSelect extends PureComponent {
     onSelect = (selectedId) => {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
         const {filterValue, selected: currentSelection} = this.state;
-        const {labels = {}} = this.props;
+        const {labels = {}, onFilterInputChange} = this.props;
 
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
             selectedId = filterValue.trim();
@@ -422,6 +422,9 @@ class AutocompleteSelect extends PureComponent {
             filterValue: filterValueWithCustom,
             errored,
         });
+
+        if (filterValueWithCustom !== filterValue)
+            orNoop(onFilterInputChange)(filterValueWithCustom)
 
         if (isActive && this.input)
             this.input.getInput().focus()

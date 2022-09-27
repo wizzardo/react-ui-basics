@@ -40,8 +40,10 @@ class Droppable extends PureComponent {
                     _state[allow] && allow,
                 )}
                         onDragOver={e => {
-                            preventDefault(e);
-                            stopPropagation(e);
+                            if (_state[allow]) {
+                                preventDefault(e);
+                                stopPropagation(e);
+                            }
                         }}
                         ref={ref('element', that)}>
                 {_props[children]}

@@ -35,7 +35,7 @@ export interface DatePickerProps {
     value: Date
     minDate?: Date
     formatter: (date: Date) => string
-    parser: (date: string) => Date
+    parser: (input: string) => Date
     onChange: (e) => void
     dayOfWeekToString: (day: number) => string | JSX.Element
     monthToString: (day: number) => string | JSX.Element
@@ -54,22 +54,24 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
 
     constructor(props: DatePickerProps) {
         super(props);
-        const date = props.value || new Date();
+        const value = props.value;
         this.state = {
             focused: false,
-            value: date,
-            text: props.formatter(date),
-            selectedMonth: DateTools.dateOf(date).resetTime().set(1, DateTools.TimeUnit.DAY),
+            value,
+            text: props.formatter(value),
+            selectedMonth: DateTools.dateOf(value || new Date()).resetTime().set(1, DateTools.TimeUnit.DAY),
         };
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.value !== prevProps.value)
+        if (this.props.value !== prevProps.value) {
+            const value = this.props.value
             this.setState({
-                value: this.props.value,
-                selectedMonth: DateTools.dateOf(this.props.value).resetTime().set(1, DateTools.TimeUnit.DAY),
-                text: this.props.formatter(this.props.value)
+                value,
+                selectedMonth: DateTools.dateOf(value || new Date()).resetTime().set(1, DateTools.TimeUnit.DAY),
+                text: this.props.formatter(value)
             })
+        }
     };
 
     componentDidMount() {
@@ -117,8 +119,8 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                            const text = e.target.value;
                            try {
                                const date = parser(text);
-                               if (date instanceof Date && !Number.isNaN(date.getTime())) {
-                                   if (date && value.getTime() !== date.getTime())
+                               if (date && date instanceof Date && !Number.isNaN(date.getTime())) {
+                                   if (!value || !DateTools.equals(value, date))
                                        this.onChange(date);
                                }
                                this.setState({text})

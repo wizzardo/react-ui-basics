@@ -32,6 +32,9 @@ const DayRenderer = ({day, selected, minDate, onClick}: {
 export interface DatePickerProps {
     id?: number | string
     name?: string
+    open?: boolean
+    onClose?: () => void
+    renderInput?: () => JSX.Element
     value: Date
     minDate?: Date
     formatter: (date: Date) => string
@@ -56,7 +59,7 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
         super(props);
         const value = props.value;
         this.state = {
-            focused: false,
+            focused: !!props.open,
             value,
             text: props.formatter(value),
             selectedMonth: DateTools.dateOf(value || new Date()).resetTime().set(1, DateTools.TimeUnit.DAY),
@@ -72,12 +75,18 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                 text: this.props.formatter(value)
             })
         }
+        if (this.props.open !== prevProps.open) {
+            const open = !!this.props.open
+            this.setState({
+                focused: open
+            }, !open ? this.props.onClose : null)
+        }
     };
 
     componentDidMount() {
         document.addEventListener('mousedown', this.listener = (e) => {
             if (this.state.focused && !this.el.contains(e.target))
-                this.setState({focused: false});
+                this.setState({focused: false}, this.props.onClose);
         })
     };
 
@@ -90,6 +99,9 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
             return true;
 
         if (!DateTools.equals(this.state.value, nextState.value))
+            return true;
+
+        if (this.props.open !== nextProps.open)
             return true;
 
         if (this.state.text !== nextState.text)
@@ -108,32 +120,33 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     };
 
     render() {
-        const {minDate, formatter, parser, dayOfWeekToString, monthToString} = this.props;
+        const {minDate, formatter, parser, dayOfWeekToString, monthToString, renderInput} = this.props;
         const {value, text, focused, selectedMonth} = this.state;
 
         return <div className={`DatePicker`} ref={el => this.el = el}>
-            <TextField id={'value'} value={text}
-                       autoComplete="off"
-                       onFocus={() => this.setState({focused: true})}
-                       onChange={e => {
-                           const text = e.target.value;
-                           try {
-                               const date = parser(text);
-                               if (date && date instanceof Date && !Number.isNaN(date.getTime())) {
-                                   if (!value || !DateTools.equals(value, date))
-                                       this.onChange(date);
-                               }
-                               this.setState({text})
-                           } catch (ignored) {
-                           }
-                       }}
-                       onKeyDown={e => {
-                           if ((e.keyCode === 27/*esc*/ || e.keyCode === 13/*enter*/) && focused) {
-                               e.preventDefault();
-                               this.setState({text: formatter(value), focused: false});
-                           }
-                       }}
-            />
+            {!!renderInput && renderInput()}
+            {!renderInput && <TextField id={'value'} value={text}
+                                        autoComplete="off"
+                                        onFocus={() => this.setState({focused: true})}
+                                        onChange={e => {
+                                            const text = e.target.value;
+                                            try {
+                                                const date = parser(text);
+                                                if (date && date instanceof Date && !Number.isNaN(date.getTime())) {
+                                                    if (!value || !DateTools.equals(value, date))
+                                                        this.onChange(date);
+                                                }
+                                                this.setState({text})
+                                            } catch (ignored) {
+                                            }
+                                        }}
+                                        onKeyDown={e => {
+                                            if ((e.keyCode === 27/*esc*/ || e.keyCode === 13/*enter*/) && focused) {
+                                                e.preventDefault();
+                                                this.setState({text: formatter(value), focused: false});
+                                            }
+                                        }}
+            />}
             <div className={`calendar ${focused && 'focused'}`}>
                 <div className={'row monthSelect'}>
                     <span>

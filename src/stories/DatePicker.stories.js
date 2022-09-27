@@ -20,7 +20,7 @@ export const story1 = () => {
             dayOfWeekToString={day => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day]}
             monthToString={month => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][month]}
             parser={(date) => new Date(date)}
-            formatter={date => date.toISOString()}
+            formatter={date => date ? date.toISOString().split('T')[0] : ''}
             onChange={e => setDate(e.target.value)}
         />
     </div>;

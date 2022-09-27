@@ -79,14 +79,17 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
             const open = !!this.props.open
             this.setState({
                 focused: open
-            }, !open ? this.props.onClose : null)
+            })
+        }
+        if (!this.state.focused && !!prevState.focused) {
+            orNoop(this.props.onClose)()
         }
     };
 
     componentDidMount() {
         document.addEventListener('mousedown', this.listener = (e) => {
             if (this.state.focused && !this.el.contains(e.target))
-                this.setState({focused: false}, this.props.onClose);
+                this.setState({focused: false});
         })
     };
 

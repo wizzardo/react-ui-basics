@@ -47,16 +47,16 @@ ls('build', file => {
     if (fs.existsSync(file.replace('.js', '.css'))) {
         let css = file.replace('.js', '.css');
         css = css.substring(css.lastIndexOf('/') + 1)
-        data = data.replace(`;\nimport`, `;\nimport './${css}';\nimport`)
+        data = data.replace(`\nimport`, `\nimport './${css}'; import`)
     }
-    data = data.replace(`;\nimport`, `;\nimport {inherits as __inherits} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
+    data = data.replace(`\nimport`, `\nimport {inherits as __inherits} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers"; import`)
     data = data.replaceAll(`__extends`, `__inherits`)
 
-    data = data.replace(`;\nimport`, `;\nimport {extends as __extends} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
+    data = data.replace(`\nimport`, `\nimport {extends as __extends} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers"; import`)
     data = data.replaceAll(`Object.assign`, `__extends`)
     data = data.replaceAll(`__assign`, `__extends`)
 
-    data = data.replace(`;\nimport`, `;\nimport {toConsumableArray as __toConsumableArray} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers";\nimport`)
+    data = data.replace(`\nimport`, `\nimport {toConsumableArray as __toConsumableArray} from "${parts.length === 3 ? './.' : ''}./_virtual/_rollupPluginBabelHelpers"; import`)
     data = data.replaceAll(`__spreadArray([], `, `__toConsumableArray(`)
 
     data = data.replace(/[a-zA-Z]+\.prototype\.[a-zA-Z]+\s+=\s+function\s*\([a-zA-Z0-9\s,_]*\)\s*\{\s+return undefined;\s*\};/m, ``)

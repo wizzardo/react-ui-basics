@@ -45,7 +45,7 @@ const ls = async (path, cb) => {
         let parts = file.split('/');
         let data = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'});
 
-        data = `import ReactConstants from "${parts.length === 3 ? './.' : ''}./ReactConstants";\n` + data;
+        data = data.replace(`\nimport`, `\nimport ReactConstants from "${parts.length === 3 ? './.' : ''}./ReactConstants"; import`)
         fields.forEach((it,i) => {
             data = data.replaceAll(new RegExp(`(\\.${it}\\b|\\[${it}\\]|"${it}")`, 'g'), `[ReactConstants[${i}]]`)
             data = data.replaceAll(new RegExp(`\\b${it}:`, 'g'), `[ReactConstants[${i}]]:`)

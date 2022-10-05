@@ -16,6 +16,7 @@ import Dropzone from "./Dropzone";
 import FilteredList from "./FilteredList";
 import FloatingActionButton from "./FloatingActionButton";
 import FormUploadProgress from "./FormUploadProgress";
+import  * as HttpTools from "./HttpTools";
 import ImageGallery from "./ImageGallery";
 import {ImageGalleryContainer} from "./ImageGallery";
 import MaterialIcon from "./MaterialIcon";
@@ -58,6 +59,7 @@ export {
     FilteredList,
     FloatingActionButton,
     FormUploadProgress,
+    HttpTools,
     ImageGallery,
     ImageGalleryContainer,
     MaterialIcon,

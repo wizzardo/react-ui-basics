@@ -45,7 +45,7 @@ const ls = async (path, cb) => {
 
         let parts = file.split('/');
         let data = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'});
-        data = data.replace(`\nimport`, `\nimport {${fields.map(it => `${it} as __${it}`).join(', ')}} from "${parts.length === 3 ? './.' : ''}./CommonFields"; import`)
+        data = `import {${fields.map(it => `${it} as __${it}`).join(', ')}} from "${parts.length === 3 ? './.' : ''}./CommonFields"; ` + data
         // fields.forEach(it => {
         //     data = data.replaceAll(new RegExp(`\\.${it}\\b`, 'g'), `[__${it}]`)
         // })

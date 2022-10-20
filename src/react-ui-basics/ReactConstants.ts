@@ -5,13 +5,13 @@ export const props: <P>(that: React.Component<P>) => P = that => that.props;
 export const propsGetter: <P>(that: React.Component<P>) => (() => P) = that => () => props(that);
 // @ts-ignore //ignore incompatible casting EMPTY to S
 export const state: <P, S>(that: React.Component<P, S>) => S = that => that.state || EMPTY;
-export const setState = (that, data, cb?) => {
+export const setState = (that: React.Component, data, cb?) => {
     that.setState(data, cb);
 };
-export const stateFieldSetter = (that, key, cb?) => (value, cb2?) => {
+export const stateFieldSetter = (that, key, cb?: () => void) => (value, cb2?) => {
     setState(that, {[key]: value}, cb2 || cb);
 };
-export const stateGS: ((that: React.Component) => (v?, cb?) => any) = (that) => {
+export const stateGS: (<T>(that: React.Component) => (v?: T, cb?: () => void) => T) = (that) => {
     !that['sfc'] && (that['sfc'] = 0);
     const key = '_' + (that['sfc']++);
     const setter = stateFieldSetter(that, key);

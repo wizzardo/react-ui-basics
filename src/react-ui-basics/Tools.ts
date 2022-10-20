@@ -169,30 +169,40 @@ export const removeEventListener = (el, type, listener, options?) => {
 export const UNDEFINED = undefined;
 export const isUndefined = a => a === UNDEFINED;
 
+export type ComparatorFunction<T> = (a: T, b: T) => number;
+export interface Comparator<T> extends ComparatorFunction<T>{
+    inverse : <T>() => Comparator<T>
+    and : <T>(comparator: Comparator<T>) => Comparator<T>
+}
+
+type SortOrder = 'ASC' | 'DESC';
+type FieldGetter<T> = (t: T) => any;
+type SortField<T> = keyof T | FieldGetter<T>;
 
 export class Comparators {
-    static SORT_ASC = 'ASC';
-    static SORT_DESC = 'DESC';
+    static SORT_ASC: SortOrder = 'ASC';
+    static SORT_DESC: SortOrder = 'DESC';
 
-    static of = (field, order, data) => {
+    static of = <T>(field: SortField<T> | SortField<T>[], order: SortOrder | SortOrder[], data?: T[]): Comparator<T> => {
         let comparator;
         if (Array.isArray(field)) {
             const isOrderArray = Array.isArray(order);
             comparator = Comparators.chain(field.map((it, i) => Comparators.of(it, (isOrderArray && order[i]) || Comparators.SORT_ASC, data)));
         } else if (isFunction(field)) {
-            if (data && data[0] && isString(field(data[0]))) {
+            const getter: FieldGetter<T> = field as FieldGetter<T>
+            if (data && data[0] && isString(getter(data[0]))) {
                 const collator = new Intl.Collator('default', {sensitivity: 'base'});
                 comparator = (a, b) => {
-                    return collator.compare(field(a), field(b));
+                    return collator.compare(getter(a), getter(b));
                 }
             } else
                 comparator = (a, b) => {
-                    const A = field(a);
-                    const B = field(b);
+                    const A = getter(a);
+                    const B = getter(b);
                     return (A < B ? -1 : (A > B ? 1 : 0));
                 };
         } else if (isString(field))
-            comparator = Comparators.of(it => it[field], Comparators.SORT_ASC, data);
+            comparator = Comparators.of(it => it[field as string], Comparators.SORT_ASC, data);
         else
             comparator = Comparators.of(it => it, Comparators.SORT_ASC, data);
 
@@ -202,7 +212,7 @@ export class Comparators {
 
         return addComparatorMethods(comparator);
     };
-    static chain = (comparators) => addComparatorMethods((a, b) => {
+    static chain = <T>(comparators: Comparator<T>[]) => addComparatorMethods((a: T, b: T) => {
             let result;
             for (let i = 0; i < comparators.length; i++) {
                 result = comparators[i](a, b);
@@ -213,11 +223,14 @@ export class Comparators {
         }
     );
 
-    static inverse = (comparator) => addComparatorMethods((a, b) => -comparator(a, b));
+    static inverse = <T>(comparator: Comparator<T>) => addComparatorMethods((a: T, b: T) => -comparator(a, b));
 }
 
-const addComparatorMethods = function (comparator) {
+const addComparatorMethods = <T>(cf: ComparatorFunction<T>): Comparator<T> => {
+    const comparator = cf as Comparator<T>
+    // @ts-ignore
     comparator.inverse = () => Comparators.inverse(comparator);
+    // @ts-ignore
     comparator.and = (another) => Comparators.chain([comparator, another]);
     return comparator;
 };

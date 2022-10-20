@@ -3,9 +3,22 @@ import './Table.css'
 import TextField from "./TextField";
 import AutocompleteSelect, {MODE_DEFAULT, MODE_MULTIPLE_MINI} from "./AutocompleteSelect";
 import Switch from "./Switch";
-import {Comparators, NOOP, classNames, preventDefault, stopPropagation, isFunction, isString, orNoop, createRef, setInterval, createAccessor, UNDEFINED} from "./Tools";
+import {
+    Comparators,
+    NOOP,
+    classNames,
+    preventDefault,
+    stopPropagation,
+    isFunction,
+    isString,
+    orNoop,
+    createRef,
+    setInterval,
+    createAccessor,
+    UNDEFINED
+} from "./Tools";
 import MaterialIcon from "./MaterialIcon";
-import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs} from "./ReactConstants";
+import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs, stateGS} from "./ReactConstants";
 
 export const SORT_ASC = Comparators.SORT_ASC;
 export const SORT_DESC = Comparators.SORT_DESC;
@@ -29,35 +42,39 @@ export interface RowProps<T> {
     cancelEditing: () => void,
     onFinishEditing: () => void,
     handleInputChange: (e: ChangeEvent) => void,
-    setValue: (v: any, t: T, field: String) => void,
-    setEditing: (t: T, i: number, value?: any) => void,
+    setValue: (v: any, t: T, field: keyof T) => void,
+    setEditing: (t: T, i: number, value?: any, focused?: boolean) => void,
     onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseEnter?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseLeave?: (e: SyntheticEvent, row: number, column: number) => void,
 }
 
-export type Formatter<T, V> =
-    ((value?: V, item?: T, format?: string) => ReactElement | string)
-    | ((value: V, item: T) => ReactElement | string)
-    | ((value: V) => ReactElement | string);
+export type Formatter<T, V> = ((value: V, item?: T, format?: string) => ReactElement | string);
 
-export type CellClassName<T> = (item: T, field: string, row: number, column: number) => string;
+export type CellClassName<T> = (item: T, field: keyof T, row: number, column: number) => string;
 export type ColumnClassName<T> = string | CellClassName<T>
 
 export interface TableColumn<T> {
-    field?: string,
+    field?: keyof T,
     className?: ColumnClassName<T>,
-    onClick?: (e: SyntheticEvent, startEditing: () => void, item: T, field: string, row: number, column: number) => void,
+    onClick?: (e: SyntheticEvent, startEditing: () => void, item: T, field: keyof T, row: number, column: number) => void,
     comparator?: Comparator,
     header?: string | ReactElement,
     sortable?: boolean,
     displayEditor?: boolean,
-    formatter?: Formatter<T, any>,
+    formatter?: Formatter<T, T[keyof T]>,
     format?: string,
     editable?: boolean | ((t: T) => boolean),
     editor?: typeof editorSelect | typeof editorSwitch | ((t: T, cancel: () => void, isEditing: boolean) => ReactElement),
-    preEditor?: (a: any) => any,
+    preEditor?: (a: T[keyof T]) => any,
+}
+
+export interface TableColumnTyped<T, F extends keyof T> extends TableColumn<T>{
+    field?: F,
+    onClick?: (e: SyntheticEvent, startEditing: () => void, item: T, field: F, row: number, column: number) => void,
+    formatter?: Formatter<T, T[F]>,
+    preEditor?: (a: T[F]) => any,
 }
 
 export interface TableProps<T> {
@@ -86,10 +103,19 @@ export interface TableState<T> {
     data?: T[],
 }
 
+export interface EditingState<T> {
+    id: number | string
+    value: any
+    columnIndex: number
+    item: T
+    field: keyof T
+    focused: boolean
+}
+
 class Table<T> extends Component<TableProps<T>, TableState<T>> {
-    startEditing: (item, columnIndex, value?) => void;
+    startEditing: (item: T, columnIndex: number, value?, focused?: boolean) => void;
     finishEditing: () => void;
-    isEditing: () => boolean;
+    getEditingState: () => EditingState<T>;
 
     constructor(properties) {
         super(properties);
@@ -106,20 +132,21 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             }
         };
 
-        const [editingState, dataState, sortByState, sortOrderState, comparatorState] = stateGSs(this, 5);
+        const editingState = stateGS<EditingState<T>>(this)
+        const [dataState, sortByState, sortOrderState, comparatorState] = stateGSs(this, 4);
         const comparatorGetter = createAccessor('comparator');
 
         const cancelEditing = () => {
-            editingState(false)
+            editingState(null)
         };
 
-        const setEditing = (item, columnIndex, value) => {
+        const setEditing = (item, columnIndex, value, focused = true) => {
             const {columns} = props()
             const field = columns[columnIndex].field
-            editingState({id: item.id, value: (value != null ? value : item[field]), columnIndex, item, field})
+            editingState({id: item.id, value: (value != null ? value : item[field]), columnIndex, item, field, focused: !!focused})
         };
         this.startEditing = setEditing
-        this.isEditing = () => !!editingState()
+        this.getEditingState = () => editingState()
 
         const handleInputChange = (event) => {
             const target = event.target;
@@ -148,7 +175,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         this.finishEditing = onFinishEditing
 
         const setValue = (value, item, field) => {
-            editingState({item, field, value}, onFinishEditing)
+            editingState({...editingState(), item, field, value}, onFinishEditing)
         };
 
 
@@ -262,12 +289,12 @@ const formatValue: (<T>(item: T, column: TableColumn<T>) => string | ReactElemen
     return formatter ? (formatter as ((value?: any, item?: any, format?: string) => ReactElement))(value, item, column.format) : '' + value;
 };
 
-export interface TableColumnSelect extends TableColumn<any> {
+export interface TableColumnSelect<T> extends TableColumn<T> {
     editorData?: any,
     multiSelect?: any,
     onSelect?: any,
     editorSelectedComponent?: any,
-    editorChildCompononent?: any,
+    editorChildComponent?: any,
     prefilter?: any,
 }
 
@@ -307,10 +334,10 @@ class Row<T> extends PureComponent<RowProps<T>> {
                         {displayEditor && !column.editor && (
                             <TextField
                                 value={value}
-                                focused={true}
+                                focused={editing.focused}
                                 onBlur={cancelEditing}
                                 onChange={handleInputChange}
-                                onKeyDown={e => {
+                                onKeyUp={e => {
                                     if (e.keyCode === 27/*escape*/) {
                                         preventDefault(e);
                                         cancelEditing();
@@ -325,22 +352,22 @@ class Row<T> extends PureComponent<RowProps<T>> {
                         {displayEditor && column.editor === editorSelect && (
                             <AutocompleteSelect
                                 value={value}
-                                data={(column as TableColumnSelect).editorData}
+                                data={(column as TableColumnSelect<T>).editorData}
                                 focused={true}
                                 withArrow={false}
                                 withFilter={false}
                                 selectedMode={'inline'}
-                                selectedComponent={(column as TableColumnSelect).editorSelectedComponent}
-                                mode={(column as TableColumnSelect).multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
-                                onChange={(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => {
-                                    setValue((column as TableColumnSelect).onSelect(value), item, column.field);
+                                selectedComponent={(column as TableColumnSelect<T>).editorSelectedComponent}
+                                mode={(column as TableColumnSelect<T>).multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
+                                onChange={(column as TableColumnSelect<T>).multiSelect && ((column as TableColumnSelect<T>).onSelect ? (value => {
+                                    setValue((column as TableColumnSelect<T>).onSelect(value), item, column.field);
                                 }) : value => setValue(value, item, column.field))}
-                                onSelect={!(column as TableColumnSelect).multiSelect && ((column as TableColumnSelect).onSelect ? (value => {
-                                    setValue((column as TableColumnSelect).onSelect(value), item, column.field);
+                                onSelect={!(column as TableColumnSelect<T>).multiSelect && ((column as TableColumnSelect<T>).onSelect ? (value => {
+                                    setValue((column as TableColumnSelect<T>).onSelect(value), item, column.field);
                                 }) : value => setValue(value, item, column.field))}
-                                childComponent={(column as TableColumnSelect).editorChildCompononent}
+                                childComponent={(column as TableColumnSelect<T>).editorChildComponent}
                                 onCancel={cancelEditing}
-                                prefilter={(column as TableColumnSelect).prefilter}
+                                prefilter={(column as TableColumnSelect<T>).prefilter}
                             />
                         )}
                         {displayEditor && column.editor === editorSwitch && (

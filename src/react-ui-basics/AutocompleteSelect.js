@@ -22,6 +22,7 @@ import {
 import Button from "./Button";
 import MaterialIcon from "./MaterialIcon";
 import {PureComponent} from "./ReactConstants";
+import ReactDOM from "react-dom";
 
 export const MODE_DEFAULT = 'default';
 export const MODE_INLINE = 'inline';
@@ -99,7 +100,9 @@ class AutocompleteSelect extends PureComponent {
     componentDidMount() {
         addEventListener(DOCUMENT, 'mousedown', this.listener = (e) => {
             if (this.state.isActive && this.el && !this.el.contains(e.target)) {
-                this.onClickOutside()
+                if(!this.props.listPortal || !this.list?.el?.el || !this.list.el.el.contains(e.target)){
+                    this.onClickOutside()
+                }
             }
         })
         if (this.props.required) {
@@ -112,11 +115,29 @@ class AutocompleteSelect extends PureComponent {
             }
         }
         this.initSelected(this.props, this.state)
+        this.updateListPosition()
+    }
+
+    updateListPosition = () => {
+        if (this.props.listPortal && this.state.isActive) {
+            var rect = this.el.getBoundingClientRect();
+            this.setState({
+                listStyles: {
+                    position: 'absolute',
+                    top: rect.bottom + 'px',
+                    left: rect.left + 'px',
+                    minWidth: rect.width + 'px',
+                    maxHeight: '300px',
+                }
+            })
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.value !== prevProps.value)
             this.initSelected(this.props, this.state)
+        if (this.state.isActive && !prevState.isActive)
+            this.updateListPosition()
     }
 
     initSelected = ({value, mode, allowCustom}, {filterValue = ''}) => {
@@ -174,11 +195,12 @@ class AutocompleteSelect extends PureComponent {
             allowCustom,
             inlineSelected,
             removeIcon,
+            listPortal,
         } = this.props;
         const id = this.props.id || this.randomId;
         const selectedComponent = this.props.selectedComponent || childComponent;
         const {selected = {}, filterValue = '', errored} = this.state;
-        let {isActive} = this.state;
+        let {isActive, listStyles} = this.state;
         if (this.props.isActive !== UNDEFINED) {
             isActive = this.props.isActive
         }
@@ -209,6 +231,26 @@ class AutocompleteSelect extends PureComponent {
         const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
 
         const filterFunction = this.createFilter(prefilter, filterValue, filterValueTrimmed.toLowerCase(), filter)
+        let filteredList = <FilteredList className={classNames(isActive && 'visible', listPortal && 'portal')}
+                                         style={listStyles}
+                                         ref={ref('list', this)}
+                                         filter={filterFunction}
+                                         selectSingle={!allowCustom}
+                                         scroll={scroll}
+                                         inline={isInline}
+                                         nextProvider={ref('next', this)}
+                                         prevProvider={ref('prev', this)}
+                                         selectedProvider={ref('getSelected', this)}
+                                         resetProvider={ref('reset', this)}
+                                         onSelect={this.onSelect}
+                                         selected={selected}
+                                         childComponent={childComponent}
+                                         childProps={childProps}
+                                         data={dataFiltered}
+                                         labels={labels}
+        />;
+        filteredList = listPortal ? ReactDOM.createPortal(filteredList, listPortal) : filteredList
+
         return (
             <div id={id}
                  className={classNames(
@@ -333,23 +375,7 @@ class AutocompleteSelect extends PureComponent {
                     </div>
                 )}
 
-                <FilteredList className={classNames(isActive && 'visible')}
-                              ref={ref('list', this)}
-                              filter={filterFunction}
-                              selectSingle={!allowCustom}
-                              scroll={scroll}
-                              inline={isInline}
-                              nextProvider={ref('next', this)}
-                              prevProvider={ref('prev', this)}
-                              selectedProvider={ref('getSelected', this)}
-                              resetProvider={ref('reset', this)}
-                              onSelect={this.onSelect}
-                              selected={selected}
-                              childComponent={childComponent}
-                              childProps={childProps}
-                              data={dataFiltered}
-                              labels={labels}
-                />
+                {filteredList}
             </div>
         )
     }

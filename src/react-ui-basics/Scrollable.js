@@ -2,7 +2,21 @@ import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './Scrollable.css'
-import {classNames, preventDefault, WINDOW, addEventListener, removeEventListener, setTimeout, clearTimeout, setInterval, clearInterval, createRef, orNoop, NOOP} from "./Tools";
+import {
+    classNames,
+    preventDefault,
+    WINDOW,
+    addEventListener,
+    removeEventListener,
+    setTimeout,
+    clearTimeout,
+    setInterval,
+    clearInterval,
+    createRef,
+    orNoop,
+    NOOP,
+    ref
+} from "./Tools";
 import {propsGetter, stateGS, PureComponent, render, componentDidMount, componentDidUpdate, componentWillUnmount} from "./ReactConstants";
 
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
@@ -36,7 +50,6 @@ class Scrollable extends PureComponent {
         const status = stateGS(that);
         const statusH = stateGS(that);
 
-        const containerRef = createRef();
         const viewportRef = createRef();
         const scrollbarRef = createRef();
         const horizontalScrollbarRef = createRef();
@@ -63,7 +76,7 @@ class Scrollable extends PureComponent {
             const viewport = viewportRef();
             const scrollbar = scrollbarRef();
             const scrollbarH = horizontalScrollbarRef();
-            const container = containerRef();
+            const container = that.el;
             const thumb = thumbRef();
             const thumbH = horizontalThumbRef();
 
@@ -340,13 +353,13 @@ class Scrollable extends PureComponent {
         };
         that.getScroll = () => viewportRef().scrollTop;
         that.getScrollHeight = () => scrollHeightOf(viewportRef());
-        that.getHeight = () => containerRef().clientHeight;
+        that.getHeight = () => that.el.clientHeight;
 
         that[render] = () => {
             const _props = props();
             const {className, children} = _props;
             return (
-                <div className={classNames('Scrollable', className, status() || WITH_SCROLL, statusH() + '-horizontal')} style={styleOf(_props)} ref={containerRef}>
+                <div className={classNames('Scrollable', className, status() || WITH_SCROLL, statusH() + '-horizontal')} style={styleOf(_props)} ref={ref('el', this)}>
                     <div className="viewport" ref={viewportRef}>
                         {children}
                     </div>

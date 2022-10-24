@@ -22,6 +22,10 @@
     }
   }
 
+  &.portal {
+    transition: opacity 0.2s ease-out;
+  }
+
   &.inline {
     max-height: 225px;
     margin-top: 5px;

@@ -116,6 +116,14 @@
         background-color: rgb(240, 240, 240);
       }
     }
+
+    > .AutocompleteSelect{
+      min-width: unset;
+
+      > .selected > .DummyChild {
+        margin: 0;
+      }
+    }
   }
 
 }

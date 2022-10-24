@@ -15,7 +15,7 @@ import {
     createRef,
     setInterval,
     createAccessor,
-    UNDEFINED
+    UNDEFINED, DOCUMENT
 } from "./Tools";
 import MaterialIcon from "./MaterialIcon";
 import {componentDidUpdate, componentWillUnmount, render, PureComponent, propsGetter, componentDidMount, stateGSs, stateGS} from "./ReactConstants";
@@ -296,6 +296,7 @@ export interface TableColumnSelect<T> extends TableColumn<T> {
     editorSelectedComponent?: any,
     editorChildComponent?: any,
     prefilter?: any,
+    filter?: (value: any, filterValue: string) => boolean,
 }
 
 class Row<T> extends PureComponent<RowProps<T>> {
@@ -358,7 +359,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 data={(column as TableColumnSelect<T>).editorData}
                                 focused={true}
                                 withArrow={false}
-                                withFilter={false}
+                                withFilter={true}
                                 selectedMode={'inline'}
                                 selectedComponent={(column as TableColumnSelect<T>).editorSelectedComponent}
                                 mode={(column as TableColumnSelect<T>).multiSelect ? MODE_MULTIPLE_MINI : MODE_DEFAULT}
@@ -371,6 +372,8 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 childComponent={(column as TableColumnSelect<T>).editorChildComponent}
                                 onCancel={cancelEditing}
                                 prefilter={(column as TableColumnSelect<T>).prefilter}
+                                filter={(column as TableColumnSelect<T>).filter}
+                                listPortal={DOCUMENT.body}
                             />
                         )}
                         {displayEditor && column.editor === editorSwitch && (

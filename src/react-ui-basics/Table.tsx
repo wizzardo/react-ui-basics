@@ -335,7 +335,10 @@ class Row<T> extends PureComponent<RowProps<T>> {
                             <TextField
                                 value={value}
                                 focused={editing.focused}
-                                onBlur={cancelEditing}
+                                onFocus={() => {
+                                    setEditing(item, j, value, true)
+                                }}
+                                onBlur={onFinishEditing}
                                 onChange={handleInputChange}
                                 onKeyUp={e => {
                                     if (e.keyCode === 27/*escape*/) {

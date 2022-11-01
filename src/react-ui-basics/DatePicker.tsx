@@ -137,6 +137,10 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
             return true;
         }
 
+        if (this.state.popupStyles !== nextState.popupStyles) {
+            return true;
+        }
+
         if (this.state.selectedMonth !== nextState.selectedMonth) {
             return true;
         }

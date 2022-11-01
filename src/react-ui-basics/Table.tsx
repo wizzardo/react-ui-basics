@@ -61,6 +61,7 @@ export interface TableColumn<T> {
     onClick?: (e: SyntheticEvent, startEditing: () => void, item: T, field: keyof T, row: number, column: number) => void,
     comparator?: Comparator,
     header?: string | ReactElement,
+    headerColspan?: number,
     sortable?: boolean,
     displayEditor?: boolean,
     formatter?: Formatter<T, T[keyof T]>,
@@ -234,8 +235,11 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                     <tr ref={headers}>
                         {columns.filter(it => !!it).map((column, i) => {
                             const sortable = column.sortable || column.sortable == null;
+                            if (column.headerColspan === 0)
+                                return null
+
                             return (
-                                <th key={i} onClick={e => sortable && sort(e, column.field, comparatorGetter(column))}>
+                                <th key={i} colSpan={column.headerColspan} onClick={e => sortable && sort(e, column.field, comparatorGetter(column))}>
                                     <div className={classNames('hidden', sortable && 'sortable', sortBy === column.field && 'active')}>
                                         {column.header}
                                         {column.header && sortBy === column.field && sortOrder === SORT_ASC && (<MaterialIcon icon={'keyboard_arrow_up'}/>)}

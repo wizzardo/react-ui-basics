@@ -1,8 +1,9 @@
 import React from 'react';
+import ReactDOM from "react-dom";
 import './DatePicker.css'
 import TextField from "./TextField";
 import * as DateTools from "./DateTools";
-import {orNoop, classNames, preventDefault} from "./Tools";
+import {orNoop, classNames, preventDefault, ref} from "./Tools";
 import Button from './Button'
 import CalendarMonthView from "./CalendarMonthView";
 import MaterialIcon from "./MaterialIcon";
@@ -41,7 +42,8 @@ export interface DatePickerProps {
     parser: (input: string) => Date
     onChange: (e) => void
     dayOfWeekToString: (day: number) => string | JSX.Element
-    monthToString: (day: number) => string | JSX.Element
+    monthToString: (day: number) => string | JSX.Element,
+    portal?: Element | DocumentFragment
 }
 
 interface DatePickerState {
@@ -49,10 +51,12 @@ interface DatePickerState {
     value: Date,
     selectedMonth: DateExtended,
     text: string,
+    popupStyles?: any,
 }
 
 class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     private el: HTMLDivElement;
+    private popup: HTMLDivElement;
     private listener: (e) => void;
 
     constructor(props: DatePickerProps) {
@@ -78,7 +82,8 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
         if (this.props.open !== prevProps.open) {
             const open = !!this.props.open
             this.setState({
-                focused: open
+                focused: open,
+                popupStyles: this.getPopupStyles()
             })
         }
         if (!this.state.focused && !!prevState.focused) {
@@ -86,10 +91,24 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
         }
     };
 
+    private getPopupStyles = () => {
+        const boundingClientRect = this.el.getBoundingClientRect();
+        return {
+            left: boundingClientRect.left + 'px',
+            top: boundingClientRect.bottom + 'px',
+        }
+    };
+
     componentDidMount() {
         document.addEventListener('mousedown', this.listener = (e) => {
-            if (this.state.focused && !this.el.contains(e.target))
-                this.setState({focused: false});
+            if (this.state.focused && !this.el.contains(e.target)) {
+                if (!this.props.portal || !this.popup.contains(e.target)) {
+                    this.setState({focused: false});
+                }
+            }
+        })
+        this.setState({
+            popupStyles: this.getPopupStyles()
         })
     };
 
@@ -98,35 +117,76 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-        if (!DateTools.equals(this.props.value, nextProps.value))
+        if (!DateTools.equals(this.props.value, nextProps.value)) {
             return true;
+        }
 
-        if (!DateTools.equals(this.state.value, nextState.value))
+        if (!DateTools.equals(this.state.value, nextState.value)) {
             return true;
+        }
 
-        if (this.props.open !== nextProps.open)
+        if (this.props.open !== nextProps.open) {
             return true;
+        }
 
-        if (this.state.text !== nextState.text)
+        if (this.state.text !== nextState.text) {
             return true;
+        }
 
-        if (this.state.focused !== nextState.focused)
+        if (this.state.focused !== nextState.focused) {
             return true;
+        }
 
-        if (this.state.selectedMonth !== nextState.selectedMonth)
+        if (this.state.selectedMonth !== nextState.selectedMonth) {
             return true;
+        }
 
-        if (!DateTools.equals(this.props.minDate, nextProps.minDate))
+        if (!DateTools.equals(this.props.minDate, nextProps.minDate)) {
             return true;
+        }
 
         return false;
     };
 
     render() {
-        const {minDate, formatter, parser, dayOfWeekToString, monthToString, renderInput} = this.props;
-        const {value, text, focused, selectedMonth} = this.state;
+        const {minDate, formatter, parser, dayOfWeekToString, monthToString, renderInput, portal} = this.props;
+        const {value, text, focused, selectedMonth, popupStyles} = this.state;
 
-        return <div className={`DatePicker`} ref={el => this.el = el}>
+        let popup = <div className={classNames('calendar', focused && 'focused', portal && 'portal')}
+                         ref={ref('popup', this)}
+                         style={popupStyles}>
+            <div className={'row monthSelect'}>
+                <span>
+                    {monthToString(selectedMonth.get(DateTools.TimeUnit.MONTH))}
+                    &nbsp;{selectedMonth.get(DateTools.TimeUnit.YEAR)}
+                </span>
+                <Button flat={true} round={true} disabled={minDate && DateTools.dateOf(selectedMonth).isBefore(minDate)} onClick={() => {
+                    this.setState({selectedMonth: DateTools.dateOf(selectedMonth).subtract(1, DateTools.TimeUnit.MONTH)})
+                }}>
+                    <MaterialIcon icon={'chevron_left'}/>
+                </Button>
+                <Button flat={true} round={true} onClick={() => {
+                    this.setState({selectedMonth: DateTools.dateOf(selectedMonth).add(1, DateTools.TimeUnit.MONTH)})
+                }}>
+                    <MaterialIcon icon={'chevron_right'}/>
+                </Button>
+            </div>
+            <CalendarMonthView monthOf={selectedMonth}
+                               dayOfWeekToString={dayOfWeekToString}
+                               dayRenderer={(date) => <DayRenderer
+                                   day={DateTools.dateOf(date)}
+                                   selected={value}
+                                   minDate={minDate}
+                                   onClick={value => {
+                                       this.onChange(value)
+                                       this.setState({focused: false, text: formatter(value)});
+                                   }}
+                               />}/>
+        </div>;
+
+        popup = portal ? ReactDOM.createPortal(popup, portal) : popup
+
+        return <div className={`DatePicker`} ref={ref('el', this)}>
             {!!renderInput && renderInput()}
             {!renderInput && <TextField id={'value'} value={text}
                                         autoComplete="off"
@@ -150,35 +210,7 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                                             }
                                         }}
             />}
-            <div className={`calendar ${focused && 'focused'}`}>
-                <div className={'row monthSelect'}>
-                    <span>
-                        {monthToString(selectedMonth.get(DateTools.TimeUnit.MONTH))}
-                        &nbsp;{selectedMonth.get(DateTools.TimeUnit.YEAR)}
-                    </span>
-                    <Button flat={true} round={true} disabled={minDate && DateTools.dateOf(selectedMonth).isBefore(minDate)} onClick={() => {
-                        this.setState({selectedMonth: DateTools.dateOf(selectedMonth).subtract(1, DateTools.TimeUnit.MONTH)})
-                    }}>
-                        <MaterialIcon icon={'chevron_left'}/>
-                    </Button>
-                    <Button flat={true} round={true} onClick={() => {
-                        this.setState({selectedMonth: DateTools.dateOf(selectedMonth).add(1, DateTools.TimeUnit.MONTH)})
-                    }}>
-                        <MaterialIcon icon={'chevron_right'}/>
-                    </Button>
-                </div>
-                <CalendarMonthView monthOf={selectedMonth}
-                                   dayOfWeekToString={dayOfWeekToString}
-                                   dayRenderer={(date) => <DayRenderer
-                                       day={DateTools.dateOf(date)}
-                                       selected={value}
-                                       minDate={minDate}
-                                       onClick={value => {
-                                           this.onChange(value)
-                                           this.setState({focused: false, text: formatter(value)});
-                                       }}
-                                   />}/>
-            </div>
+            {popup}
         </div>
     };
 

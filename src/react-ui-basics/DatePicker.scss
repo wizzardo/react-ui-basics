@@ -11,26 +11,28 @@
       text-align: center;
     }
   }
+}
 
-  .calendar {
-    user-select: none;
-    position: absolute;
-    top: 33px;
-    z-index: 10;
-    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+.calendar {
+  user-select: none;
+  position: absolute;
+  top: 33px;
+  z-index: 10;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
 
-    transition: 0.2s all ease;
-    opacity: 0;
-    visibility: hidden;
+  transition: 0.2s all ease;
+  opacity: 0;
+  visibility: hidden;
 
-    &.focused {
-      opacity: 1;
-      visibility: visible;
-    }
+  &.focused {
+    opacity: 1;
+    visibility: visible;
   }
 
-
   .monthSelect {
+    align-items: center;
     margin-bottom: 0;
     background: white;
     font-size: 12px;

@@ -3,7 +3,7 @@ export const resetTime = (date: Date) => {
     return date
 };
 export const timeOf = (date: Date) => date.getTime();
-export const equals = (a: Date, b: Date) => a && b && timeOf(a) === timeOf(b);
+export const equals = (a: Date, b: Date) => (a === b) || (a && b && timeOf(a) === timeOf(b));
 export const isBefore = (a: Date, b: Date) => a && b && timeOf(a) < timeOf(b);
 export const isAfter = (a: Date, b: Date) => a && b && timeOf(a) > timeOf(b);
 export const max = (a: Date, b: Date) => {

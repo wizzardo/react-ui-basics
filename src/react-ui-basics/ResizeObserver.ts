@@ -47,4 +47,5 @@ class ResizeObserver {
     }
 }
 
+// @ts-ignore
 WINDOW.ResizeObserver = WINDOW.ResizeObserver || ResizeObserver;

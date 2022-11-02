@@ -1,5 +1,5 @@
 var global = global || window;
-export const WINDOW = global;
+export const WINDOW: Window = global as Window;
 export const DOCUMENT = WINDOW.document;
 
 export function classNames(...classes: Array<string | number | boolean | null | void>) {

@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import './DatePicker.css'
 import TextField from "./TextField";
 import * as DateTools from "./DateTools";
-import {orNoop, classNames, preventDefault, ref} from "./Tools";
+import {orNoop, classNames, preventDefault, ref, WINDOW} from "./Tools";
 import Button from './Button'
 import CalendarMonthView from "./CalendarMonthView";
 import MaterialIcon from "./MaterialIcon";
@@ -92,10 +92,20 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     };
 
     private getPopupStyles = () => {
-        const boundingClientRect = this.el.getBoundingClientRect();
+        const textInputBoundingRect = this.el.getBoundingClientRect();
+        const popupBoundingRect = this.popup.getBoundingClientRect();
+        let left = textInputBoundingRect.left;
+        let top = textInputBoundingRect.bottom;
+        if (left + popupBoundingRect.width > WINDOW.innerWidth) {
+            left = textInputBoundingRect.right - popupBoundingRect.width;
+        }
+        if (top + popupBoundingRect.height > WINDOW.innerHeight) {
+            top = textInputBoundingRect.top - popupBoundingRect.height;
+        }
+
         return {
-            left: boundingClientRect.left + 'px',
-            top: boundingClientRect.bottom + 'px',
+            left: left + 'px',
+            top: top + 'px',
         }
     };
 

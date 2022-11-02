@@ -27,8 +27,12 @@ const clearSelection = () => {
         } else if (getSelection().removeAllRanges) {  // Firefox
             getSelection().removeAllRanges();
         }
-    } else if (DOCUMENT.selection) {  // IE?
-        DOCUMENT.selection.empty();
+    } else {
+        // @ts-ignore
+        if (DOCUMENT.selection) {  // IE?
+            // @ts-ignore
+            DOCUMENT.selection.empty();
+        }
     }
 };
 

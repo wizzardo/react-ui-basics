@@ -43,7 +43,7 @@ export interface RowProps<T> {
     onFinishEditing: () => void,
     handleInputChange: (e: ChangeEvent) => void,
     setValue: (v: any, t: T, field: keyof T) => void,
-    setEditing: (t: T, i: number, value?: any, focused?: boolean) => void,
+    setEditing: (t: T, row: number, column: number, value?: any, focused?: boolean) => void,
     onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseEnter?: (e: SyntheticEvent, row: number, column: number) => void,
@@ -88,7 +88,7 @@ export interface TableProps<T> {
     onRowClick?: (t: T, e: SyntheticEvent) => void,
     disabled?: (t: T) => boolean,
     toKey?: (t: T) => number | string,
-    onChange?: (t: T, cancel: () => void) => void,
+    onChange?: (t: T, cancel: () => void, rowIndex: number) => void,
     rowClassName?: string | ((t: T) => string),
     onMouseDown?: (e: SyntheticEvent, row: number, column: number) => void,
     onMouseUp?: (e: SyntheticEvent, row: number, column: number) => void,
@@ -107,6 +107,7 @@ export interface TableState<T> {
 export interface EditingState<T> {
     id: number | string
     value: any
+    rowIndex: number
     columnIndex: number
     item: T
     field: keyof T
@@ -141,10 +142,10 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
             editingState(null)
         };
 
-        const setEditing = (item, columnIndex, value, focused = true) => {
+        const setEditing = (item, rowIndex, columnIndex, value, focused = true) => {
             const {columns} = props()
             const field = columns[columnIndex].field
-            editingState({id: item.id, value: (value != null ? value : item[field]), columnIndex, item, field, focused: !!focused})
+            editingState({id: item.id, value: (value != null ? value : item[field]), rowIndex, columnIndex, item, field, focused: !!focused})
         };
         this.startEditing = setEditing
         this.getEditingState = () => editingState()
@@ -171,7 +172,7 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
                 ...editing.item,
                 [editing.field]: value
             };
-            props().onChange(updated, cancelEditing)
+            props().onChange(updated, cancelEditing, editing.rowIndex)
         };
         this.finishEditing = onFinishEditing
 
@@ -314,7 +315,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
             {columns.filter(it => !!it).map((column, j) => {
                 const isEditing = editing && editing.columnIndex === j;
                 const editable = isFunction(column.editable) ? (column.editable as ((t: T) => boolean))(item) : !!column.editable;
-                const startEditing = !isEditing && editable ? () => setEditing(item, j) : NOOP;
+                const startEditing = !isEditing && editable ? () => setEditing(item, i, j) : NOOP;
                 const onClick = (!!column.onClick ? (e) => column.onClick(e, startEditing, item, column.field, i, j) : startEditing)
 
                 let displayEditor = isEditing || column.displayEditor;
@@ -341,7 +342,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 value={value}
                                 focused={editing.focused}
                                 onFocus={() => {
-                                    setEditing(item, j, value, true)
+                                    setEditing(item, i, j, value, true)
                                 }}
                                 onBlur={onFinishEditing}
                                 onChange={handleInputChange}

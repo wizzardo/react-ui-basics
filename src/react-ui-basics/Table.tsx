@@ -115,7 +115,7 @@ export interface EditingState<T> {
 }
 
 class Table<T> extends Component<TableProps<T>, TableState<T>> {
-    startEditing: (item: T, columnIndex: number, value?, focused?: boolean) => void;
+    startEditing: (item: T, rowIndex: number, columnIndex: number, value?, focused?: boolean) => void;
     finishEditing: () => void;
     getEditingState: () => EditingState<T>;
 

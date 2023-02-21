@@ -54,6 +54,7 @@ class FilteredList extends PureComponent {
         const {data, labels, filter, className, selected, inline, childComponent, childProps, style, scroll} = this.props;
         return (
             <Scrollable className={classNames('FilteredList', className, inline ? 'inline' : 'popup')}
+                        autoScrollTop={false}
                         ref={ref('el', this)} style={style} scrollBarMode={scroll}>
                 {(data || []).filter(id => id !== false && id != null).map(id => <ItemWrapper
                     id={id}

@@ -78,7 +78,8 @@ function isMultipleSelect(mode) {
 class AutocompleteSelect extends PureComponent {
 
     static propTypes = {
-        mode: PropTypes.oneOf([MODE_DEFAULT, MODE_INLINE, MODE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI, MODE_MULTIPLE_MINI_INLINE, MODE_INLINE_MULTIPLE, MODE_MINI])
+        mode: PropTypes.oneOf([MODE_DEFAULT, MODE_INLINE, MODE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI, MODE_MULTIPLE_MINI_INLINE, MODE_INLINE_MULTIPLE, MODE_MINI]),
+        listPortalPosition: PropTypes.oneOf('left', 'right'),
     };
 
     constructor(props) {
@@ -121,14 +122,20 @@ class AutocompleteSelect extends PureComponent {
     updateListPosition = () => {
         if (this.props.listPortal && this.state.isActive) {
             var rect = this.el.getBoundingClientRect();
+            let listPortalPosition = this.props.listPortalPosition;
+            let listStyles = {
+                position: 'absolute',
+                top: rect.bottom + 'px',
+                minWidth: rect.width + 'px',
+                maxHeight: '300px',
+            };
+            if (listPortalPosition === 'right')
+                listStyles.right = rect.right + 'px'
+            else
+                listStyles.left = rect.left + 'px'
+
             this.setState({
-                listStyles: {
-                    position: 'absolute',
-                    top: rect.bottom + 'px',
-                    left: rect.left + 'px',
-                    minWidth: rect.width + 'px',
-                    maxHeight: '300px',
-                }
+                listStyles: listStyles
             })
         }
     }
@@ -160,6 +167,7 @@ class AutocompleteSelect extends PureComponent {
         scrollToValue: false,
         mode: MODE_DEFAULT,
         selectedMode: 'full',
+        listPortalPosition: 'left',
         removeIcon: <MaterialIcon icon="close"/>,
     };
 

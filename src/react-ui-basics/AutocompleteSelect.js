@@ -130,7 +130,7 @@ class AutocompleteSelect extends PureComponent {
                 maxHeight: '300px',
             };
             if (listPortalPosition === 'right')
-                listStyles.right = rect.right + 'px'
+                listStyles.right = (window.innerWidth - rect.right) + 'px'
             else
                 listStyles.left = rect.left + 'px'
 

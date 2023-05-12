@@ -74,7 +74,7 @@ const isArrayShallowEqual = (a, b) => {
     return result;
 }
 
-const debounce = (func: (...args: any[]) => void, delay: number): (...args: any[]) => void => {
+export const debounce = (func: (...args: any[]) => void, delay: number): (...args: any[]) => void => {
   let inDebounce: NodeJS.Timeout | undefined;
   return function (...args: any[]): void {
     const context = this;

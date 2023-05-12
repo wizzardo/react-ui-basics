@@ -74,16 +74,15 @@ const isArrayShallowEqual = (a, b) => {
     return result;
 }
 
-export const debounce = (func, delay) => {
-    let inDebounce;
-    return function () {
-        const context = this;
-        const args = arguments;
-        clearTimeout(inDebounce);
-        inDebounce = setTimeout(() => {
-            func.apply(context, args);
-        }, delay)
-    }
+export const debounce = (func: (...args: any[]) => void, delay: number): (...args: any[]) => void => {
+  let inDebounce: NodeJS.Timeout | undefined;
+  return function (...args: any[]): void {
+    const context = this;
+    clearTimeout(inDebounce);
+    inDebounce = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
 };
 
 export const memo = (func) => {

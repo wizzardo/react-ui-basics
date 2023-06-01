@@ -33,6 +33,7 @@ const DayRenderer = ({day, selected, minDate, onClick}: {
 export interface DatePickerProps {
     id?: number | string
     name?: string
+    className?: string
     open?: boolean
     onClose?: () => void
     renderInput?: () => JSX.Element
@@ -139,6 +140,14 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
             return true;
         }
 
+        if (this.props.className !== nextProps.className) {
+            return true;
+        }
+
+        if (this.props.renderInput !== nextProps.renderInput) {
+            return true;
+        }
+
         if (this.state.text !== nextState.text) {
             return true;
         }
@@ -163,10 +172,10 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
     };
 
     render() {
-        const {minDate, formatter, parser, dayOfWeekToString, monthToString, renderInput, portal} = this.props;
+        const {minDate, formatter, parser, dayOfWeekToString, monthToString, className, renderInput, portal} = this.props;
         const {value, text, focused, selectedMonth, popupStyles} = this.state;
 
-        let popup = <div className={classNames('calendar', focused && 'focused', portal && 'portal')}
+        let popup = <div className={classNames('calendar', focused && 'focused', portal && 'portal', className)}
                          ref={ref('popup', this)}
                          style={popupStyles}>
             <div className={'row monthSelect'}>

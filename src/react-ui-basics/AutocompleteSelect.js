@@ -79,7 +79,7 @@ class AutocompleteSelect extends PureComponent {
 
     static propTypes = {
         mode: PropTypes.oneOf([MODE_DEFAULT, MODE_INLINE, MODE_MULTIPLE, MODE_MULTIPLE_AUTO, MODE_MULTIPLE_MINI, MODE_MULTIPLE_MINI_INLINE, MODE_INLINE_MULTIPLE, MODE_MINI]),
-        listPortalPosition: PropTypes.oneOf('left', 'right'),
+        listPortalPosition: PropTypes.oneOf(['left', 'right']),
     };
 
     constructor(props) {

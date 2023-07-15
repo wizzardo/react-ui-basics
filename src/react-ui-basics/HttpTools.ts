@@ -22,6 +22,7 @@ export class FetchOptions {
     async?: boolean = true
     withCredentials?: boolean = true
     timeout?: number
+    responseType?: "arraybuffer" | "text" | "json" | "blob" | "document" = "json"
     onTimeout?: ((ev: ProgressEvent) => any)
     onSuccess?: ((t: any) => void)
     onError?: ((e: any, status: number) => void)
@@ -104,21 +105,23 @@ export const fetch = <T>(url, options: FetchOptions = DEFAULT_OPTIONS) => {
             request.onprogress = onProgress;
         }
 
+        request.responseType = options.responseType
+
         request.onload = () => {
-            const responseText = request.responseText;
+            const response = request.response;
             const status = request.status;
             if (status >= 200 && status < 400) {
                 try {
-                    orNoop(success)(JSON.parse(responseText || "{}"));
+                    orNoop(success)(response);
                 } catch (e) {
-                    const message = `Unexpected exception while processing response for ${method} ${url}, status: ${status}, response: '${responseText}', exception:`;
+                    const message = `Unexpected exception while processing response for ${method} ${url}, status: ${status}, response: '${response}', exception:`;
                     console.log(message, e)
-                    onError(new FetchError(message, status, responseText))
+                    onError(new FetchError(message, status, response))
                 }
             } else {
-                const message = `Not ok response for ${method} ${url}, status: ${status}, response: '${responseText}'`;
+                const message = `Not ok response for ${method} ${url}, status: ${status}, response: '${response}'`;
                 console.log(message);
-                onError(new FetchError(message, status, responseText))
+                onError(new FetchError(message, status, response))
             }
         };
 

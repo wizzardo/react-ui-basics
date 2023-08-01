@@ -77,15 +77,16 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
 
     const [state, setState] = useState(selector(store.get()))
 
-    const updateState = () => {
-        setState(selector(store.get()))
-    };
-
     useEffect(() => {
-        updateState()
+        const updateState = () => {
+            setState(selector(store.get()))
+        };
+
         store.subscribe(updateState)
-        return () => store.unsubscribe(updateState)
-    })
+        return () => {
+            store.unsubscribe(updateState);
+        }
+    }, [selector])
 
     return state
 }

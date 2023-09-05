@@ -389,13 +389,14 @@ class AutocompleteSelect extends PureComponent {
     }
 
     onClickOutside = () => {
-        const {allowCustom, required} = this.props;
+        const {allowCustom, required, onFilterInputChange} = this.props;
         const {filterValue} = this.state;
         if (allowCustom && (!!filterValue || !required)) {
             this.onSelect()
         }
 
-        this.setState({isActive: false});
+        this.setState({isActive: false, filterValue: ''});
+        onFilterInputChange && onFilterInputChange('');
 
         this.onCancel();
     };

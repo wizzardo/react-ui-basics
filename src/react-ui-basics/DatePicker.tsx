@@ -22,6 +22,7 @@ const DayRenderer = ({day, selected, minDate, onClick}: {
         )}
         onClick={e => {
             preventDefault(e);
+            stopPropagation(e)
             if (minDate && (day.isBefore(minDate) && !day.isSameDate(minDate))) return;
 
             onClick(day);

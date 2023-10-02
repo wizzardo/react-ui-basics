@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import './DatePicker.css'
 import TextField from "./TextField";
 import * as DateTools from "./DateTools";
-import {orNoop, classNames, preventDefault, ref, WINDOW} from "./Tools";
+import {orNoop, classNames, preventDefault, ref, WINDOW, stopPropagation} from "./Tools";
 import Button from './Button'
 import CalendarMonthView from "./CalendarMonthView";
 import MaterialIcon from "./MaterialIcon";
@@ -183,12 +183,14 @@ class DatePicker extends React.Component<DatePickerProps, DatePickerState> {
                     {monthToString(selectedMonth.get(DateTools.TimeUnit.MONTH))}
                     &nbsp;{selectedMonth.get(DateTools.TimeUnit.YEAR)}
                 </span>
-                <Button flat={true} round={true} disabled={minDate && DateTools.dateOf(selectedMonth).isBefore(minDate)} onClick={() => {
+                <Button flat={true} round={true} disabled={minDate && DateTools.dateOf(selectedMonth).isBefore(minDate)} onClick={(e) => {
+                    stopPropagation(e)
                     this.setState({selectedMonth: DateTools.dateOf(selectedMonth).subtract(1, DateTools.TimeUnit.MONTH)})
                 }}>
                     <MaterialIcon icon={'chevron_left'}/>
                 </Button>
-                <Button flat={true} round={true} onClick={() => {
+                <Button flat={true} round={true} onClick={(e) => {
+                    stopPropagation(e)
                     this.setState({selectedMonth: DateTools.dateOf(selectedMonth).add(1, DateTools.TimeUnit.MONTH)})
                 }}>
                     <MaterialIcon icon={'chevron_right'}/>

@@ -22,6 +22,7 @@ import {propsGetter, stateGS, PureComponent, render, componentDidMount, componen
 export const SCROLLBAR_MODE_HIDDEN = 'hidden';
 export const SCROLLBAR_MODE_VISIBLE = 'visible';
 export const SCROLLBAR_MODE_AUTO = 'auto';
+export const SCROLLBAR_RESIZE_DISABLED = 'disabled';
 
 let NATIVE_SCROLL_WIDTH = -1;
 let NATIVE_SCROLL_HEIGHT = -1;
@@ -330,11 +331,21 @@ class Scrollable extends PureComponent {
                 styleOf(thumbH).left = (position * (scrollbarWidth - offsetWidthOf(thumbH))) + 'px';
             };
 
-            initTimeout = setTimeout(() => {
-                resizeInterval = setInterval(() => {
+            let update;
+            let sbm = scrollBarModeOf(props());
+            let hsbm = horizontalScrollBarModeOf(props());
+            if (sbm !== SCROLLBAR_RESIZE_DISABLED && !hsbm === SCROLLBAR_RESIZE_DISABLED) {
+                update = () => {
                     updateVerticalScrollbar();
                     updateHorizontalScrollbar();
-                }, 50);
+                };
+            } else if (sbm !== SCROLLBAR_RESIZE_DISABLED)
+                update = updateVerticalScrollbar
+            else
+                update = updateVerticalScrollbar
+
+            initTimeout = setTimeout(() => {
+                resizeInterval = setInterval(update, 50);
             }, 200)
         };
 
@@ -384,8 +395,8 @@ Scrollable.defaultProps = {
 
 if (window.isNotProductionEnvironment) {
     Scrollable.propTypes = {
-        scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE]),
-        horizontalScrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE]),
+        scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE, SCROLLBAR_RESIZE_DISABLED]),
+        horizontalScrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE, SCROLLBAR_RESIZE_DISABLED]),
         className: PropTypes.string,
         style: PropTypes.object,
         onScrolledToBottom: PropTypes.func,

@@ -34,6 +34,10 @@
     max-width: unset;
   }
 
+  &.undefined-horizontal {
+    max-width: unset;
+  }
+
   &.without-scroll {
     padding-right: 0;
     max-height: unset;

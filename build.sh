@@ -5,7 +5,6 @@ NODE_ENV=publish rollup -c rollup.config.js
 cp package.json build/
 cp src/react-ui-basics/*.css build/
 
-cp build/_virtual/_rollupPluginBabelHelpers.js ./
 cp -R build/src/react-ui-basics/* build/
 rm -rf build/src/*
 cp -R src/react-ui-basics/* build/src
@@ -15,6 +14,8 @@ if ! md5sum -c helpers.md5; then
     echo 'helpers updated, please check the changes'
     exit 1
 fi
+
+cp build/_virtual/_rollupPluginBabelHelpers.js ./
 
 cp helpers.js build/_virtual/_rollupPluginBabelHelpers.js
 # md5sum build/_virtual/_rollupPluginBabelHelpers.js > helpers.md5

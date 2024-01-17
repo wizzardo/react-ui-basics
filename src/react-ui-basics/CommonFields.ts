@@ -1,4 +1,4 @@
-export const createAccessor = (field) => (o) => {
+export const createAccessor = (field: string) => (o) => {
     return o[field];
 }
 

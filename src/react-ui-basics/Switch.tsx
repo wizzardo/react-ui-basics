@@ -1,11 +1,21 @@
-import React from 'react';
+import React, {ChangeEventHandler, MouseEventHandler, ReactElement} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Switch.css'
 import {getRandomId, classNames} from "./Tools";
 import {PureComponent, render} from "./ReactConstants";
-import PropTypes from "prop-types";
 
-class Switch extends PureComponent {
+export interface SwitchProps {
+    value: boolean,
+    id?: string | number,
+    label?: string | ReactElement,
+    className?: string,
+    labelOn?: string | ReactElement,
+    labelOff?: string | ReactElement,
+    onChange?: ChangeEventHandler,
+    onClick?: MouseEventHandler
+}
+
+class Switch extends PureComponent<SwitchProps> {
 
     constructor(props) {
         super(props);
@@ -13,7 +23,7 @@ class Switch extends PureComponent {
 
         this[render] = () => {
             const {label, className, labelOn, labelOff, onChange, value, onClick} = this.props;
-            const id = this.props.id || randomId;
+            const id = (this.props.id || randomId) + '';
             return (
                 <div className={classNames("Switch", className)} onClick={onClick}>
                     <input type="checkbox" id={id} className="switch-input" onChange={onChange} checked={value}/>
@@ -30,19 +40,3 @@ class Switch extends PureComponent {
 }
 
 export default Switch
-
-if (window.isNotProductionEnvironment) {
-    Switch.propTypes = {
-        className: PropTypes.string,
-        label: PropTypes.string,
-        labelOn: PropTypes.string,
-        labelOff: PropTypes.string,
-        value: PropTypes.bool,
-        onChange: PropTypes.func,
-        onClick: PropTypes.func,
-        id: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number
-        ]),
-    };
-}

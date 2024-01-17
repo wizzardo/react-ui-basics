@@ -386,7 +386,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                                 stopPropagation(e);
                                 preventDefault(e);
                                 setValue(!value, item, column.field)
-                            }} value={value}/>
+                            }} value={!!value}/>
                         )}
                         {displayEditor && isFunction(column.editor)
                             && (column.editor as ((t: T, cancel: () => void, isEditing: boolean) => ReactElement))(item, cancelEditing, isEditing)}

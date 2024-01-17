@@ -1,18 +1,27 @@
-import React from 'react';
+import React, {MouseEventHandler} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './ModalMenu.css'
 import {PureComponent, stateGS, render} from "./ReactConstants";
 import {classNames} from "./Tools";
 import Animated from "./Animated";
 import Button from "./Button";
-import MaterialIcon from "./MaterialIcon";
+import MaterialIcon, {MaterialIconType} from "./MaterialIcon";
 
-class ModalMenu extends PureComponent {
+export interface ModalMenuItem {
+    icon: MaterialIconType,
+    action: MouseEventHandler
+}
+
+export interface ModalMenuProps {
+    items: ModalMenuItem[]
+}
+
+class ModalMenu extends PureComponent<ModalMenuProps> {
 
     constructor(props) {
         super(props);
         this.state = {};
-        const isOpen = stateGS(this);
+        const isOpen = stateGS<boolean>(this);
 
         const toggle = () => {
             isOpen(!isOpen());

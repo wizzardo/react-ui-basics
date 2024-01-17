@@ -17,7 +17,7 @@ export const NOOP = () => {
 
 export const orNoop = <T>(f: (...a: any) => T) => f || NOOP;
 
-export const getRandomId = (prefix) => prefix + Math.random();
+export const getRandomId = (prefix: string) => prefix + Math.random();
 
 export const ref = (name, component) => {
     const refKey = "__" + name;

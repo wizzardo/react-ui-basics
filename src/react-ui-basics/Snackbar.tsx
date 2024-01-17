@@ -1,14 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
-import PropTypes from "prop-types";
 import './Snackbar.css'
 import {classNames, setTimeout, clearTimeout} from "./Tools";
 import {componentWillUnmount, render, props, className, PureComponent, stateGSs} from "./ReactConstants";
 
 const shown = 'shown';
 
-class Snackbar extends PureComponent {
+export interface SnackbarProps {
+    className?: string,
+    text?: string,
+    container?: Element,
+}
+
+type SnackbarState = [
+    (v?: boolean) => boolean,
+    (v?: string) => string,
+    (v?: string) => string,
+]
+
+class Snackbar extends PureComponent<SnackbarProps> {
 
     constructor(properties) {
         super(properties);
@@ -18,7 +29,7 @@ class Snackbar extends PureComponent {
             isShow,
             getText,
             clazzName
-        ] = stateGSs(this, 3);
+        ] = stateGSs(this, 3) as SnackbarState;
 
         let timeout;
         that[componentWillUnmount] = () => {
@@ -34,12 +45,12 @@ class Snackbar extends PureComponent {
             return container ? ReactDOM.createPortal(el, container) : el;
         };
 
-        const hide = ()=>{
+        const hide = () => {
             isShow(false)
             clazzName(null)
         }
 
-        that.show = (text, className) => {
+        that.show = (text: string, className: string) => {
             if (isShow()) {
                 clearTimeout(timeout);
                 isShow(false);
@@ -52,14 +63,9 @@ class Snackbar extends PureComponent {
             }
         }
     }
-}
 
-if (window.isNotProductionEnvironment) {
-    Snackbar.propTypes = {
-        className: PropTypes.string,
-        text: PropTypes.string,
-        container: PropTypes.node,
-    };
+    show(text: string, className: string) {
+    }
 }
 
 export default Snackbar;

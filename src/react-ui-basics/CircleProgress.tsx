@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
-import PropTypes from "prop-types";
 import './CircleProgress.css'
 
 const radius = 8.75;
@@ -8,8 +7,11 @@ const length = 2 * Math.PI * radius;
 
 const dashoffset = (percent) => length * (100 - percent) / 100;
 
-const CircleProgress = ({value}) => {
-    value = Number.parseFloat(value);
+export interface CircleProgressProps{
+    value: number
+}
+
+const CircleProgress = ({value}: CircleProgressProps) => {
     return (
         <div className="CircleProgress">
             <svg viewBox="0 0 24 24">
@@ -23,10 +25,5 @@ const CircleProgress = ({value}) => {
 CircleProgress.defaultProps = {
     value: 0,
 };
-if (window.isNotProductionEnvironment) {
-    CircleProgress.propTypes = {
-        value: PropTypes.number,
-    };
-}
 
 export default CircleProgress;

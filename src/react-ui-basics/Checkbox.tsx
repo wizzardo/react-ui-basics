@@ -1,11 +1,20 @@
-import React from 'react';
+import React, {ChangeEventHandler, ReactElement} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Checkbox.css'
 import {classNames, getRandomId} from "./Tools";
 import {PureComponent, render, propsGetter} from "./ReactConstants";
-import PropTypes from "prop-types";
 
-class Checkbox extends PureComponent {
+export interface CheckboxProps {
+    value: boolean,
+    onChange: ChangeEventHandler,
+    label: string | ReactElement,
+    name?: string,
+    id?: string | number,
+    disabled?: boolean,
+    className?: string,
+}
+
+class Checkbox extends PureComponent<CheckboxProps> {
 
     constructor(properties) {
         super(properties);
@@ -14,7 +23,7 @@ class Checkbox extends PureComponent {
 
         this[render] = () => {
             const {label, name, onChange, value, className, disabled} = props();
-            const id = props().id || randomId;
+            const id = (props().id || randomId) + '';
             return (
                 <div className={classNames("Checkbox", className)}>
                     <input name={name} id={id} type="checkbox" onChange={onChange} checked={value} disabled={disabled}/>
@@ -23,24 +32,6 @@ class Checkbox extends PureComponent {
             )
         }
     }
-}
-
-if (window.isNotProductionEnvironment) {
-    Checkbox.propTypes = {
-        onChange: PropTypes.func.isRequired,
-        value: PropTypes.bool,
-        disabled: PropTypes.bool,
-        className: PropTypes.string,
-        label: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        name: PropTypes.string,
-        id: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number
-        ]),
-    };
 }
 
 export default Checkbox

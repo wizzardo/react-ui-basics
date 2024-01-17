@@ -1,12 +1,20 @@
-import React from 'react';
+import React, {DragEventHandler, ReactElement} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './DropFileInput.css'
 import Dropzone from "./Dropzone";
-import PropTypes from "prop-types";
 import {classNames} from "./Tools";
-import MaterialIcon from "./MaterialIcon";
+import MaterialIcon, {MaterialIconType} from "./MaterialIcon";
 
-const DropFileInput = ({icon, label, onDrop, droppable, multiple, accept}) => (
+export interface DropFileInputProps {
+    icon?: MaterialIconType,
+    label?: string | ReactElement,
+    droppable?: boolean,
+    onDrop?: DragEventHandler,
+    multiple?: boolean,
+    accept?: string,
+}
+
+const DropFileInput = ({icon, label, onDrop, droppable, multiple, accept}: DropFileInputProps) => (
     <section className="DropFileInput">
         <Dropzone droppable={droppable} onDrop={onDrop} accept={accept} multiple={multiple}>
             <MaterialIcon className={classNames(`icon`, label && 'withText')} icon={icon}/>
@@ -20,20 +28,5 @@ DropFileInput.defaultProps = {
     droppable: false,
     multiple: true,
 };
-
-if (window.isNotProductionEnvironment) {
-    DropFileInput.propTypes = {
-        icon: MaterialIcon.propTypes.icon,
-        label: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        droppable: PropTypes.bool,
-        onDrop: PropTypes.func,
-        multiple: PropTypes.bool,
-        accept: PropTypes.string,
-    };
-}
-
 
 export default DropFileInput;

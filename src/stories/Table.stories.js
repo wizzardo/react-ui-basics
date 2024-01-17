@@ -12,12 +12,11 @@ export const story1 = () => {
     const [data, setData] = useState([...Array(50).keys()].map(i => ({id: i, column1: `value ${i}`, column2: `value ${i}`, column3: `value ${i}`})))
     return <Table
         onChange={item => {
-            const newData = data;
+            const newData = [...data];
             newData[item.id] = item
             setData(newData)
         }}
-        data={[...Array(50).keys()]}
-        dataMapper={i=> data[i]}
+        data={data}
         columns={[
             {
                 header: 'Column 1', field: 'column1', editable: true,

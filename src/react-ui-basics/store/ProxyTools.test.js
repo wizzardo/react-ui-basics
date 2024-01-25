@@ -1,5 +1,10 @@
 import {createProxy} from "./ProxyTools";
 
+it('test proxy null', () => {
+    const p = createProxy(null);
+    expect(p).toBe(null);
+});
+
 it('test proxy noop', () => {
     const user = {name: 'Bob'};
     const p = createProxy(user);
@@ -19,7 +24,10 @@ it('test proxy add property', () => {
     const user = {name: 'Bob'};
     const p = createProxy(user);
     p.age = 16
+    expect(p.age).toEqual(16);
+
     p.age = 32
+    expect(p.age).toEqual(32);
 
     expect(user).toEqual({name: 'Bob'});
     expect(p.bake()).toEqual({name: 'Bob', age: 32});
@@ -29,6 +37,7 @@ it('test proxy delete property', () => {
     const user = {name: 'Bob'};
     const p = createProxy(user);
     delete p.name;
+    expect(p.name).toBe(undefined);
 
     expect(user).toEqual({name: 'Bob'});
     expect(p.bake()).toEqual({});
@@ -59,6 +68,7 @@ it('test proxy change inner properties', () => {
     const p = createProxy(user);
 
     p.hobbies.push('poker');
+    expect(p.hobbies).toEqual(['chess', 'poker']);
 
     expect(user).toEqual({name: 'Bob', hobbies: ['chess']});
     expect(p.bake()).toEqual({name: 'Bob', hobbies: ['chess', 'poker']});

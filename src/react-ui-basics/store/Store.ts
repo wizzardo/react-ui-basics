@@ -8,46 +8,56 @@ interface Stores {
 let STORES: Stores = {}
 let COUNTER = 0
 
-export class Store<T> {
-    private name: string
-    private listeners: Array<() => void> = []
-    private initialState: T
-    private index: number
+abstract class AbstractStore<T> {
+    get: () => T;
+    set: (mutator: (oldState: T) => T | void) => void;
+    reset: () => void;
+    subscribe: (fn: () => void) => void;
+    unsubscribe: (fn: () => void) => void;
+    toString: () => string;
+}
+
+export class Store<T> extends AbstractStore<T> {
 
     constructor(initialState: T, name?: string) {
+        super()
         let that = this;
-        that.name = name;
-        that.initialState = initialState;
+        let listeners: Array<() => void> = []
+
         const index = COUNTER++;
-        that.index = index;
         STORES[index] = initialState
+
+        that.unsubscribe = (fn: () => void) => {
+            listeners = listeners.filter(f => f !== fn)
+        }
+        that.get = (): T => STORES[index]
+
+        const runListeners = () => {
+            listeners.forEach(fn => fn())
+        };
+
+        that.set = (mutator: (oldState: T) => T | void) => {
+            const proxy = createProxy(STORES[index]);
+            const result = mutator(proxy);
+            if (!result || result === proxy)
+                STORES[index] = proxy.bake()
+            else
+                STORES[index] = result
+
+            runListeners();
+        }
+
+        that.reset = () => {
+            STORES[index] = initialState
+            runListeners();
+        }
+
+        that.subscribe = (fn: () => void) => {
+            listeners.push(fn)
+        }
+
+        that.toString = (): string => name;
     }
-
-    get = (): T => STORES[this.index]
-    set = (mutator: (oldState: T) => T | void) => {
-        const proxy = createProxy(STORES[this.index]);
-        const result = mutator(proxy);
-        if (!result || result === proxy)
-            STORES[this.index] = proxy.bake()
-        else
-            STORES[this.index] = result
-
-        this.listeners.forEach(fn => fn())
-    }
-
-    reset = () => {
-        STORES[this.index] = this.initialState
-    }
-
-    subscribe = (fn: () => void) => {
-        this.listeners.push(fn)
-    }
-
-    unsubscribe = (fn: () => void) => {
-        this.listeners = this.listeners.filter(f => f !== fn)
-    }
-
-    toString = (): string => this.name;
 }
 
 export default Store;

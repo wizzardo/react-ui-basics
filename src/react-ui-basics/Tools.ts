@@ -105,6 +105,8 @@ export const isFunction = (v) => typeOf(v) === 'function';
 export const isString = (v) => typeOf(v) === 'string';
 export const isObject = (v) => typeOf(v) === 'object';
 
+export const deleteKey = (obj: object, key: string | symbol) => delete obj[key];
+
 const FALSE = false;
 const TRUE = true;
 

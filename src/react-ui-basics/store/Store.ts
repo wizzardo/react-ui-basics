@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {createProxy} from "./ProxyTools";
+import {isFunction, isObject} from "../Tools";
 
 interface Stores {
     [index: number]: any
@@ -8,9 +9,11 @@ interface Stores {
 let STORES: Stores = {}
 let COUNTER = 0
 
+type Setter<T> = (oldState: T) => T | void;
+
 abstract class AbstractStore<T> {
     get: () => T;
-    set: (mutator: (oldState: T) => T | void) => void;
+    set: (setter: T | Partial<T> | (Setter<T>)) => void;
     reset: () => void;
     subscribe: (fn: () => void) => void;
     unsubscribe: (fn: () => void) => void;
@@ -23,27 +26,36 @@ export class Store<T> extends AbstractStore<T> {
         super()
         let that = this;
         let listeners: Array<() => void> = []
-
-        const index = COUNTER++;
-        STORES[index] = initialState
-
-        that.unsubscribe = (fn: () => void) => {
-            listeners = listeners.filter(f => f !== fn)
-        }
-        that.get = (): T => STORES[index]
-
-        const runListeners = () => {
+        let index = '' + COUNTER++;
+        let runListeners = () => {
             listeners.forEach(fn => fn())
         };
 
-        that.set = (mutator: (oldState: T) => T | void) => {
-            const proxy = createProxy(STORES[index]);
-            const result = mutator(proxy);
-            if (!result || result === proxy)
-                STORES[index] = proxy.bake()
-            else
-                STORES[index] = result
+        STORES[index] = initialState
 
+        that.unsubscribe = (fn: () => void) => {
+            let i = listeners.indexOf(fn)
+            let length = listeners.length;
+            if (i > -1) {
+                listeners[i] = listeners[length - 1]
+                listeners.splice(length - 1, 1)
+            }
+        }
+        that.get = (): T => STORES[index]
+        that.set = (setter) => {
+            let result;
+            if (isFunction(setter)) {
+                const proxy = createProxy(STORES[index]);
+                result = (setter as Setter<T>)(proxy);
+                if (!result || result === proxy)
+                    result = proxy.bake()
+            } else if (isObject(setter)) {
+                result = {...STORES[index], ...setter}
+            } else {
+                result = setter
+            }
+
+            STORES[index] = result
             runListeners();
         }
 
@@ -85,7 +97,7 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
     if (!selector)
         selector = (defaultSelector as Selector<T, R>)
 
-    const [state, setState] = useState(selector(store.get()))
+    const [state, setState] = useState(() => selector(store.get()))
 
     useEffect(() => {
         const updateState = () => {
@@ -96,7 +108,7 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
         return () => {
             store.unsubscribe(updateState);
         }
-    }, [selector])
+    }, [])
 
     return state
 }

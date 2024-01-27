@@ -6,8 +6,8 @@ import {PureComponent, render, propsGetter} from "./ReactConstants";
 
 export interface CheckboxProps {
     value: boolean,
-    onChange: ChangeEventHandler,
-    label: string | ReactElement,
+    onChange: ChangeEventHandler<HTMLInputElement>,
+    label?: string | ReactElement,
     name?: string,
     id?: string | number,
     disabled?: boolean,

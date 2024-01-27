@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import PropTypes from "prop-types";
 import ReactCreateElement from './ReactCreateElement';
 import './Dropzone.css'
@@ -30,7 +30,19 @@ const ignoredTypes = setOf([
 
 const ignore = dt => dt && (!dt.types[0] || ignoredTypes[dt.types[0]]);
 
-class Dropzone extends PureComponent {
+export interface DropzoneProps {
+    onDrop: (files: File[]) => void,
+    className?: string,
+    overlayLabel?: string | ReactElement,
+    clickable?: boolean,
+    droppable?: boolean,
+    multiple?: boolean,
+    disabled?: boolean,
+    accept?: string,
+    children?: ReactNode
+}
+
+class Dropzone extends PureComponent<DropzoneProps> {
 
     constructor(properties) {
         super(properties);
@@ -40,7 +52,7 @@ class Dropzone extends PureComponent {
         let entries = [];
 
         const props = propsGetter(that);
-        const isDragging = stateGS(that);
+        const isDragging = stateGS<boolean>(that);
 
         const onDrop = (e) => {
             const dt = e.dataTransfer;
@@ -61,6 +73,7 @@ class Dropzone extends PureComponent {
         const onDragEnter = (e) => {
             const dt = e.dataTransfer;
             if (ignore(dt)) return;
+
             if (entries.indexOf(e.target) === -1) {
                 entries.push(e.target)
             }
@@ -81,7 +94,16 @@ class Dropzone extends PureComponent {
         const inputRef = createRef()
 
         that[render] = () => {
-            const {children, className, disabled, clickable, multiple, droppable, overlayLabel, accept} = props();
+            const {
+                children,
+                className,
+                disabled,
+                clickable = true,
+                multiple = true,
+                droppable = true,
+                overlayLabel,
+                accept
+            } = props();
 
             return <div className={classNames('Dropzone', className, isDragging() && 'dragging')}
                         onDragLeave={!disabled && droppable && onDragLeave || UNDEFINED}
@@ -107,28 +129,6 @@ class Dropzone extends PureComponent {
             </div>
         }
     }
-}
-
-Dropzone.defaultProps = {
-    clickable: true,
-    multiple: true,
-    droppable: true,
-};
-
-if (window.isNotProductionEnvironment) {
-    Dropzone.propTypes = {
-        className: PropTypes.string,
-        overlayLabel: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        clickable: PropTypes.bool,
-        droppable: PropTypes.bool,
-        multiple: PropTypes.bool,
-        disabled: PropTypes.bool,
-        onDrop: PropTypes.func.isRequired,
-        accept: PropTypes.string,
-    };
 }
 
 export default Dropzone;

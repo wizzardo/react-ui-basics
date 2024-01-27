@@ -9,7 +9,7 @@ export interface DropFileInputProps {
     icon?: MaterialIconType,
     label?: string | ReactElement,
     droppable?: boolean,
-    onDrop?: DragEventHandler,
+    onDrop?: (files: File[]) => void,
     multiple?: boolean,
     accept?: string,
 }

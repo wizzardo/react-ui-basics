@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {createProxy} from "./ProxyTools";
 import {isFunction, isObject} from "../Tools";
 
-const STORES = new Map<Symbol, any>()
+const STORES = new Map<Symbol, Store<any>>()
 
 type Setter<T> = (oldState: T) => T | void;
 type ListenerFn = () => void;
@@ -28,38 +28,33 @@ export class Store<T> extends AbstractStore<T> {
         super()
         let that = this;
         let listeners: Map<Symbol, ListenerFn> = new Map<Symbol, () => void>()
-        let index = Symbol();
+        let value = initialState;
         let runListeners = () => {
             for (let listener of listeners.values()) {
                 listener()
             }
         };
-
-        let get = (): T => STORES.get(index);
-        let reset = () => {
-            STORES.set(index, initialState)
-            runListeners();
-        };
-        reset()
-
-        that.get = get
+        that.get = (): T => value;
         that.set = (setter) => {
             let result;
             if (isFunction(setter)) {
-                const proxy = createProxy(get() as object);
+                const proxy = createProxy(value as object);
                 result = (setter as Setter<T>)(proxy);
                 if (!result || result === proxy)
                     result = proxy.bake()
             } else if (isObject(setter)) {
-                result = {...get(), ...setter}
+                result = {...value, ...setter}
             } else {
                 result = setter
             }
 
-            STORES.set(index, result)
+            value = result
             runListeners();
         }
-        that.reset = reset
+        that.reset = () => {
+            value = initialState
+            runListeners();
+        }
 
         that.subscribe = (fn: ListenerFn) => {
             const key = Symbol();
@@ -70,6 +65,7 @@ export class Store<T> extends AbstractStore<T> {
         }
 
         that.toString = (): string => name;
+        STORES.set(Symbol(), that)
     }
 }
 

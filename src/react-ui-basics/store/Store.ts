@@ -91,9 +91,9 @@ export type Selector<T, R> = (t: T) => R;
 
 export const defaultSelector = <T>(store: T): T => store;
 
-export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>): R
-export function useStore<T>(store: Store<T>, selector?: undefined): T
-export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
+export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>, selectorDependencies: ReadonlyArray<any>): R
+export function useStore<T>(store: Store<T>, selector?: undefined, selectorDependencies?: undefined): T
+export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>, selectorDependencies: ReadonlyArray<any> = []): R {
     if (!selector)
         selector = (defaultSelector as Selector<T, R>)
 
@@ -103,12 +103,12 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>): R {
         const updateState = () => {
             setState(selector(store.get()))
         };
-
+        updateState()
         store.subscribe(updateState)
         return () => {
             store.unsubscribe(updateState);
         }
-    }, [])
+    }, selectorDependencies)
 
     return state
 }

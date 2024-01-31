@@ -3,7 +3,7 @@ import {mount} from 'enzyme';
 import Store, {useStore} from "./Store";
 import {act} from 'react-dom/test-utils';
 
-it('test 1', () => {
+it('basic test, rerender on each change', () => {
     const store = new Store({
         count: 0,
         value: ''
@@ -44,14 +44,14 @@ it('test 1', () => {
 });
 
 
-it('test 2', () => {
+it('no rerender if selector value doesn\'t change', () => {
     const store = new Store({
         count: 0,
         value: ''
     });
     let renderCount = 0
     const MyComponent = () => {
-        let count = useStore(store, it=> it.count);
+        let count = useStore(store, it => it.count);
         renderCount++
         return <div>{count}</div>;
     };
@@ -73,8 +73,7 @@ it('test 2', () => {
         })
     });
     expect(wrapper).toHaveHTML('<div>1</div>');
-    // react executes functional-component after first setState with the same value
-    expect(renderCount).toBe(3);
+    expect(renderCount).toBe(2);
 
     act(() => {
         store.set({
@@ -82,5 +81,36 @@ it('test 2', () => {
         })
     });
     expect(wrapper).toHaveHTML('<div>1</div>');
-    expect(renderCount).toBe(3);
+    expect(renderCount).toBe(2);
+});
+
+it('update value if selector dependencies change', () => {
+    const store = new Store({
+        key: 'foo',
+        foo: 'foo',
+        bar: 'bar',
+    });
+    let renderCount = 0
+    let renderedValue = []
+
+    const MyComponent = () => {
+        let key = useStore(store, it => it.key);
+        let value = useStore(store, it => it[key], [key]);
+        renderCount++
+        renderedValue.push(value)
+        return <div>{value}</div>;
+    };
+    const wrapper = mount(<MyComponent/>);
+    expect(wrapper).toHaveHTML('<div>foo</div>');
+    expect(renderCount).toBe(1);
+    expect(renderedValue).toEqual(['foo']);
+
+    act(() => {
+        store.set(it => {
+            it.key = 'bar'
+        })
+    });
+    expect(wrapper).toHaveHTML('<div>bar</div>');
+    expect(renderCount).toBe(2);
+    expect(renderedValue).toEqual(['foo', 'bar']);
 });

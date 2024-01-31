@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useReducer} from "react";
 import {createProxy} from "./ProxyTools";
 import {isFunction, isObject} from "../Tools";
 
@@ -86,15 +86,19 @@ export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>, selec
     if (!selector)
         selector = (defaultSelector as Selector<T, R>)
 
-    const [state, setState] = useState(() => selector(store.get()))
+    const [_, forceUpdate] = useReducer(x => x + 1, 0);
+    let value = selector(store.get())
 
     useEffect(() => {
         const updateState = () => {
-            setState(selector(store.get()))
+            let next = selector(store.get())
+            if (value !== next) {
+                value = next
+                forceUpdate()
+            }
         };
-        updateState()
         return store.subscribe(updateState)
     }, selectorDependencies)
 
-    return state
+    return value
 }

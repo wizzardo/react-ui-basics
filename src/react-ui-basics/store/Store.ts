@@ -1,6 +1,7 @@
 import {useEffect, useReducer} from "react";
 import {createProxy} from "./ProxyTools";
 import {isFunction, isObject} from "../Tools";
+import {useSyncExternalStore} from "../ReactConstants";
 
 const STORES = new Map<Symbol, Store<any>>()
 
@@ -77,28 +78,7 @@ export function getGlobalState() {
 
 export type Selector<T, R> = (t: T) => R;
 
-export const defaultSelector = <T>(store: T): T => store;
-
-export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>, selectorDependencies: ReadonlyArray<any>): R
-export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>, selectorDependencies?: undefined): R
-export function useStore<T>(store: Store<T>, selector?: undefined, selectorDependencies?: undefined): T
-export function useStore<T, R>(store: Store<T>, selector?: Selector<T, R>, selectorDependencies: ReadonlyArray<any> = []): R {
-    if (!selector)
-        selector = (defaultSelector as Selector<T, R>)
-
-    const [_, forceUpdate] = useReducer(x => x + 1, 0);
-    let value = selector(store.get())
-
-    useEffect(() => {
-        const updateState = () => {
-            let next = selector(store.get())
-            if (value !== next) {
-                value = next
-                forceUpdate()
-            }
-        };
-        return store.subscribe(updateState)
-    }, selectorDependencies)
-
-    return value
-}
+export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>): R
+export function useStore<T>(store: Store<T>, selector?: undefined): T
+export const useStore = <T, R>(store: Store<T>, selector?: Selector<T, R>): R =>
+    useSyncExternalStore(store.subscribe, selector ? () => selector(store.get()) : store.get);

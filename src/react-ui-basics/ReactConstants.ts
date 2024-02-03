@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useReducer, useRef} from 'react';
 
 const EMPTY = {};
 export const props: <P>(that: React.Component<P>) => P = that => that.props;
@@ -28,6 +28,24 @@ export const stateGSs = (that, num) => {
     }
     return result;
 };
+
+const useSyncExternalStoreShim = (subscribe, getSnapshot) => {
+    const [_, forceUpdate] = useReducer(x => x + 1, 0);
+    const cb = useRef();
+    cb.current = getSnapshot;
+    let value = getSnapshot()
+
+    useEffect(() => subscribe(() => {
+        let next = cb.current()
+        if (value !== next) {
+            value = next
+            forceUpdate()
+        }
+    }), []);
+    return value
+}
+
+export const useSyncExternalStore = React.useSyncExternalStore || useSyncExternalStoreShim
 
 export const componentDidMount = 'componentDidMount';
 export const componentWillUnmount = 'componentWillUnmount';

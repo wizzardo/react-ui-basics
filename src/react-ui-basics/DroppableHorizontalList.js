@@ -39,6 +39,37 @@ class DroppableHorizontalList extends Component {
         let oldIndex;
         let newIndex;
 
+        const onHover = (e, draggable) => {
+            const offset = e.pageX - that.scrollOffsetX;
+            const transformLeft = 'translateX(' + draggable.width + 'px)';
+            const transformRight = 'translateX(-' + draggable.width + 'px)';
+            list.forEach((id, i) => {
+                if (i !== oldIndex) {
+                    const d = draggables[id];
+                    const bounds = d.bounds;
+                    const style = d.element.style;
+                    if (i > oldIndex) {
+                        if (offset >= bounds.left)
+                            style.transform = transformRight;
+                        else
+                            style.transform = '';
+                    } else {
+                        if (offset <= bounds.right)
+                            style.transform = transformLeft;
+                        else
+                            style.transform = '';
+                    }
+                }
+            });
+
+            let i = list.findIndex(id => {
+                let bounds = draggables[id].bounds;
+                return offset >= bounds.left && offset <= bounds.right
+            });
+
+            newIndex = i !== -1 ? i : list.length;
+        };
+
         that[componentDidMount] = () => {
             let inTransition = false;
             orNoop(props().provideDraggableEnhancer)(initializer => it => {
@@ -46,6 +77,7 @@ class DroppableHorizontalList extends Component {
                 it.createPositionListener = (e, style) => {
                     const offset = e.pageX;
                     return e => {
+                        onHover(e, it)
                         e.pageX && (style.transform = 'translateX(' + (e.pageX - offset) + 'px)');
                     };
                 };
@@ -80,41 +112,10 @@ class DroppableHorizontalList extends Component {
             })
         };
 
-        const onHover = (e, draggable) => {
-            const offset = e.pageX - that.scrollOffsetX;
-            const transformLeft = 'translateX(' + draggable.width + 'px)';
-            const transformRight = 'translateX(-' + draggable.width + 'px)';
-            list.forEach((id, i) => {
-                if (i !== oldIndex) {
-                    const d = draggables[id];
-                    const bounds = d.bounds;
-                    const style = d.element.style;
-                    if (i > oldIndex) {
-                        if (offset >= bounds.left)
-                            style.transform = transformRight;
-                        else
-                            style.transform = '';
-                    } else {
-                        if (offset <= bounds.right)
-                            style.transform = transformLeft;
-                        else
-                            style.transform = '';
-                    }
-                }
-            });
-
-            let i = list.findIndex(id => {
-                let bounds = draggables[id].bounds;
-                return offset >= bounds.left && offset <= bounds.right
-            });
-
-            newIndex = i !== -1 ? i : list.length;
-        };
-
         const onDragStart = (e, draggable) => {
             dragging = true;
             dropped = false;
-            oldIndex = list.indexOf(getProps(draggable).id);
+            oldIndex = list.indexOf(draggable.id);
             that.scrollOffsetX = e.pageX - e.clientX;
 
             list.forEach((id) => {

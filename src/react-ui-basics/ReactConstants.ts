@@ -29,9 +29,11 @@ export const stateGSs = (that, num) => {
     return result;
 };
 
-const useSyncExternalStoreShim = (subscribe, getSnapshot) => {
+type GetSnapshot<T> = () => T;
+type Subscribe = (onStoreChange: () => void) => () => void;
+const useSyncExternalStoreShim = <T>(subscribe: Subscribe, getSnapshot: GetSnapshot<T>) => {
     const [_, forceUpdate] = useReducer(x => x + 1, 0);
-    const cb = useRef();
+    const cb = useRef<GetSnapshot<T>>();
     cb.current = getSnapshot;
     let value = getSnapshot()
 
@@ -45,7 +47,7 @@ const useSyncExternalStoreShim = (subscribe, getSnapshot) => {
     return value
 }
 
-export const useSyncExternalStore = React.useSyncExternalStore || useSyncExternalStoreShim
+export const useSyncExternalStore = React['useSyncExternalStore'] || useSyncExternalStoreShim
 
 export const componentDidMount = 'componentDidMount';
 export const componentWillUnmount = 'componentWillUnmount';

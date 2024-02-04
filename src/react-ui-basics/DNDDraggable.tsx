@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {MouseEventHandler} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import {classNames, orNoop, ref} from "./Tools";
 import {componentDidUpdate, props, state, render, children, className, componentDidMount, componentWillUnmount, PureComponent} from "./ReactConstants";
@@ -12,7 +12,33 @@ const hover = 'hover',
 
 const init = that => orNoop(props(that)[initializer])(that);
 
-class Draggable extends PureComponent {
+interface DraggableProps {
+    id: string | number
+    data: any
+    copy?: (initializer: (it: Draggable) => Draggable, classname: string, item: Draggable) => Draggable
+    onClick?: MouseEventHandler<HTMLDivElement>
+    children?: React.ReactNode
+    className?: string,
+    handle?: React.ReactNode
+    initializer?: (draggable: Draggable) => void
+}
+
+interface DraggableState {
+    dragged?: boolean,
+    placeholder?: boolean,
+    hover?: boolean,
+}
+
+abstract class AbstractDraggable extends PureComponent<DraggableProps, DraggableState> {
+    onUnmount?: () => void
+    element: HTMLDivElement
+    width: number;
+    height: number;
+    createPositionListener: (e, style, itemOffset, container) => any;
+    initDraggedStyles: (style, itemOffset) => void;
+}
+
+class Draggable extends AbstractDraggable {
 
     constructor(properties) {
         super(properties);

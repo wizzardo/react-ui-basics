@@ -39,6 +39,37 @@ class DroppableList extends Component {
         let oldIndex;
         let newIndex;
 
+        const onHover = (e, draggable) => {
+            const y = e.pageY - that.scrollOffsetY;
+            const transformUp = 'translateY(' + draggable.height + 'px)';
+            const transformDown = 'translateY(-' + draggable.height + 'px)';
+            list.forEach((id, i) => {
+                if (i !== oldIndex) {
+                    const d = draggables[id];
+                    const bounds = d.bounds;
+                    const style = d.element.style;
+                    if (i > oldIndex) {
+                        if (y >= bounds.top)
+                            style.transform = transformDown;
+                        else
+                            style.transform = '';
+                    } else {
+                        if (y <= bounds.bottom)
+                            style.transform = transformUp;
+                        else
+                            style.transform = '';
+                    }
+                }
+            });
+
+            let i = list.findIndex(id => {
+                let bounds = draggables[id].bounds;
+                return y >= bounds.top && y <= bounds.bottom
+            });
+
+            newIndex = i !== -1 ? i : list.length;
+        };
+
         that[componentDidMount] = () => {
             let inTransition = false;
             orNoop(props().provideDraggableEnhancer)(initializer => it => {
@@ -46,7 +77,8 @@ class DroppableList extends Component {
                 it.createPositionListener = (e, style) => {
                     const offsetTop = e.pageY;
                     return e => {
-                        e.pageY && (style.transform = 'translateY(' + (e.pageY - offsetTop - that.scrollDiff) + 'px)');
+                        onHover(e, it)
+                        e.pageY && (style.transform = 'translateY(' + (e.pageY - offsetTop) + 'px)');
                     };
                 };
                 it.initDraggedStyles = NOOP;
@@ -79,52 +111,13 @@ class DroppableList extends Component {
                 draggables[getProps(it).id] = it;
             })
 
-            orNoop(props().provideScrollListener)(e => {
-                if (!dragging)
-                    return
-
-                that.scrollDiff = that.scroll - orNoop(props().getScrollPosition)() || 0;
-            })
-        };
-
-        const onHover = (e, draggable) => {
-            const y = e.pageY - that.scrollOffsetY - that.scrollDiff;
-            const transformUp = 'translateY(' + draggable.height + 'px)';
-            const transformDown = 'translateY(-' + draggable.height + 'px)';
-            list.forEach((id, i) => {
-                if (i !== oldIndex) {
-                    const d = draggables[id];
-                    const bounds = d.bounds;
-                    const style = d.element.style;
-                    if (i > oldIndex) {
-                        if (y >= bounds.top)
-                            style.transform = transformDown;
-                        else
-                            style.transform = '';
-                    } else {
-                        if (y <= bounds.bottom)
-                            style.transform = transformUp;
-                        else
-                            style.transform = '';
-                    }
-                }
-            });
-
-            let i = list.findIndex(id => {
-                let bounds = draggables[id].bounds;
-                return y >= bounds.top && y <= bounds.bottom
-            });
-
-            newIndex = i !== -1 ? i : list.length;
         };
 
         const onDragStart = (e, draggable) => {
             dragging = true;
             dropped = false;
-            oldIndex = list.indexOf(getProps(draggable).id);
+            oldIndex = list.indexOf(draggable.id);
             that.scrollOffsetY = e.pageY - e.clientY;
-            that.scroll = orNoop(props().getScrollPosition)() || 0;
-            that.scrollDiff = 0;
 
             list.forEach((id) => {
                 draggables[id].bounds = draggables[id].element.getBoundingClientRect();

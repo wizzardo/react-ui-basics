@@ -1,4 +1,3 @@
-import {useEffect, useReducer} from "react";
 import {createProxy} from "./ProxyTools";
 import {isFunction, isObject} from "../Tools";
 import {useSyncExternalStore} from "../ReactConstants";
@@ -78,7 +77,10 @@ export function getGlobalState() {
 
 export type Selector<T, R> = (t: T) => R;
 
+// @ts-ignore
 export function useStore<T, R>(store: Store<T>, selector: Selector<T, R>): R
+// @ts-ignore
 export function useStore<T>(store: Store<T>, selector?: undefined): T
+// @ts-ignore
 export const useStore = <T, R>(store: Store<T>, selector?: Selector<T, R>): R =>
     useSyncExternalStore(store.subscribe, selector ? () => selector(store.get()) : store.get);

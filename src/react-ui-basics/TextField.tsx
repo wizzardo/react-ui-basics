@@ -1,11 +1,41 @@
-import React from 'react';
+import React, {ChangeEventHandler, KeyboardEventHandler, MouseEventHandler, ReactElement} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './TextField.css'
 import {classNames, getRandomId, isUndefined, orNoop, addEventListener, createRef, setTimeout} from "./Tools";
 import {PureComponent, render, componentDidMount, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
-import PropTypes from "prop-types";
 
-class TextField extends PureComponent {
+export interface TextAreaProps {
+    id?: string,
+    className?: string,
+    value?: string,
+    name?: string,
+    type?: string,
+    autoComplete?: string,
+    placeholder?: string,
+    label?: string | ReactElement,
+    check?: (value: string) => boolean,
+    onClick?: MouseEventHandler<HTMLInputElement>,
+    onMouseUp?: MouseEventHandler<HTMLInputElement>,
+    onKeyDown?: KeyboardEventHandler<HTMLInputElement>,
+    onKeyUp?: KeyboardEventHandler<HTMLInputElement>,
+    onFocus?: () => void,
+    onBlur?: () => void,
+    onChange: ChangeEventHandler<HTMLInputElement>,
+    required?: boolean,
+    disabled?: boolean,
+    focused?: boolean,
+    min?: string | number,
+    max?: string | number,
+    input?: (el: HTMLInputElement) => void,
+}
+
+abstract class AbstractTextField extends PureComponent<TextAreaProps> {
+    check: () => void
+    getInput: () => HTMLInputElement
+    withAutofillAnimationCallback: () => void
+}
+
+class TextField extends AbstractTextField {
 
     constructor(properties) {
         super(properties);
@@ -20,7 +50,7 @@ class TextField extends PureComponent {
         ] = stateGSs(that, 3);
         const props = propsGetter(that);
 
-        const inputRef = createRef();
+        const inputRef = createRef<HTMLInputElement>();
         const check = () => {
             const {required, check} = props();
             const value = inputRef().value;
@@ -119,38 +149,6 @@ class TextField extends PureComponent {
             }, false);
         };
     }
-}
-
-if (window.isNotProductionEnvironment) {
-    TextField.propTypes = {
-        id: PropTypes.string,
-        className: PropTypes.string,
-        value: PropTypes.string,
-        name: PropTypes.string,
-        type: PropTypes.string,
-        autoComplete: PropTypes.string,
-        placeholder: PropTypes.string,
-        label: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        check: PropTypes.func,
-        onClick: PropTypes.func,
-        onKeyDown: PropTypes.func,
-        onFocus: PropTypes.func,
-        onBlur: PropTypes.func,
-        onChange: PropTypes.func,
-        required: PropTypes.bool,
-        disabled: PropTypes.bool,
-        min: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number
-        ]),
-        max: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number
-        ]),
-    };
 }
 
 export default TextField

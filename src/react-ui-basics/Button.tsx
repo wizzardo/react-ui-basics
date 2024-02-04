@@ -1,19 +1,37 @@
-import React from 'react';
+import React, {FocusEventHandler, MouseEventHandler, ReactElement, ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
 import {classNames, DOCUMENT, addEventListener, createRef, orNoop} from "./Tools";
-import PropTypes from "prop-types";
 import {PureComponent, render, stateGS, props} from "./ReactConstants";
 
-class Button extends PureComponent {
+export interface ButtonProps {
+    flat?: boolean,
+    raised?: boolean,
+    round?: boolean,
+    disabled?: boolean,
+    withRipple?: boolean,
+    type?: 'button' | 'submit' | 'reset',
+    className?: string,
+    onClick?: MouseEventHandler,
+    onFocus?: FocusEventHandler,
+    style?: any,
+    children?: ReactNode,
+}
+
+class Button extends PureComponent<ButtonProps> {
+    static defaultProps = {
+        type: 'button',
+        withRipple: true,
+    }
+
     constructor(properties) {
         super(properties);
 
         const that = this;
-        const el = createRef();
-        const ripple = createRef();
+        const el = createRef<HTMLButtonElement>();
+        const ripple = createRef<HTMLSpanElement>();
 
-        const rippleClassName = stateGS(that);
+        const rippleClassName = stateGS<string>(that);
 
         const onMouseDown = (e) => {
             if (!props(that).withRipple) return;
@@ -74,25 +92,5 @@ class Button extends PureComponent {
         }
     }
 }
-
-if (window.isNotProductionEnvironment) {
-    Button.propTypes = {
-        flat: PropTypes.bool,
-        raised: PropTypes.bool,
-        round: PropTypes.bool,
-        disabled: PropTypes.bool,
-        withRipple: PropTypes.bool,
-        type: PropTypes.oneOf(['button', 'submit', 'reset']),
-        className: PropTypes.string,
-        onClick: PropTypes.func,
-        onFocus: PropTypes.func,
-        style: PropTypes.object,
-    };
-}
-
-Button.defaultProps = {
-    type: 'button',
-    withRipple: true,
-};
 
 export default Button;

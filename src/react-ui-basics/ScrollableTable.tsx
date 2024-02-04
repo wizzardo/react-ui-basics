@@ -13,13 +13,17 @@ export interface ScrollableTableProps<T> extends TableProps<T> {
     scrollableProps?: any
 }
 
-class ScrollableTable<T> extends PureComponent<ScrollableTableProps<T>, TableState<T>> implements WithScrollable {
+abstract class AbstractScrollableTable<T> extends PureComponent<ScrollableTableProps<T>, TableState<T>> {
+    getScrollable: () => Scrollable
+}
+
+class ScrollableTable<T> extends AbstractScrollableTable<T> implements WithScrollable {
 
     constructor(properties) {
         super(properties);
         const that = this;
 
-        const scrollableRef = createRef();
+        const scrollableRef = createRef<Scrollable>();
 
         that[render] = () => {
             return <div className={`ScrollableTable`}>
@@ -28,11 +32,7 @@ class ScrollableTable<T> extends PureComponent<ScrollableTableProps<T>, TableSta
                 </Scrollable>
             </div>;
         }
-        that.getScrollable = () => scrollableRef()
-    }
-
-    getScrollable(): Scrollable {
-        return undefined;
+        that.getScrollable = scrollableRef
     }
 }
 

@@ -18,6 +18,8 @@ import {
     UNDEFINED
 } from "./Tools";
 import {propsGetter, render, componentDidMount} from "./ReactConstants";
+import Droppable from "./DNDDroppable";
+import Draggable from "./DNDDraggable";
 
 const clearSelection = () => {
     const getSelection = WINDOW.getSelection;
@@ -113,9 +115,9 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
             draggable = null;
         };
 
-        const draggableInitializer = (item) => {
+        const draggableInitializer = (item: Draggable) => {
             const handle = item.props.handle;
-            const draggableElement = (handle && item.element.childNodes[0]) || item.element;
+            const draggableElement: HTMLElement = ((handle && item.element.firstElementChild as HTMLElement) || item.element);
             draggableElement.draggable = true;
 
             const dragStartListener = (e) => {
@@ -131,7 +133,7 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                 item.width = itemOffset.width;
                 item.height = itemOffset.height;
 
-                let clone = orNoop(item.props.copy)((it) => {
+                let clone = orNoop(item.props.copy)((it: Draggable) => {
                     let style = it.element.style;
 
                     const offsetLeft = totalOffsetLeft(container) + (e.clientX - itemOffset.left);
@@ -177,7 +179,7 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                     }
                 }
                 onDragStart(e);
-                setTimeout(() => item.setState({placeholder: true}), 1)
+                return setTimeout(() => item.setState({placeholder: true}), 1)
             };
             addListener(draggableElement, item, 'dragend', (e) => {
                 if (item.state.placeholder)
@@ -232,7 +234,7 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
             });
         }
 
-        const droppableInitializer = (item) => {
+        const droppableInitializer = (item: Droppable) => {
             droppables.push(item);
 
             addEventListener(item.element, 'drop', (e) => {
@@ -242,27 +244,34 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                     data && orNoop(item.props.onDrop)(data);
                 }
             }, false);
-            addEventListener(item.element, 'dragenter', (e) => {
+            addEventListener(item.element, 'mouseenter', (e) => {
+                if(!draggable)
+                    return
+
                 if (item.state.allow) {
                     preventDefault(e);
                     item.isHover(e, draggable, true)
                 }
             });
-            addEventListener(item.element, 'dragleave', (e) => {
+            addEventListener(item.element, 'mouseleave', (e) => {
+                if(!draggable)
+                    return
+
                 if (item.state.allow) {
                     preventDefault(e);
                     item.isHover(e, draggable, false)
                 }
             });
 
-            item.onDragStart = (e, draggable) => {
+            item.onDragStart = (e, draggable: Draggable) => {
                 item.bounds = item.element.getBoundingClientRect();
                 let allow = (orNoop(item.props.onDragStart)(e, data));
                 if (allow === UNDEFINED)
                     allow = true
-                item.setState({allow});
+                item.setState({allow: allow as boolean});
+                item.isHover(e, draggable)
             };
-            item.isHover = (e, draggable, hover) => {
+            item.isHover = (e, draggable, hover?: boolean) => {
                 const bounds = item.bounds;
                 if (!bounds)
                     return;

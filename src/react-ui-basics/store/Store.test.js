@@ -95,7 +95,7 @@ it('update value if selector dependencies change', () => {
 
     const MyComponent = () => {
         let key = useStore(store, it => it.key);
-        let value = useStore(store, it => it[key], [key]);
+        let value = useStore(store, it => it[key]);
         renderCount++
         renderedValue.push(value)
         return <div>{value}</div>;

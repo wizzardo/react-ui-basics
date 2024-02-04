@@ -123,14 +123,14 @@ class Table<T> extends Component<TableProps<T>, TableState<T>> {
         super(properties);
         const props = propsGetter(this);
 
-        const headers = createRef();
+        const headers = createRef<HTMLTableRowElement>();
         let updateHeadersInterval = 0;
 
         const updateHeaders = () => {
             const hidden = headers().querySelectorAll('.hidden');
             const fixed = headers().querySelectorAll('.fixed');
             for (let i = 0; i < hidden.length; i++) {
-                fixed[i].style.width = hidden[i].offsetWidth + 'px'
+                (fixed[i] as HTMLElement).style.width = (hidden[i] as HTMLElement).offsetWidth + 'px'
             }
         };
 
@@ -339,7 +339,7 @@ class Row<T> extends PureComponent<RowProps<T>> {
                         onClick={onClick}>
                         {displayEditor && !column.editor && (
                             <TextField
-                                value={value}
+                                value={String(value)}
                                 focused={editing.focused}
                                 onFocus={() => {
                                     setEditing(item, i, j, value, true)

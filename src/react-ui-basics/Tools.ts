@@ -24,9 +24,9 @@ export const ref = (name, component) => {
     return component[refKey] || (component[refKey] = (it) => component[name] = it)
 };
 
-export const createRef = (initialValue?: any) => {
+export const createRef = <T>(initialValue?: T) => {
     let v = initialValue;
-    return function (value?: any) {
+    return (value?: any) => {
         if (value != UNDEFINED)
             v = value
         return v;

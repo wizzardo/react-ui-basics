@@ -91,7 +91,7 @@ class Dropzone extends PureComponent<DropzoneProps> {
             prevent(e)
         };
 
-        const inputRef = createRef()
+        const inputRef = createRef<HTMLInputElement>()
 
         that[render] = () => {
             const {

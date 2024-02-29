@@ -11,7 +11,9 @@ export const setState = (that: React.Component, data, cb?) => {
 export const stateFieldSetter = (that, key, cb?: () => void) => (value, cb2?) => {
     setState(that, {[key]: value}, cb2 || cb);
 };
-export const stateGS: (<T>(that: React.Component) => (v?: T, cb?: () => void) => T) = (that) => {
+
+type GetterSetter<T> = (v?: T, cb?: () => void) => T;
+export const stateGS: (<T>(that: React.Component) => GetterSetter<T>) = (that) => {
     !that['sfc'] && (that['sfc'] = 0);
     const key = '_' + (that['sfc']++);
     const setter = stateFieldSetter(that, key);
@@ -21,12 +23,16 @@ export const stateGS: (<T>(that: React.Component) => (v?: T, cb?: () => void) =>
     result.toString = () => key;
     return result;
 };
-export const stateGSs = (that, num) => {
+
+type TupleToGetterSetter<T extends any[]> = {
+    [K in keyof T]: GetterSetter<T[K]>;
+};
+export const stateGSs = <T extends any[]>(that, num): TupleToGetterSetter<T> => {
     const result = [];
     for (let i = 0; i < num; i++) {
         result.push(stateGS(that));
     }
-    return result;
+    return result as TupleToGetterSetter<T>;
 };
 
 type GetSnapshot<T> = () => T;

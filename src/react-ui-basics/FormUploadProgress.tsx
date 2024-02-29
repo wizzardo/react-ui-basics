@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './FormUploadProgress.css'
 import Button from "./Button";
@@ -6,11 +6,10 @@ import Animated from "./Animated";
 import CircleProgress from "./CircleProgress";
 import SpinningProgress from "./SpinningProgress";
 import {formatAbbreviation, formatNumberWithMaxLength} from "./Size";
-import PropTypes from "prop-types";
 import {preventDefault} from "./Tools";
 
 
-const defaultValueFormat = (value, loaded, total) => {
+const defaultValueFormat = (value: number, loaded: number, total: number) => {
     if (total == null)
         return Math.floor(Number.isFinite(value) ? value : 0) + '%';
 
@@ -24,6 +23,16 @@ const defaultValueFormat = (value, loaded, total) => {
     </>
 };
 
+export interface FormUploadProgressProps {
+    value: number
+    loaded: number
+    total: number
+    formatValue?: (value: number, loaded: number, total: number) => ReactNode
+    processingLabel?: ReactNode
+    cancelLabel?: ReactNode
+    cancel?: () => void
+}
+
 const FormUploadProgress = ({
                                 value,
                                 cancel,
@@ -32,7 +41,7 @@ const FormUploadProgress = ({
                                 formatValue,
                                 processingLabel,
                                 cancelLabel,
-                            }) => {
+                            }: FormUploadProgressProps) => {
     return (
         <Animated value={total > 0}>
             <div className="FormUploadProgress">
@@ -59,23 +68,5 @@ FormUploadProgress.defaultProps = {
     value: 0,
     formatValue: defaultValueFormat,
 };
-
-if (window.isNotProductionEnvironment) {
-    FormUploadProgress.propTypes = {
-        value: PropTypes.number,
-        loaded: PropTypes.number,
-        total: PropTypes.number,
-        formatValue: PropTypes.func,
-        processingLabel: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        cancelLabel: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        cancel: PropTypes.func,
-    };
-}
 
 export default FormUploadProgress;

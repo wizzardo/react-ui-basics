@@ -1,13 +1,23 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import {componentDidMount, render, componentWillUnmount, setState, props, state, componentDidUpdate, children, PureComponent} from "./ReactConstants";
 import {orNoop} from "./Tools";
+
+export interface NotReadyIndicatorProps {
+    onChange?: (ready: boolean) => void
+    render?: (ready: boolean) => JSX.Element | ReactNode
+    children?: ReactNode
+}
+
+interface NotReadyIndicatorState {
+    r: boolean
+}
 
 export const createReadyListener = () => {
     let indicator,
         count = 0;
 
-    class NotReadyIndicator extends PureComponent {
+    class NotReadyIndicator extends PureComponent<NotReadyIndicatorProps, NotReadyIndicatorState> {
         constructor(properties) {
             super(properties);
             const that = this;

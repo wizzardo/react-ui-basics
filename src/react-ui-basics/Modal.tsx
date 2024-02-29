@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import ReactDOM from 'react-dom';
 import ReactCreateElement from './ReactCreateElement';
 import './Modal.css'
@@ -6,7 +6,6 @@ import Button from "./Button";
 import {classNames, orNoop, setTimeout, DOCUMENT, addEventListener, removeEventListener, createRef, UNDEFINED, stopPropagation} from "./Tools";
 import {PureComponent, componentDidMount, render, propsGetter, stateGSs, componentDidUpdate} from "./ReactConstants";
 import MaterialIcon from "./MaterialIcon";
-import PropTypes from "prop-types";
 
 let listenerRef;
 let zIndex = 100;
@@ -26,7 +25,32 @@ const addListener = (modal, listener) => {
     addEventListener(DOCUMENT, EVENT_TYPE, listenerRef = listener);
 };
 
-class Modal extends PureComponent {
+type VoidFunction = () => void;
+
+export interface ModalProps {
+    className?: string
+    top?: number
+    container?: Element | DocumentFragment
+    children?: ReactNode
+    closeIcon?: string | ReactElement
+    beforeClose?: (close: VoidFunction) => void
+    onOpen?: VoidFunction
+    onClose?: VoidFunction
+    open?: (open: VoidFunction) => void
+    close?: (open: VoidFunction) => void
+    show?: boolean
+}
+
+abstract class AbstractModal extends PureComponent<ModalProps> {
+    close: VoidFunction
+    open: VoidFunction
+}
+
+class Modal extends AbstractModal {
+
+    static defaultContainer = UNDEFINED
+    static pollListener = pollListener
+    static addListener = addListener
 
     static defaultProps = {
         closeIcon: <MaterialIcon icon="close"/>,
@@ -41,21 +65,21 @@ class Modal extends PureComponent {
             isShow,
             getMenu,
             getBeforeClose,
-        ] = stateGSs(that, 3);
-        const overlay = createRef();
-        const el = createRef();
-        const content = createRef();
+        ] = stateGSs<[boolean, any, (close: VoidFunction) => void]>(that, 3);
+        const overlay = createRef<HTMLDivElement>();
+        const el = createRef<HTMLDivElement>();
+        const content = createRef<HTMLDivElement>();
         const props = propsGetter(that);
 
         const beforeClose = (e) => {
             stopPropagation(e);
             const bc = getBeforeClose() || props().beforeClose;
             if (!bc || bc(that.close))
-                that.close(e);
+                that.close();
         };
 
         const shouldClose = (e) => {
-            const isSameModal = el().style.zIndex == zIndex - 1;
+            const isSameModal = el().style.zIndex == (zIndex - 1) + '';
             !(e && content().contains(e.target)) && isSameModal && beforeClose(e);
         };
 
@@ -79,10 +103,13 @@ class Modal extends PureComponent {
                      style={top && {top: top + 'px'}}
                      ref={content}
                 >
-                    {React.Children.map(children, child => React.cloneElement(child, {
-                        modalMenuConsumer: getMenu,
-                        modalBeforeCloseConsumer: getBeforeClose
-                    }))}
+                    {React.Children.map(children, child => {
+                        // @ts-ignore
+                        return React.cloneElement(child, {
+                            modalMenuConsumer: getMenu,
+                            modalBeforeCloseConsumer: getBeforeClose
+                        });
+                    })}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>
                         {closeIcon}
@@ -107,13 +134,13 @@ class Modal extends PureComponent {
             if (isShow())
                 return;
 
-            el() && (el().style.zIndex = zIndex++);
+            el() && (el().style.zIndex = '' + (zIndex++));
             addTransitionListener();
             isShow(true);
 
             let listener = event => {
                 if (!event.defaultPrevented && event.keyCode === 27/*escape*/)
-                    beforeClose();
+                    beforeClose(event);
                 return true;
             };
 
@@ -139,16 +166,4 @@ class Modal extends PureComponent {
     }
 }
 
-Modal.defaultContainer = UNDEFINED;
-Modal.pollListener = pollListener;
-Modal.addListener = addListener;
-
 export default Modal;
-
-if (window.isNotProductionEnvironment) {
-    Modal.propTypes = {
-        className: PropTypes.string,
-        top: PropTypes.number,
-        container: PropTypes.node,
-    };
-}

@@ -47,7 +47,7 @@ story3.story = {
 
 
 
-export const story4 = () => <FormUploadProgress processingLabel={'Processing..'} cancelLabel={'Cancel'} value={100} cancel={() => console.log('canceled')}/>;
+export const story4 = () => <FormUploadProgress loaded={100} total={100} processingLabel={'Processing..'} cancelLabel={'Cancel'} value={100} cancel={() => console.log('canceled')}/>;
 story4.story = {
     name: 'form upload. processing',
 };

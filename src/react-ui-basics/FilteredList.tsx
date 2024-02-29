@@ -1,13 +1,39 @@
-import React from 'react';
+import React, {CSSProperties, MouseEventHandler} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './FilteredList.css'
 import Scrollable from "./Scrollable";
 import {classNames, orNoop, ref, stopPropagation, isFunction, isObject} from "./Tools";
 import {PureComponent} from "./ReactConstants";
 
-export const getLabel = (labels, id) => isFunction(labels) ? labels(id) : labels[id]
+type Labels<T> = ((item: T) => string) | { [key: string]: string } | { [key: number]: string };
 
-class FilteredList extends PureComponent {
+// @ts-ignore
+export const getLabel: (<T extends string | number>(labels: Labels<T>, id: T) => string) = (labels, id) => isFunction(labels) ? labels(id) : labels[id]
+
+export interface FilteredListProps<T> {
+    nextProvider?: (cb: () => void) => void
+    prevProvider?: (cb: () => void) => void
+    resetProvider?: (cb: () => void) => void
+    selectedProvider?: (cb: () => void) => void
+    data: T[]
+    labels?: Labels<T>
+    filter?: (item: T) => boolean
+    className?: string
+    selected?: T | { [key: string]: boolean } | { [key: number]: boolean }
+    inline?: boolean
+    childComponent
+    childProps
+    style?: CSSProperties
+    scroll
+    onSelect: (selected: T) => void
+    selectSingle?: boolean
+}
+
+export interface FilteredListState<T> {
+    selected: T
+}
+
+class FilteredList<T extends string|number> extends PureComponent<FilteredListProps<T>, FilteredListState<T>> {
 
     static defaultProps = {
         data: [],
@@ -18,11 +44,14 @@ class FilteredList extends PureComponent {
         filter: () => true,
     };
 
+    hidden:Map<T, boolean> = new Map();
+    elements :Map<T, HTMLDivElement> = new Map();
+    list:T[] = [];
+    el: Scrollable
+
     constructor(props) {
         super(props);
-        this.state = {selected: -1};
-        this.hidden = {};
-        this.elements = {};
+        this.state = {selected: null};
     }
 
     componentDidMount() {
@@ -47,7 +76,7 @@ class FilteredList extends PureComponent {
         this.list = data || [];
 
         if (!this.list.includes(selected))
-            this.setState({selected: -1})
+            this.setState({selected: null})
     };
 
     render() {
@@ -56,21 +85,25 @@ class FilteredList extends PureComponent {
             <Scrollable className={classNames('FilteredList', className, inline ? 'inline' : 'popup')}
                         autoScrollTop={false}
                         ref={ref('el', this)} style={style} scrollBarMode={scroll}>
-                {(data || []).filter(id => id !== false && id != null).map(id => <ItemWrapper
+                {(data || []).filter(id => !!id || id === 0).map(id => <ItemWrapper
                     id={id}
                     key={id}
                     label={getLabel(labels, id)}
                     childComponent={childComponent}
                     childProps={childProps}
-                    element={el => this.elements[id] = el}
+                    element={el => this.elements.set(id, el)}
                     onClick={e => {
                         stopPropagation(e);
                         this.onSelect(id);
                     }}
                     onMouseEnter={e => this.setState({selected: id})}
-                    onMouseLeave={e => id === this.state.selected && this.setState({selected: -1})}
-                    className={classNames('child', this.state.selected === id && 'active', selected === id || (isObject(selected) && selected[id]) && 'selected')}
-                    classProvider={it => (this.hidden[id] = !filter(it)) && 'hidden'}
+                    onMouseLeave={e => id === this.state.selected && this.setState({selected: null})}
+                    className={classNames('child', this.state.selected === id && 'active', selected === id || (isObject(selected) && selected[id as (string | number)]) && 'selected')}
+                    classProvider={it => {
+                        const hidden = !filter(it);
+                        this.hidden.set(id, hidden)
+                        return hidden && 'hidden';
+                    }}
                 />)}
             </Scrollable>
         )
@@ -81,13 +114,13 @@ class FilteredList extends PureComponent {
         this.props.onSelect(id);
     };
 
-    selected = () => {
+    selected = (): T => {
         const {selected: value} = this.state;
         const {selectSingle} = this.props;
 
 
-        if (value === -1 || this.hidden[value]) {
-            let filtered = this.list.filter(id => !this.hidden[id]);
+        if (value === -1 || this.hidden.get(value)) {
+            let filtered = this.list.filter(id => !this.hidden.get(id));
             if (selectSingle && filtered.length === 1)
                 return filtered[0];
 
@@ -101,11 +134,11 @@ class FilteredList extends PureComponent {
         const list = this.list;
         const selected = this.state.selected;
         let position = list.findIndex(id => selected === id);
-        if (this.hidden[list[position]])
+        if (this.hidden.get(list[position]))
             position = -1;
 
         while (++position < list.length) {
-            if (!this.hidden[list[position]])
+            if (!this.hidden.get(list[position]))
                 break
         }
         if (position < list.length) {
@@ -119,11 +152,11 @@ class FilteredList extends PureComponent {
         const list = this.list;
         const selected = this.state.selected;
         let position = list.findIndex(id => selected === id);
-        if (this.hidden[list[position]])
+        if (this.hidden.get(list[position]))
             position = list.length;
 
         while (--position >= 0) {
-            if (!this.hidden[list[position]])
+            if (!this.hidden.get(list[position]))
                 break
         }
         if (position >= 0) {
@@ -151,8 +184,8 @@ class FilteredList extends PureComponent {
     };
 
     reset = () => {
-        this.setState({selected: -1});
-        this.el.scrollTop = 0;
+        this.setState({selected: null});
+        this.el.setScroll(0)
     };
 
     scrollTo = (id) => this.el.setScroll(this.elements[id] && this.elements[id].offsetTop);
@@ -160,7 +193,24 @@ class FilteredList extends PureComponent {
 
 export default FilteredList;
 
-class ItemWrapper extends React.Component {
+interface ItemWrapperProps {
+    id
+    label
+    onClick?: MouseEventHandler
+    onMouseDown?: MouseEventHandler
+    onMouseEnter?: MouseEventHandler
+    onMouseLeave?: MouseEventHandler
+    classProvider?: (data) => string
+    className?: string
+    childComponent
+    childProps
+    element?: (el: HTMLDivElement) => void
+}
+
+class ItemWrapper extends React.Component<ItemWrapperProps> {
+    data
+    el: HTMLDivElement
+
     render() {
         const {id, label, onClick, onMouseDown, onMouseEnter, onMouseLeave, classProvider, className, childComponent, childProps} = this.props;
         const child = React.createElement(childComponent, {

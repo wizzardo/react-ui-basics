@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {CSSProperties, ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import PropTypes from 'prop-types';
 import './Scrollable.css'
@@ -40,7 +40,32 @@ const scrollBarModeOf = createFieldGetter('scrollBarMode');
 const onScroll = createFieldGetter('onScroll');
 const horizontalScrollBarModeOf = createFieldGetter('horizontalScrollBarMode');
 
-class Scrollable extends PureComponent {
+type ScrollbarMode = typeof SCROLLBAR_MODE_HIDDEN | typeof SCROLLBAR_MODE_VISIBLE | typeof SCROLLBAR_MODE_AUTO | typeof SCROLLBAR_RESIZE_DISABLED;
+
+export interface ScrollableProps {
+    scrollBarMode?: ScrollbarMode
+    horizontalScrollBarMode?: ScrollbarMode
+    className?: string
+    style?: CSSProperties
+    onScrolledToBottom?: () => void
+    onScrolledToTop?: () => void
+    autoScrollTop?: boolean
+    children?: ReactNode
+}
+
+abstract class AbstractScrollable extends PureComponent<ScrollableProps> {
+    el: HTMLDivElement
+    setScroll: (y) => void
+    getScroll: () => number
+    getScrollHeight: () => number
+    getHeight: () => number
+}
+
+class Scrollable extends AbstractScrollable {
+    static defaultProps = {
+        autoScrollTop: true,
+        horizontalScrollBarMode: SCROLLBAR_MODE_HIDDEN
+    }
 
     constructor(properties) {
         super(properties);
@@ -48,14 +73,14 @@ class Scrollable extends PureComponent {
         that.state = {};
 
         const props = propsGetter(that);
-        const status = stateGS(that);
-        const statusH = stateGS(that);
+        const status = stateGS<typeof WITHOUT_SCROLL | typeof WITH_SCROLL>(that);
+        const statusH = stateGS<typeof WITHOUT_SCROLL | typeof WITH_SCROLL>(that);
 
-        const viewportRef = createRef();
-        const scrollbarRef = createRef();
-        const horizontalScrollbarRef = createRef();
-        const thumbRef = createRef();
-        const horizontalThumbRef = createRef();
+        const viewportRef = createRef<HTMLDivElement>();
+        const scrollbarRef = createRef<HTMLDivElement>();
+        const horizontalScrollbarRef = createRef<HTMLDivElement>();
+        const thumbRef = createRef<HTMLDivElement>();
+        const horizontalThumbRef = createRef<HTMLDivElement>();
 
         let resizeInterval;
         let initTimeout;
@@ -81,7 +106,7 @@ class Scrollable extends PureComponent {
             const thumb = thumbRef();
             const thumbH = horizontalThumbRef();
 
-            let scrolling = false;
+            let scrolling = '';
             let scrolledToBottom = false;
             let scrolledToTop = false;
             let adjustedScrollWidth = false;
@@ -129,7 +154,7 @@ class Scrollable extends PureComponent {
                 removeEventListener(WINDOW, 'mouseup', reset);
                 removeEventListener(WINDOW, 'mousemove', moveListener);
                 viewport.style.scrollBehavior = ''
-                scrolling = false;
+                scrolling = '';
             };
             const moveListener = (e) => {
                 if (!scrolling)
@@ -255,7 +280,7 @@ class Scrollable extends PureComponent {
                 const horizontalScrollBarOffset = statusH() !== WITHOUT_SCROLL ? scrollbarH.clientHeight + Math.max(NATIVE_SCROLL_HEIGHT, 0) : 0;
 
                 let containerOffsetHeight = containerHeight + horizontalScrollBarOffset;
-                if (containerOffsetHeight > scrollHeight && status() === WITHOUT_SCROLL)
+                if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
                     return;
 
                 if (props().autoScrollTop && scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
@@ -276,7 +301,7 @@ class Scrollable extends PureComponent {
                     return
                 }
 
-                if (containerOffsetHeight <= scrollHeight) {
+                if (containerOffsetHeight < scrollHeight) {
                     adjustedScrollWidth = false;
                     showScrollbar(scrollbar, viewport, adjustScrollWidth);
                 } else {
@@ -304,7 +329,7 @@ class Scrollable extends PureComponent {
                 const verticalScrollBarOffset = status() !== WITHOUT_SCROLL ? scrollbar.clientWidth + Math.max(NATIVE_SCROLL_WIDTH, 0) : 0;
 
                 let containerOffsetWidth = containerWidth + verticalScrollBarOffset;
-                if (containerOffsetWidth > scrollWidth && statusH() === WITHOUT_SCROLL)
+                if (containerOffsetWidth === scrollWidth && statusH() === WITHOUT_SCROLL)
                     return;
 
                 ratioH = newRatio;
@@ -322,7 +347,7 @@ class Scrollable extends PureComponent {
                 styleOf(container).width = (scrollWidth - verticalScrollBarOffset) + 'px';
                 containerOffsetWidth = containerWidth + verticalScrollBarOffset;
 
-                if (containerOffsetWidth <= scrollWidth) {
+                if (containerOffsetWidth < scrollWidth) {
                     adjustedScrollWidth = false;
                     showHorizontalScrollbar(scrollbarH, viewport, adjustScrollWidth);
                 } else {
@@ -336,7 +361,7 @@ class Scrollable extends PureComponent {
             let update;
             let sbm = scrollBarModeOf(props());
             let hsbm = horizontalScrollBarModeOf(props());
-            if (sbm !== SCROLLBAR_RESIZE_DISABLED && !hsbm === SCROLLBAR_RESIZE_DISABLED) {
+            if (sbm !== SCROLLBAR_RESIZE_DISABLED && hsbm !== SCROLLBAR_RESIZE_DISABLED) {
                 update = () => {
                     updateVerticalScrollbar();
                     updateHorizontalScrollbar();
@@ -373,8 +398,12 @@ class Scrollable extends PureComponent {
         that[render] = () => {
             const _props = props();
             const {className, children} = _props;
+
             return (
-                <div className={classNames('Scrollable', className, status() || WITH_SCROLL, statusH() + '-horizontal')} style={styleOf(_props)} ref={ref('el', this)}>
+                <div className={classNames('Scrollable', className, status() || WITH_SCROLL, statusH() + '-horizontal')}
+                     style={styleOf(_props)}
+                     ref={ref('el', this)}
+                >
                     <div className="viewport" ref={viewportRef}>
                         {children}
                     </div>
@@ -391,20 +420,3 @@ class Scrollable extends PureComponent {
 }
 
 export default Scrollable
-
-Scrollable.defaultProps = {
-    autoScrollTop: true,
-    horizontalScrollBarMode: SCROLLBAR_MODE_HIDDEN
-};
-
-if (window.isNotProductionEnvironment) {
-    Scrollable.propTypes = {
-        scrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE, SCROLLBAR_RESIZE_DISABLED]),
-        horizontalScrollBarMode: PropTypes.oneOf([SCROLLBAR_MODE_AUTO, SCROLLBAR_MODE_HIDDEN, SCROLLBAR_MODE_VISIBLE, SCROLLBAR_RESIZE_DISABLED]),
-        className: PropTypes.string,
-        style: PropTypes.object,
-        onScrolledToBottom: PropTypes.func,
-        onScrolledToTop: PropTypes.func,
-        autoScrollTop: PropTypes.bool,
-    }
-}

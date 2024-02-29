@@ -119,20 +119,6 @@ function _isNativeReflectConstruct() {
     }
 }
 
-function _objectWithoutProperties(source, excluded) {
-    if (source == null) return {};
-    var target = {};
-    var sourceKeys = OBJECT.keys(source);
-    var key, i;
-
-    for (i = 0; i < sourceKeys.length; i++) {
-        key = sourceKeys[i];
-        excluded.indexOf(key) < 0 && (target[key] = source[key]);
-    }
-
-    return target;
-}
-
 function _assertThisInitialized(self) {
     if (self !== void 0) {
         return self;
@@ -178,7 +164,6 @@ export {
     _extends as extends,
     _inherits as inherits,
     _objectSpread2 as objectSpread2,
-    _objectWithoutProperties as objectWithoutProperties,
     _slicedToArray as slicedToArray,
     _toConsumableArray as toConsumableArray,
     _typeof as typeof

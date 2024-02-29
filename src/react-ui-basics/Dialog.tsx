@@ -1,13 +1,31 @@
-import React, {Component} from 'react';
+import React, {MouseEventHandler, ReactElement} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Dialog.css'
 import Button from "./Button";
 import Modal from "./Modal";
 import {isUndefined, orNoop, preventDefault, ref, UNDEFINED, classNames, createRef} from "./Tools";
 import {PureComponent, render, componentDidMount, propsGetter, stateGSs} from "./ReactConstants";
-import PropTypes from "prop-types";
 
-class Dialog extends PureComponent {
+
+type StringOrReactElement = string | ReactElement;
+
+export interface DialogProps {
+    title?: StringOrReactElement,
+    description?: StringOrReactElement,
+    accept?: StringOrReactElement,
+    cancel?: StringOrReactElement,
+    className?: string,
+    top?: number,
+    onAccept?: MouseEventHandler,
+    onCancel?: MouseEventHandler,
+}
+
+class Dialog extends PureComponent<DialogProps> {
+    static defaultProps = {
+        accept: 'Accept',
+        cancel: 'Decline',
+    }
+
     constructor(properties) {
         super(properties);
 
@@ -26,16 +44,34 @@ class Dialog extends PureComponent {
     }
 }
 
-Dialog.defaultProps = {
-    accept: 'Accept',
-    cancel: 'Decline',
-};
 
 const throwIfPropExists = (key, props) => {
     if (props[key]) throw Error(key + " was already set by props")
 };
 
-class DialogWrapper extends Component {
+export type OpenDialogFn = (
+    onAccept?: MouseEventHandler,
+    onCancel?: MouseEventHandler,
+    title?: StringOrReactElement,
+    description?: StringOrReactElement,
+    accept?: StringOrReactElement,
+    cancel?: StringOrReactElement
+) => void;
+
+export type CloseDialogFn = () => void;
+
+abstract class AbstractDialogWrapper extends PureComponent<DialogWrapperProps> {
+    open: OpenDialogFn
+    close: CloseDialogFn
+}
+
+export interface DialogWrapperProps extends DialogProps {
+    show?: boolean,
+    open?: (open: OpenDialogFn) => void,
+    close?: (close: CloseDialogFn) => void,
+}
+
+class DialogWrapper extends AbstractDialogWrapper {
 
     constructor(properties) {
         super(properties);
@@ -43,8 +79,8 @@ class DialogWrapper extends Component {
         that.state = {};
 
         const props = propsGetter(that);
-        const openRef = createRef();
-        const closeRef = createRef();
+        const openRef = createRef<() => void>();
+        const closeRef = createRef<() => void>();
 
         const [titleState,
             descriptionState,
@@ -52,9 +88,9 @@ class DialogWrapper extends Component {
             onCancelState,
             acceptState,
             cancelState
-        ] = stateGSs(that, 6);
+        ] = stateGSs<[StringOrReactElement, StringOrReactElement, MouseEventHandler, MouseEventHandler, StringOrReactElement, StringOrReactElement]>(that, 6);
 
-        const onCancel = (e) => {
+        const onCancel = (e?) => {
             preventDefault(e);
             orNoop(props().onCancel || onCancelState())();
             closeRef()();
@@ -67,7 +103,7 @@ class DialogWrapper extends Component {
         };
 
         that[render] = () => {
-            const {top, className, ...other} = props();
+            const {top, className} = props();
             return (
                 <Modal
                     top={top}
@@ -76,7 +112,15 @@ class DialogWrapper extends Component {
                     close={closeRef}
                     onClose={onCancel}
                 >
-                    <Dialog title={titleState()} description={descriptionState()} accept={acceptState()} cancel={cancelState()} {...other} onAccept={onAccept} onCancel={onCancel}/>
+                    <Dialog
+                        title={titleState()}
+                        description={descriptionState()}
+                        accept={acceptState()}
+                        cancel={cancelState()}
+                        {...props()}
+                        onAccept={onAccept}
+                        onCancel={onCancel}
+                    />
                 </Modal>
             );
         };
@@ -127,28 +171,3 @@ class DialogWrapper extends Component {
 }
 
 export default DialogWrapper;
-
-if (window.isNotProductionEnvironment) {
-    DialogWrapper.propTypes = {
-        title: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        description: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        accept: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        cancel: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.element
-        ]),
-        onAccept: PropTypes.func,
-        onCancel: PropTypes.func,
-        className: PropTypes.string,
-        top: PropTypes.number,
-    };
-}

@@ -274,14 +274,16 @@ class Scrollable extends AbstractScrollable {
                 !adjustedScrollWidth && adjustScrollWidth();
 
                 const newRatio = scrollHeight / scrollbarHeight;
-                if (!containerHeight || (ratio === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
+                if ((ratio === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
 
                 const offsetHeight = offsetHeightOf(viewport);
                 const horizontalScrollBarOffset = statusH() !== WITHOUT_SCROLL ? scrollbarH.clientHeight + Math.max(NATIVE_SCROLL_HEIGHT, 0) : 0;
 
                 let containerOffsetHeight = containerHeight + horizontalScrollBarOffset;
-                if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL)
+                if (containerOffsetHeight === scrollHeight && status() === WITHOUT_SCROLL) {
+                    ratio = newRatio;
                     return;
+                }
 
                 if (props().autoScrollTop && scrollHeight - offsetHeight - viewport.scrollTop <= 20 && newRatio < ratio && Number.isFinite(newRatio) && Number.isFinite(ratio)) {
                     viewport.scrollTop = 0; // scroll to top if scrollbar gets smaller
@@ -323,16 +325,16 @@ class Scrollable extends AbstractScrollable {
                 !adjustedScrollWidth && adjustScrollWidth();
 
                 const newRatio = scrollWidth / scrollbarWidth;
-                if (!containerWidth || (ratioH === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
+                if ((ratioH === newRatio && Number.isFinite(newRatio)) || Number.isNaN(newRatio)) return;
 
                 const offsetWidth = offsetWidthOf(viewport);
                 const verticalScrollBarOffset = status() !== WITHOUT_SCROLL ? scrollbar.clientWidth + Math.max(NATIVE_SCROLL_WIDTH, 0) : 0;
 
+                ratioH = newRatio;
                 let containerOffsetWidth = containerWidth + verticalScrollBarOffset;
                 if (containerOffsetWidth === scrollWidth && statusH() === WITHOUT_SCROLL)
                     return;
 
-                ratioH = newRatio;
                 if (newRatio > 1.02)
                     styleOf(thumbH).width = (scrollbarWidth / newRatio) + 'px';
 
@@ -373,7 +375,7 @@ class Scrollable extends AbstractScrollable {
 
             if (update) {
                 initTimeout = setTimeout(() => {
-                    resizeInterval = setInterval(update, 50);
+                    resizeInterval = setInterval(update, 16);
                 }, 200)
             }
         };

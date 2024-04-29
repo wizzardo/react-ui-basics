@@ -195,8 +195,6 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                 if (e.touches.length > 1)
                     return;
 
-                stopPropagation(e)
-                preventDefault(e)
                 dragged = dragStarted = false;
                 const touch = e.targetTouches[0];
                 longTouch = setTimeout(() => longTouch && (dragStarted = true) && (longTouch = dragStartListener(touch)), !handle ? 500 : 0)

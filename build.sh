@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 npm run prebuild
-NODE_ENV=publish rollup -c rollup.config.js
+NODE_ENV=publish npx rollup -c rollup.config.js
 cp package.json build/
 cp src/react-ui-basics/*.css build/
 

@@ -167,8 +167,11 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
     };
 
     updateScroll = (id) => {
-        let child = this.elements[id];
-        let container = this.el;
+        const child = this.elements[id];
+        if (!child)
+            return
+
+        const container = this.el;
         const scrollTop = container.getScroll();
         const height = container.getHeight();
         let isVisible = scrollTop <= child.offsetTop && scrollTop + height >= child.offsetTop + child.clientHeight;

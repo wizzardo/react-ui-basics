@@ -24,6 +24,7 @@ import Modal from "./Modal";
 import ModalMenu from "./ModalMenu";
 import Router from "./router";
 import Scrollable from "./Scrollable";
+import  * as SimpleSentryClient from "./misc/SimpleSentryClient";
 import Size from "./Size";
 import Snackbar from "./Snackbar";
 import SpinningProgress from "./SpinningProgress";
@@ -68,6 +69,7 @@ export {
     Router,
     Scrollable,
     ScrollableTable,
+    SimpleSentryClient,
     Size,
     Snackbar,
     SpinningProgress,

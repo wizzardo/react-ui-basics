@@ -1825,6 +1825,6 @@ export interface MaterialIconProps {
 }
 
 const MaterialIcon = ({icon, className}: MaterialIconProps) => (
-    <i className={classNames('MaterialIcon', 'material-icons', className)}>{icon}</i>
+    <i className={classNames('MaterialIcon', 'material-icons', className)} translate="no">{icon}</i>
 );
 export default MaterialIcon;

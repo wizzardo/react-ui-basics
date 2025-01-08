@@ -50,7 +50,7 @@ export const fetch = <T>(url, options: FetchOptions = DEFAULT_OPTIONS) => {
 
     if (method === 'POST' || method === 'PUT') {
         if (options.multipart) {
-            let formData;
+            let formData: FormData;
             if (params instanceof FormData) {
                 formData = params;
             } else {
@@ -58,9 +58,9 @@ export const fetch = <T>(url, options: FetchOptions = DEFAULT_OPTIONS) => {
                 Object.keys(params).forEach(name => {
                     let value = params[name];
                     if (Array.isArray(value)) {
-                        value.forEach(it => formData.append(name, it))
+                        value.forEach(it => formData.append(name, String(it)))
                     } else if (value != null)
-                        formData.append(name, value);
+                        formData.append(name, String(value));
                 });
             }
             body = formData;

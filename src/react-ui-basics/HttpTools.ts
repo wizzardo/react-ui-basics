@@ -58,9 +58,9 @@ export const fetch = <T>(url, options: FetchOptions = DEFAULT_OPTIONS) => {
                 Object.keys(params).forEach(name => {
                     let value = params[name];
                     if (Array.isArray(value)) {
-                        value.forEach(it => formData.append(name, String(it)))
+                        value.forEach(it => formData.append(name, it))
                     } else if (value != null)
-                        formData.append(name, String(value));
+                        formData.append(name, value);
                 });
             }
             body = formData;

@@ -63,19 +63,19 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         this.updateList(this.props)
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps: FilteredListProps<T>, prevState: FilteredListState<T>, snapshot) {
         if (this.props.data === prevProps.data)
             return;
 
         this.updateList(this.props)
     }
 
-    updateList = (props) => {
+    updateList = (props: FilteredListProps<T>) => {
         const {data} = props;
         const {selected} = this.state;
         this.list = data || [];
 
-        if (!this.list.includes(selected))
+        if (selected && !this.list.includes(selected))
             this.setState({selected: null})
     };
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import {classNames} from "./Tools";
-import PropTypes from "prop-types";
 
 /**
  * Component to render https://google.github.io/material-design-icons/

@@ -1,6 +1,5 @@
 import React, {CSSProperties, ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
-import PropTypes from 'prop-types';
 import './Scrollable.css'
 import {
     classNames,

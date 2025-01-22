@@ -1,4 +1,4 @@
-import {DOCUMENT, WINDOW} from "../Tools";
+import {WINDOW} from "../Tools";
 
 const history = WINDOW.history;
 
@@ -12,14 +12,13 @@ events.forEach(e => {
 });
 
 const fireEvent = (name) => {
-    const event = DOCUMENT.createEvent('Event');
-    event.initEvent(name, true, true);
+    const event = new Event(name, { bubbles: true, cancelable: true });
     WINDOW.dispatchEvent(event);
 };
 
-export const pushLocation = (path) => path !== WINDOW.location.pathname && history[events[0]](null, null, path);
+export const pushLocation = (path: string) => path !== WINDOW.location.pathname && history[events[0]](null, null, path);
 
-export const replaceLocation = (path) => history[events[1]](null, null, path);
+export const replaceLocation = (path: string) => history[events[1]](null, null, path);
 
 if (window['isNotProductionEnvironment']) {
     // will be removed in production build

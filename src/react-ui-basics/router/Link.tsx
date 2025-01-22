@@ -1,22 +1,21 @@
 import React from 'react';
 import ReactCreateElement from '../ReactCreateElement';
-import PropTypes from 'prop-types';
 import './HistoryTools'
 import {pushLocation} from "./HistoryTools";
 import {preventDefault} from "../Tools";
 
-const Link = ({children, href, className}) =>
-    <a href={href} className={className} onClick={(e) => {
+export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+    href: string
+    className?: string
+}
+
+const Link: React.FC<LinkProps> = ({children, href, className, ...other}) => {
+    return <a href={href} className={className} {...other} onClick={(e) => {
         if (!e.ctrlKey) {
             preventDefault(e);
             pushLocation(href);
         }
     }}>{children}</a>;
-
-if (window.isNotProductionEnvironment) {
-    Link.propTypes = {
-        href: PropTypes.string.isRequired,
-    };
-}
+};
 
 export default Link;

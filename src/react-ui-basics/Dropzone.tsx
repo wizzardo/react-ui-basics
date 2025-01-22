@@ -1,5 +1,4 @@
 import React, {ReactElement, ReactNode} from 'react';
-import PropTypes from "prop-types";
 import ReactCreateElement from './ReactCreateElement';
 import './Dropzone.css'
 import {classNames, setOf, preventDefault, stopPropagation, UNDEFINED, createRef} from "./Tools";

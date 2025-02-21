@@ -13,7 +13,7 @@ export interface TextAreaProps {
     autoComplete?: string,
     placeholder?: string,
     label?: string | ReactElement,
-    check?: (value: string) => boolean,
+    check?: (value: string) => boolean | string | ReactElement,
     onClick?: MouseEventHandler<HTMLInputElement>,
     onMouseUp?: MouseEventHandler<HTMLInputElement>,
     onKeyDown?: KeyboardEventHandler<HTMLInputElement>,

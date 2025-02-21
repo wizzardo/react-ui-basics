@@ -79,13 +79,13 @@ export const story5 = () => {
         withArrow={false}
         filterCheck={value => {
             const split = value.split(':');
-            if (split.length !== 2) return false;
+            if (split.length !== 2) return true;
             const hours = parseInt(split[0]);
             const minutes = parseInt(split[1]);
             let trimmed = value.trim();
             if (trimmed.indexOf('0') === 0 && trimmed.indexOf(':') !== 1) trimmed = trimmed.substring(1);
-            console.log('filterCheck', hours < 24 && minutes < 60 ? trimmed === `${hours}:${minutes < 10 ? '0' + minutes : minutes}` : false)
-            return hours < 24 && minutes < 60 ? trimmed === `${hours}:${minutes < 10 ? '0' + minutes : minutes}` : false;
+            // console.log('filterCheck', hours, minutes, trimmed, hours < 24 && minutes < 60 ? trimmed !== `${hours}:${minutes < 10 ? '0' + minutes : minutes}` : true)
+            return hours < 24 && minutes < 60 ? trimmed !== `${hours}:${minutes < 10 ? '0' + minutes : minutes}` : true;
         }}
         value={time}
         label={"Select time"}

@@ -410,8 +410,9 @@ class AutocompleteSelect extends PureComponent {
     onSelect = (selectedId) => {
         const {mode, required, allowCustom, onSelect, onChange, default: defaultValue} = this.props;
         const {filterValue, selected: currentSelection} = this.state;
-        const {labels = {}, onFilterInputChange} = this.props;
+        const {labels = {}, onFilterInputChange, withFilter} = this.props;
 
+        // debugger
         if (selectedId == null && (!!filterValue || !required) && allowCustom && (!this.input || !this.input.check()))
             selectedId = filterValue.trim();
 
@@ -452,16 +453,16 @@ class AutocompleteSelect extends PureComponent {
                 customValue = label
         }
 
-        let filterValueWithCustom = isMultiSelect ? '' : customValue;
+        let nextFilterValue = (!isMultipleSelect(mode) && withFilter && Object.values(selected)[0]) || ''
         this.setState({
             isActive: isActive,
             selected: selected,
-            filterValue: filterValueWithCustom,
+            filterValue: nextFilterValue,
             errored,
         });
 
-        if (filterValueWithCustom !== filterValue)
-            orNoop(onFilterInputChange)(filterValueWithCustom)
+        if (nextFilterValue !== filterValue)
+            orNoop(onFilterInputChange)(nextFilterValue)
 
         if (isActive && this.input)
             this.input.getInput().focus()
@@ -504,6 +505,8 @@ class AutocompleteSelect extends PureComponent {
         const data = this.state.data || this.props.data || []
         if (data.indexOf(value) !== -1) {
             this.list.selected(value)
+        } else {
+            this.list.reset()
         }
 
         this.props.onFilterInputChange?.(value);

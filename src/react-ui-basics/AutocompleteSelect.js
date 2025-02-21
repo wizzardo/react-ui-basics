@@ -163,6 +163,7 @@ class AutocompleteSelect extends PureComponent {
         childComponent: DummyChild,
         withArrow: true,
         withFilter: true,
+        selectCustomOnClickOutside: true,
         withReset: false,
         scrollToValue: false,
         mode: MODE_DEFAULT,
@@ -223,7 +224,7 @@ class AutocompleteSelect extends PureComponent {
         const hasSelected = selectedIds.length !== 0;
         const setActive = (e) => {
             stopPropagation(e);
-            this.setState({isActive: true}, () => (scrollToValue && selectedIds.length > 0) && this.list.scrollTo(selectedIds[0]));
+            this.setState({isActive: true}, () => (scrollToValue && selectedIds.length > 0) && this.list.selected(selectedIds[0]));
         };
         const toggle = (e) => {
             if (!this.state.isActive) {
@@ -236,9 +237,9 @@ class AutocompleteSelect extends PureComponent {
 
         const isInline = mode === MODE_INLINE || mode === MODE_INLINE_MULTIPLE || mode === MODE_MULTIPLE_MINI_INLINE;
         const filterValueTrimmed = filterValue.trim();
-        const dataFiltered = allowCustom ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
+        const dataFiltered = allowCustom && !scrollToValue ? [filterValueTrimmed, ...data.filter(suggestion => suggestion !== filterValueTrimmed)] : data;
 
-        const filterFunction = this.createFilter(prefilter, filterValue, filterValueTrimmed.toLowerCase(), filter)
+        const filterFunction = !scrollToValue ? this.createFilter(prefilter, filterValue, filterValueTrimmed.toLowerCase(), filter) : UNDEFINED
         let filteredList = <FilteredList className={classNames(isActive && 'visible', listPortal && 'portal')}
                                          style={listStyles}
                                          ref={ref('list', this)}
@@ -371,7 +372,7 @@ class AutocompleteSelect extends PureComponent {
                                                       } else if (keyCode === 27/*esc*/) {
                                                           this.setState({
                                                               isActive: false,
-                                                              filterValue: isMultipleSelect(mode) ? '' : (allowCustom ? filterValue : ''),
+                                                              filterValue: isMultipleSelect(mode) ? '' : Object.values(selected)[0] || '',
                                                           });
                                                           this.input.getInput().blur()
                                                           this.onCancel();
@@ -389,14 +390,15 @@ class AutocompleteSelect extends PureComponent {
     }
 
     onClickOutside = () => {
-        const {allowCustom, required, onFilterInputChange} = this.props;
-        const {filterValue} = this.state;
-        if (allowCustom && (!!filterValue || !required)) {
-            this.onSelect()
+        const {allowCustom, required, onFilterInputChange, mode, selectCustomOnClickOutside} = this.props;
+        let {filterValue, selected} = this.state;
+        if (allowCustom && selectCustomOnClickOutside && (!!filterValue || !required)) {
+            selected = this.onSelect()
         }
 
-        this.setState({isActive: false, filterValue: ''});
-        onFilterInputChange && onFilterInputChange('');
+        filterValue = (!isMultipleSelect(mode) && Object.values(selected)[0]) || ''
+        this.setState({isActive: false, filterValue});
+        onFilterInputChange && onFilterInputChange(filterValue);
 
         this.onCancel();
     };
@@ -466,6 +468,7 @@ class AutocompleteSelect extends PureComponent {
 
         orNoop(onSelect)(selectedId);
         orNoop(onChange)(Object.values(selected));
+        return selected
     };
 
     clean = (e) => {
@@ -498,6 +501,11 @@ class AutocompleteSelect extends PureComponent {
     onChange = (event) => {
         const value = event.target.value;
         this.setState({filterValue: value});
+        const data = this.state.data || this.props.data || []
+        if (data.indexOf(value) !== -1) {
+            this.list.selected(value)
+        }
+
         this.props.onFilterInputChange?.(value);
     }
 }

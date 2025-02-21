@@ -12,6 +12,10 @@ export interface NavLinkProps extends LinkProps {
 
 const NavLink: React.FC<NavLinkProps> = (props) => {
     const {href, highlightPath, className, activeClassName} = props;
+    const other = {...props}
+    delete other.activeClassName
+    delete other.highlightPath
+
     return <Route
         path={highlightPath || href}
         controller={matches => <Link {...props} className={classNames(className, matches && activeClassName)}/>}

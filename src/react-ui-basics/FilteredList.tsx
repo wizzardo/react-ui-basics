@@ -2,7 +2,7 @@ import React, {CSSProperties, MouseEventHandler} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './FilteredList.css'
 import Scrollable from "./Scrollable";
-import {classNames, orNoop, ref, stopPropagation, isFunction, isObject} from "./Tools";
+import {classNames, orNoop, ref, stopPropagation, isFunction, isObject, UNDEFINED} from "./Tools";
 import {PureComponent} from "./ReactConstants";
 
 type Labels<T> = ((item: T) => string) | { [key: string]: string } | { [key: number]: string };
@@ -44,9 +44,9 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         filter: () => true,
     };
 
-    hidden:Map<T, boolean> = new Map();
-    elements :Map<T, HTMLDivElement> = new Map();
-    list:T[] = [];
+    hidden: Map<T, boolean> = new Map();
+    elements: Map<T, HTMLDivElement> = new Map();
+    list: T[] = [];
     el: Scrollable
 
     constructor(props) {
@@ -114,7 +114,12 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         this.props.onSelect(id);
     };
 
-    selected = (): T => {
+    selected = (id?: T): T => {
+        if (id !== UNDEFINED) {
+            this.setState({selected: id});
+            this.scrollTo(id)
+            return id;
+        }
         const {selected: value} = this.state;
         const {selectSingle} = this.props;
 
@@ -144,7 +149,7 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         if (position < list.length) {
             let id = list[position];
             this.setState({selected: id});
-            this.updateScroll(id)
+            this.scrollTo(id)
         }
     };
 
@@ -162,27 +167,7 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         if (position >= 0) {
             let id = list[position];
             this.setState({selected: id});
-            this.updateScroll(id)
-        }
-    };
-
-    updateScroll = (id) => {
-        const child = this.elements[id];
-        if (!child)
-            return
-
-        const container = this.el;
-        const scrollTop = container.getScroll();
-        const height = container.getHeight();
-        let isVisible = scrollTop <= child.offsetTop && scrollTop + height >= child.offsetTop + child.clientHeight;
-        if (!isVisible) {
-            let scrollToBottom = child.offsetTop + child.clientHeight - height;
-            let scrollToTop = child.offsetTop;
-            if (Math.abs(scrollTop - scrollToTop) < Math.abs(scrollTop - scrollToBottom)) {
-                container.setScroll(scrollToTop)
-            } else {
-                container.setScroll(scrollToBottom)
-            }
+            this.scrollTo(id)
         }
     };
 
@@ -191,7 +176,10 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
         this.el.setScroll(0)
     };
 
-    scrollTo = (id) => this.el.setScroll(this.elements[id] && this.elements[id].offsetTop);
+    scrollTo = (id: T) => {
+        const child = this.elements.get(id);
+        child && this.el.setScroll(child.offsetTop - (this.el.getHeight() - child.clientHeight) / 2);
+    };
 }
 
 export default FilteredList;

@@ -39,6 +39,8 @@ const DummyChild = ({id, label, dataConsumer, onClick}) => {
     return <div className={`DummyChild`} onClick={onClick}>{label || id}</div>
 };
 
+const ifString = (s) => isString(s) && s
+
 const prepareSelected = (value) => {
     let result;
     if (value != null) {
@@ -372,7 +374,7 @@ class AutocompleteSelect extends PureComponent {
                                                       } else if (keyCode === 27/*esc*/) {
                                                           this.setState({
                                                               isActive: false,
-                                                              filterValue: isMultipleSelect(mode) ? '' : Object.values(selected)[0] || '',
+                                                              filterValue: isMultipleSelect(mode) ? '' : ifString(Object.values(selected)[0]) || '',
                                                           });
                                                           this.input.getInput().blur()
                                                           this.onCancel();
@@ -396,8 +398,7 @@ class AutocompleteSelect extends PureComponent {
             selected = this.onSelect()
         }
 
-        filterValue = (!isMultipleSelect(mode) && withFilter && Object.values(selected)[0]) || ''
-        filterValue = isString(filterValue) ? filterValue : ''
+        filterValue = (!isMultipleSelect(mode) && withFilter && ifString(Object.values(selected)[0])) || ''
 
         this.setState({isActive: false, filterValue});
         onFilterInputChange && onFilterInputChange(filterValue);
@@ -455,7 +456,7 @@ class AutocompleteSelect extends PureComponent {
                 customValue = label
         }
 
-        let nextFilterValue = (!isMultipleSelect(mode) && withFilter && Object.values(selected)[0]) || ''
+        let nextFilterValue = (!isMultipleSelect(mode) && withFilter && ifString(Object.values(selected)[0])) || ''
         this.setState({
             isActive: isActive,
             selected: selected,

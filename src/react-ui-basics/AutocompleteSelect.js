@@ -147,10 +147,10 @@ class AutocompleteSelect extends PureComponent {
             this.updateListPosition()
     }
 
-    initSelected = ({value, mode, allowCustom}, {filterValue = ''}) => {
+    initSelected = ({value, mode, allowCustom, withFilter}, {filterValue = ''}) => {
         this.setState({
             selected: prepareSelected(value),
-            filterValue: allowCustom && isString(value) && !isMultipleSelect(mode) ? value : filterValue,
+            filterValue: allowCustom && withFilter && isString(value) && !isMultipleSelect(mode) ? value : filterValue,
         });
     };
 
@@ -390,13 +390,15 @@ class AutocompleteSelect extends PureComponent {
     }
 
     onClickOutside = () => {
-        const {allowCustom, required, onFilterInputChange, mode, selectCustomOnClickOutside} = this.props;
+        const {allowCustom, required, onFilterInputChange, mode, selectCustomOnClickOutside, withFilter} = this.props;
         let {filterValue, selected} = this.state;
         if (allowCustom && selectCustomOnClickOutside && (!!filterValue || !required)) {
             selected = this.onSelect()
         }
 
-        filterValue = (!isMultipleSelect(mode) && Object.values(selected)[0]) || ''
+        filterValue = (!isMultipleSelect(mode) && withFilter && Object.values(selected)[0]) || ''
+        filterValue = isString(filterValue) ? filterValue : ''
+
         this.setState({isActive: false, filterValue});
         onFilterInputChange && onFilterInputChange(filterValue);
 

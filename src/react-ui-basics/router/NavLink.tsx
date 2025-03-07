@@ -18,7 +18,7 @@ const NavLink: React.FC<NavLinkProps> = (props) => {
 
     return <Route
         path={highlightPath || href}
-        controller={matches => <Link {...props} className={classNames(className, matches && activeClassName)}/>}
+        controller={matches => <Link {...other} className={classNames(className, matches && activeClassName)}/>}
     />;
 };
 

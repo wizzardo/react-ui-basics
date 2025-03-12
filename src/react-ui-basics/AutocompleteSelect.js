@@ -147,7 +147,7 @@ class AutocompleteSelect extends PureComponent {
             this.initSelected(this.props, this.state)
         if (this.state.isActive && !prevState.isActive)
             this.updateListPosition()
-        if (this.state.isActive !== !prevState.isActive)
+        if (this.state.isActive !== prevState.isActive)
             orNoop(this.props.onIsActiveChange)(this.state.isActive)
     }
 

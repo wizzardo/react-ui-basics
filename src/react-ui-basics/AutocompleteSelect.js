@@ -147,6 +147,8 @@ class AutocompleteSelect extends PureComponent {
             this.initSelected(this.props, this.state)
         if (this.state.isActive && !prevState.isActive)
             this.updateListPosition()
+        if (this.state.isActive !== !prevState.isActive)
+            orNoop(this.props.onIsActiveChange)(this.state.isActive)
     }
 
     initSelected = ({value, mode, allowCustom, withFilter}, {filterValue = ''}) => {
@@ -226,7 +228,9 @@ class AutocompleteSelect extends PureComponent {
         const hasSelected = selectedIds.length !== 0;
         const setActive = (e) => {
             stopPropagation(e);
-            this.setState({isActive: true}, () => (scrollToValue && selectedIds.length > 0) && this.list.selected(selectedIds[0]));
+            this.setState({isActive: true}, () => {
+                scrollToValue && selectedIds.length > 0 && data.includes(selectedIds[0]) && this.list.selected(selectedIds[0]);
+            });
         };
         const toggle = (e) => {
             if (!this.state.isActive) {

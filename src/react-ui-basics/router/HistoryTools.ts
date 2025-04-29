@@ -2,9 +2,9 @@ import {WINDOW} from "../Tools";
 
 const history = WINDOW.history;
 
-type HistoryAction = 'pushState' | 'replaceState';
-type HistoryActionArgs = Parameters<typeof history[HistoryAction]>;
-type HistoryMiddleware = (action: HistoryAction, args: HistoryActionArgs) => HistoryActionArgs;
+export type HistoryAction = 'pushState' | 'replaceState';
+export type HistoryActionArgs = Parameters<typeof history[HistoryAction]>;
+export type HistoryMiddleware = (action: HistoryAction, args: HistoryActionArgs) => HistoryActionArgs;
 
 const middlewares: HistoryMiddleware[] = []
 

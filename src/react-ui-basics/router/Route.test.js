@@ -1,7 +1,7 @@
 import React from 'react';
 import Route from "./Route";
 import {mount} from 'enzyme';
-import {pushLocation} from './HistoryTools'
+import {pushLocation, addMiddleware, removeMiddleware} from './HistoryTools'
 
 it('renders exact path', () => {
     pushLocation('/test');
@@ -131,4 +131,28 @@ it('do not render if regex does not match ', () => {
             <WithVariable/>
         </Route>
     </div>)).toHaveHTML('<div></div>');
+});
+
+it('middleware test', () => {
+    let middleware = (action, args) => {
+        expect(action).toBe('pushState');
+        expect(args.length).toBe(3);
+        expect(args[0]).toBe(null);
+        expect(args[1]).toBe(null);
+        expect(args[2]).toBe('/to-rewrite');
+        return [null, null, '/']
+    };
+    addMiddleware(middleware)
+    pushLocation('/to-rewrite');
+    removeMiddleware(middleware)
+
+    expect(mount(<Route path="/">
+        <div>test</div>
+    </Route>)).toContainReact(<div>test</div>);
+
+
+    pushLocation('/to-rewrite');
+    expect(mount(<Route path="/to-rewrite">
+        <div>to-rewrite</div>
+    </Route>)).toContainReact(<div>to-rewrite</div>);
 });

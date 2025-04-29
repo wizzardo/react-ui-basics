@@ -43,6 +43,8 @@ if (window['isNotProductionEnvironment']) {
     // will be removed in production build
     // needed only to prevent bundler to remove 'unused' functions
     window['history-tools'] = {
-        replaceLocation
+        replaceLocation,
+        addMiddleware,
+        removeMiddleware,
     }
 }

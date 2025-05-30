@@ -72,10 +72,11 @@ class Modal extends AbstractModal {
         const props = propsGetter(that);
 
         const beforeClose = (e) => {
-            stopPropagation(e);
             const bc = getBeforeClose() || props().beforeClose;
-            if (!bc || bc(that.close, e))
+            if (!bc || bc(that.close, e)) {
+                stopPropagation(e);
                 that.close();
+            }
         };
 
         const shouldClose = (e) => {

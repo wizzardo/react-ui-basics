@@ -33,7 +33,7 @@ export interface ModalProps {
     container?: Element | DocumentFragment
     children?: ReactNode
     closeIcon?: string | ReactElement
-    beforeClose?: (close: VoidFunction) => void
+    beforeClose?: (close: VoidFunction, e: MouseEvent | KeyboardEvent) => void
     onOpen?: VoidFunction
     onClose?: VoidFunction
     open?: (open: VoidFunction) => void
@@ -74,7 +74,7 @@ class Modal extends AbstractModal {
         const beforeClose = (e) => {
             stopPropagation(e);
             const bc = getBeforeClose() || props().beforeClose;
-            if (!bc || bc(that.close))
+            if (!bc || bc(that.close, e))
                 that.close();
         };
 

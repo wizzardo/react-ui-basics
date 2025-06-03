@@ -11,7 +11,7 @@ export interface CircleProgressProps{
     value: number
 }
 
-const CircleProgress = ({value}: CircleProgressProps) => {
+const CircleProgress = ({value = 0}: CircleProgressProps) => {
     return (
         <div className="CircleProgress">
             <svg viewBox="0 0 24 24">
@@ -20,10 +20,6 @@ const CircleProgress = ({value}: CircleProgressProps) => {
             </svg>
         </div>
     );
-};
-
-CircleProgress.defaultProps = {
-    value: 0,
 };
 
 export default CircleProgress;

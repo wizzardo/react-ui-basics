@@ -34,11 +34,11 @@ export interface FormUploadProgressProps {
 }
 
 const FormUploadProgress = ({
-                                value,
+                                value = 0,
                                 cancel,
                                 loaded,
                                 total,
-                                formatValue,
+                                formatValue = defaultValueFormat,
                                 processingLabel,
                                 cancelLabel,
                             }: FormUploadProgressProps) => {
@@ -62,11 +62,6 @@ const FormUploadProgress = ({
             </div>
         </Animated>
     );
-};
-
-FormUploadProgress.defaultProps = {
-    value: 0,
-    formatValue: defaultValueFormat,
 };
 
 export default FormUploadProgress;

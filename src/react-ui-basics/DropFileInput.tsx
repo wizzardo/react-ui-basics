@@ -14,7 +14,7 @@ export interface DropFileInputProps {
     accept?: string,
 }
 
-const DropFileInput = ({icon, label, onDrop, droppable, multiple, accept}: DropFileInputProps) => (
+const DropFileInput = ({icon = 'cloud_upload', label, onDrop, droppable = false, multiple = true, accept}: DropFileInputProps) => (
     <section className="DropFileInput">
         <Dropzone droppable={droppable} onDrop={onDrop} accept={accept} multiple={multiple}>
             <MaterialIcon className={classNames(`icon`, label && 'withText')} icon={icon}/>
@@ -22,11 +22,5 @@ const DropFileInput = ({icon, label, onDrop, droppable, multiple, accept}: DropF
         </Dropzone>
     </section>
 );
-
-DropFileInput.defaultProps = {
-    icon: 'cloud_upload',
-    droppable: false,
-    multiple: true,
-};
 
 export default DropFileInput;

@@ -13,16 +13,10 @@ export interface FloatingActionButtonProps {
     onClick: MouseEventHandler
 }
 
-const FloatingActionButton = ({icon, onClick, mini, className, hidden}: FloatingActionButtonProps) => {
+const FloatingActionButton = ({icon = 'add', onClick, mini, className, hidden}: FloatingActionButtonProps) => {
     return <Button onClick={onClick} round={true} className={classNames("FloatingActionButton", className, mini && 'mini', hidden && 'hidden')}>
         <MaterialIcon icon={icon}/>
     </Button>;
-};
-
-FloatingActionButton.defaultProps = {
-    icon: 'add',
-    mini: false,
-    hidden: false,
 };
 
 export default FloatingActionButton;

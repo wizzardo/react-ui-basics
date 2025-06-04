@@ -25,6 +25,8 @@ const ignoredTypes = setOf([
     'text',
     'Text',
     'text/plain',
+    'text/uri-list',
+    'text/html',
 ]);
 
 const ignore = dt => dt && (!dt.types[0] || ignoredTypes[dt.types[0]]);
@@ -63,7 +65,7 @@ class Dropzone extends PureComponent<DropzoneProps> {
         };
         const onDragOver = (e) => {
             const dt = e.dataTransfer;
-            if (ignore(dt)) return;
+            if (ignore(dt) || !(dt && dt.files || e.target.files)) return;
 
             dt && (dt.dropEffect = 'copy');
             !isDragging() && isDragging(true);
@@ -71,7 +73,7 @@ class Dropzone extends PureComponent<DropzoneProps> {
         };
         const onDragEnter = (e) => {
             const dt = e.dataTransfer;
-            if (ignore(dt)) return;
+            if (ignore(dt) || !(dt && dt.files || e.target.files)) return;
 
             if (entries.indexOf(e.target) === -1) {
                 entries.push(e.target)

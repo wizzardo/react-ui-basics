@@ -1,10 +1,10 @@
-import React, {FocusEventHandler, MouseEventHandler, ReactElement, ReactNode} from 'react';
+import React, {ButtonHTMLAttributes, FocusEventHandler, MouseEventHandler, ReactElement, ReactNode} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
 import {classNames, DOCUMENT, addEventListener, createRef, orNoop} from "./Tools";
 import {PureComponent, render, stateGS, props} from "./ReactConstants";
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     flat?: boolean,
     raised?: boolean,
     round?: boolean,
@@ -69,20 +69,17 @@ class Button extends PureComponent<ButtonProps> {
         }
 
         that[render] = () => {
-            const {children, type, className, onClick, flat, raised = !flat, round, style, disabled} = props(that);
+            const {children, className, flat, raised = !flat, round, disabled, withRipple, ...other} = props(that);
             return (
-                <button className={classNames('Button',
-                    className,
-                    disabled && 'disabled',
-                    raised && 'raised',
-                    flat && 'flat',
-                    round && 'round')
-                }
+                <button {...other}
+                        className={classNames('Button',
+                            className,
+                            disabled && 'disabled',
+                            raised && 'raised',
+                            flat && 'flat',
+                            round && 'round')
+                        }
                         onFocus={onFocus}
-                        disabled={disabled}
-                        style={style}
-                        type={type}
-                        onClick={onClick}
                         onMouseDown={onMouseDown}
                         ref={el}>
                     {children}

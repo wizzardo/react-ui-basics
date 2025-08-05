@@ -30,6 +30,7 @@ ls('build', file => {
 
     let data = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'});
     data = data.replace(`from '../../node_modules/react/jsx-runtime.js'`, `from 'react/jsx-runtime'`)
+    data = data.replace(`from '../../../node_modules/react/jsx-runtime.js'`, `from 'react/jsx-runtime'`)
     data = data.replace(`from '../../../_virtual/_rollupPluginBabelHelpers.js';`, `from '../_virtual/_rollupPluginBabelHelpers.js';`)
     data = data.replace(`from '../../_virtual/_rollupPluginBabelHelpers.js';`, `from './_virtual/_rollupPluginBabelHelpers.js';`)
     data = data.replaceAll(`window.isNotProductionEnvironment`, `process.env.NODE_ENV !== 'production'`)

@@ -1,35 +1,42 @@
-import React from 'react';
-import ReactCreateElement from './ReactCreateElement';
-import PropTypes from 'prop-types';
+import React, {CSSProperties} from 'react';
 import './Animated.css'
-import {allPropsExcept, classNames, setOf, setTimeout, requestAnimationFrame, clearTimeout} from "./Tools";
-import {props, state, setState, componentWillUnmount, componentDidMount, render, componentDidUpdate, className, children, PureComponent} from "./ReactConstants";
+import {allPropsExcept, classNames, clearTimeout, requestAnimationFrame, setOf, setTimeout} from "./Tools";
+import {
+    children,
+    className,
+    componentDidMount,
+    componentDidUpdate,
+    componentWillUnmount,
+    props,
+    PureComponent,
+    render,
+    setState,
+    state
+} from "./ReactConstants";
 
-let mounting = 'mounting',
+const mounting = 'mounting',
     unmounting = 'unmounting',
     mounted = 'mounted',
     enabled = 'enabled',
     mountingDelay = 'mountingDelay',
     unmountingDelay = 'unmountingDelay',
     timeout = 'timeout',
-    value = 'value'
-;
-
-const selfProps = setOf([
-    children,
-    className,
-    'styles',
-    mountingDelay,
-    unmountingDelay,
-    mounting,
-    unmounting,
-    value,
-]);
+    value = 'value',
+    selfProps = setOf([
+        children,
+        className,
+        'styles',
+        mountingDelay,
+        unmountingDelay,
+        mounting,
+        unmounting,
+        value,
+    ]);
 
 const clearTimer = that => clearTimeout(that[timeout]);
 
-const animatedState = (isEnabled, isMounting, isMounted, isUnMounting) => {
-    const r = {};
+const animatedState = (isEnabled: boolean, isMounting?: boolean, isMounted?: boolean, isUnMounting?: boolean): AnimatedState => {
+    const r = {} as AnimatedState;
     r[enabled] = isEnabled;
     r[mounting] = isMounting;
     r[mounted] = isMounted;
@@ -37,13 +44,13 @@ const animatedState = (isEnabled, isMounting, isMounted, isUnMounting) => {
     return r;
 };
 
-const doMounting = (that, duration) => {
+const doMounting = (that, duration: number) => {
     setState(that, animatedState(true, true, false, false));
 
     that[timeout] = setTimeout(setState, duration, that, animatedState(true, false, true, false))
 };
 
-const processMounting = (that, duration, mountingDelay) => {
+const processMounting = (that, duration: number, mountingDelay: number) => {
     const _state = state(that);
     if (_state[mounting] || _state[mounted]) return;
     clearTimer(that);
@@ -61,12 +68,12 @@ const processMounting = (that, duration, mountingDelay) => {
     }
 };
 
-const doUnmounting = (that, duration) => {
+const doUnmounting = (that, duration: number) => {
     setState(that, animatedState(true, false, false, true));
     that[timeout] = setTimeout(setState, duration, that, animatedState(false, false, false, false));
 };
 
-const processUnmounting = (that, duration, unmountingDelay) => {
+const processUnmounting = (that, duration: number, unmountingDelay: number) => {
     const _state = state(that);
     if (_state[unmounting]) return;
     clearTimer(that);
@@ -84,7 +91,39 @@ const processUnmounting = (that, duration, unmountingDelay) => {
     }
 };
 
-class Animated extends PureComponent {
+export interface AnimatedStyles {
+    mounting?: CSSProperties,
+    mounted?: CSSProperties,
+    unmounting?: CSSProperties,
+    default?: CSSProperties,
+}
+
+export interface AnimatedProps {
+    value: boolean,
+    className?: string,
+    styles?: AnimatedStyles,
+    mountingDelay?: number,
+    unmountingDelay?: number,
+    mounting?: number,
+    unmounting?: number,
+}
+
+export interface AnimatedState {
+    enabled: boolean
+    mounting: boolean,
+    unmounting: boolean,
+    mounted: boolean,
+}
+
+class Animated extends PureComponent<AnimatedProps, AnimatedState> {
+    static defaultProps = {
+        [className]: 'animated',
+        [mounting]: 250,
+        [unmounting]: 250,
+        styles: {},
+        [mountingDelay]: 0,
+        [unmountingDelay]: 0,
+    }
 
     constructor(properties) {
         super(properties);
@@ -131,15 +170,14 @@ class Animated extends PureComponent {
                         isMounted && mounted,
                         isUnMounting && unmounting
                     ),
+                    // @ts-ignore
                     style: {...props(child).style, ...childStyles},
                     ...otherProps,
                 }));
         };
 
         that[componentDidUpdate] = () => {
-            const p = props;
-            const t = that;
-            const _props = p(t)||props(that),
+            const _props = props(that),
                 _state = state(that),
                 {
                     [value]: v,
@@ -174,40 +212,5 @@ class Animated extends PureComponent {
         }
     }
 }
-
-if (window.isNotProductionEnvironment) {
-    Animated.propTypes = {
-        [value]: PropTypes.bool,
-        [className]: PropTypes.string,
-        styles: PropTypes.shape({
-            [mounting]: PropTypes.object,
-            [mounted]: PropTypes.object,
-            [unmounting]: PropTypes.object,
-        }),
-        [mountingDelay]: PropTypes.number,
-        [unmountingDelay]: PropTypes.number,
-        [mounting]: PropTypes.number,
-        [unmounting]: PropTypes.number,
-    };
-}
-
-Animated.defaultProps = {
-    [className]: 'animated',
-    [mounting]: 250,
-    [unmounting]: 250,
-    styles: {},
-    [mountingDelay]: 0,
-    [unmountingDelay]: 0,
-};
-
-// forcing webpack to NOT inline constant fields
-// mounting = mounting || 1;
-// mounted = mounted || 1;
-// unmounting = unmounting || 1;
-// enabled = enabled || 1;
-// mountingDelay = mountingDelay || 1;
-// unmountingDelay = unmountingDelay || 1;
-// value = value || 1;
-// timeout = timeout || 1;
 
 export default Animated

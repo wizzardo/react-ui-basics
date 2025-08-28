@@ -1,15 +1,17 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 import ReactCreateElement from '../ReactCreateElement';
-import PropTypes from 'prop-types';
 import './HistoryTools'
 import {allPropsExcept, isDifferent, orNoop, setOf, WINDOW, addEventListener, removeEventListener} from "../Tools";
 import {componentDidUpdate, render, PureComponent, componentDidMount, componentWillUnmount, propsGetter, stateGSs, setState} from "../ReactConstants";
+
+const indexOf = (src: string, search: string) => src.indexOf(search);
+const substring = (src: string, start: number, end?: number) => src.substring(start, end);
 
 const historyEvents = ['popstate', 'pushState', 'replaceState'];
 
 const cleanPath = (path) => {
     if (path.length > 1 && path.lastIndexOf('/') === path.length - 1)
-        return path.substring(0, path.length - 1);
+        return substring(path, 0, path.length - 1);
 
     return path;
 };
@@ -17,10 +19,10 @@ const cleanPath = (path) => {
 const createUrlMatcher = path => {
     let matcher;
     const segments = path.split('/');
-    const optionals = segments.map(it => it === '*' || it.indexOf('?') === it.length - 1);
-    const containsVariables = path.indexOf(':') !== -1;
-    const containsAnySegment = path.indexOf('*') !== -1;
-    const containsNot = path.indexOf('!') !== -1;
+    const optionals = segments.map(it => it === '*' || indexOf(it, '?') === it.length - 1);
+    const containsVariables = indexOf(path, ':') !== -1;
+    const containsAnySegment = indexOf(path, '*') !== -1;
+    const containsNot = indexOf(path, '!') !== -1;
 
     if (!containsAnySegment && !containsVariables && !containsNot) {
         matcher = (p) => p === path
@@ -28,21 +30,21 @@ const createUrlMatcher = path => {
         const endsWithAny = path.lastIndexOf('*') === path.length - 1;
         const matchers = segments.map((segment, i) => {
             let matcher;
-            const variableNameIndex = segment.indexOf(':');
+            const variableNameIndex = indexOf(segment, ':');
             if (segment === '*')
                 matcher = () => true;
             else if (variableNameIndex !== -1) {
-                let variable = segment.substring(variableNameIndex + 1);
+                let variable = substring(segment, variableNameIndex + 1);
                 let regex = null
-                if (variable.indexOf('?') !== -1)
-                    variable = variable.substring(0, variable.indexOf('?'));
-                if (variable.indexOf('(') !== -1) {
-                    let regexStart = variable.indexOf('(');
-                    regex = new RegExp(variable.substring(regexStart))
-                    variable = variable.substring(0, regexStart);
+                if (indexOf(variable, '?') !== -1)
+                    variable = substring(variable, 0, indexOf(variable, '?'));
+                if (indexOf(variable, '(') !== -1) {
+                    let regexStart = indexOf(variable, '(');
+                    regex = new RegExp(substring(variable, regexStart))
+                    variable = substring(variable, 0, regexStart);
                 }
 
-                const prefix = variableNameIndex && segment.substring(0, variableNameIndex);
+                const prefix = variableNameIndex && substring(segment, 0, variableNameIndex);
                 matcher = (p, params) => {
                     if (regex && !!p && !p.match(regex))
                         return false
@@ -50,8 +52,8 @@ const createUrlMatcher = path => {
                     if (!p && !optionals[i])
                         return false;
                     if (prefix) {
-                        if (p.indexOf(prefix) === 0)
-                            p = p.substring(variableNameIndex);
+                        if (indexOf(p, prefix) === 0)
+                            p = substring(p, variableNameIndex);
                         else
                             return false;
                     }
@@ -59,8 +61,8 @@ const createUrlMatcher = path => {
                     params[variable] = p;
                     return true;
                 }
-            } else if (segment.indexOf('!') === 0) {
-                const not = segment.substring(1);
+            } else if (indexOf(segment, '!') === 0) {
+                const not = substring(segment, 1);
                 matcher = (p) => p !== not;
             } else
                 matcher = (p) => p === segment;
@@ -118,7 +120,16 @@ const selfProps = setOf([
     'onToggle',
 ]);
 
-class Route extends PureComponent {
+export type Controller = (matches: boolean, children: ReactNode, props: any) => ReactNode;
+
+export interface RouteProps {
+    path: string | string[],
+    controller?: Controller,
+    onToggle?: (matches: boolean) => void,
+    children?: ReactNode,
+}
+
+class Route extends PureComponent<RouteProps> {
 
     constructor(properties) {
         super(properties);
@@ -139,10 +150,13 @@ class Route extends PureComponent {
             let isMatching = matcher(cleanPath(WINDOW.location.pathname), params);
 
             const toggle = isMatching !== isRendering();
+            // @ts-ignore
             toggle && (nextState[isRendering] = isMatching);
 
             if (isDifferent(paramsState(), params)) {
+                // @ts-ignore
                 nextState[mergedPropsState] = Object.assign(allPropsExcept(props(), selfProps), params);
+                // @ts-ignore
                 nextState[paramsState] = params;
             }
 
@@ -182,20 +196,10 @@ class Route extends PureComponent {
     }
 }
 
-if (window.isNotProductionEnvironment) {
-    Route.propTypes = {
-        path: PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.arrayOf(PropTypes.string)
-        ]).isRequired,
-        controller: PropTypes.func,
-        onToggle: PropTypes.func,
-    };
-}
-
-const DefaultController = (matches, children, props) => {
+const DefaultController: Controller = (matches, children, props) => {
     if (!matches || !children) return null;
     if (Object.keys(props).length > 0) {
+        // @ts-ignore
         return React.Children.map(children, child => React.cloneElement(child, props));
     }
     return children;

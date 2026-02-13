@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {CSSProperties} from 'react';
 import ReactCreateElement from './ReactCreateElement';
 import {classNames} from "./Tools";
 
@@ -13,6 +13,7 @@ export interface MaterialIconProps {
     icon: MaterialIconType
     className?: string
     type?: 'Outlined' | 'Filled' | 'Rounded' | 'Sharp' | 'TwoTone'
+    style?: CSSProperties
 }
 
 let DEFAULT_CLASS_NAME = 'material-icons';
@@ -24,7 +25,7 @@ const typeToClass = {
     'TwoTone': DEFAULT_CLASS_NAME + '-two-tone',
 }
 
-const MaterialIcon = ({icon, className, type = 'Filled'}: MaterialIconProps) => (
-    <i className={classNames('MaterialIcon', typeToClass[type] || DEFAULT_CLASS_NAME, className)} translate="no">{icon}</i>
+const MaterialIcon = ({icon, className, type = 'Filled', style}: MaterialIconProps) => (
+    <i className={classNames('MaterialIcon', typeToClass[type] || DEFAULT_CLASS_NAME, className)} style={style} translate="no">{icon}</i>
 );
 export default MaterialIcon;

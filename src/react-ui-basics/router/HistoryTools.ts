@@ -27,9 +27,9 @@ const fireEvent = (name) => {
     WINDOW.dispatchEvent(event);
 };
 
-export const pushLocation = (path: string) => path !== WINDOW.location.pathname && history[events[0]](null, null, path);
+export const pushLocation = (path: string | URL) => path !== WINDOW.location.pathname && history[events[0]](null, null, path);
 
-export const replaceLocation = (path: string) => history[events[1]](null, null, path);
+export const replaceLocation = (path: string | URL) => history[events[1]](null, null, path);
 
 export const addMiddleware = (middleware: HistoryMiddleware) => {
     middlewares.push(middleware);

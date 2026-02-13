@@ -13,21 +13,16 @@ export const stateFieldSetter = (that, key, cb?: () => void) => (value, cb2?) =>
 };
 
 export type Callback = () => void;
-export function createStateGetterSetter<C extends React.Component, K extends keyof C["state"]>(that: C, key: K, cb?: Callback): {
+export const createStateGetterSetter = <C extends React.Component, K extends keyof C["state"]>(that: C, key: K, cb?: Callback): {
     (): C["state"][K];
     (value: C["state"][K], cb2?: Callback): void;
-} {
-    return ((value?: C["state"][K], cb2?: Callback): C["state"][K] => {
-        if (arguments.length === 0) {
-            // getter
-            // @ts-ignore
-            return that.state[key];
-        } else {
-            // setter
-            that.setState({[key]: value} as any, cb2 ?? cb);
-        }
-    }) as any;
-}
+} => (function (value?: C["state"][K], cb2?: Callback): C["state"][K] {
+    return arguments.length === 0 ?
+        // @ts-ignore
+        state(that)[key]
+        :
+        setState(that, {[key]: value} as any, cb2 ?? cb)
+});
 
 type GetterSetter<T> = (v?: T, cb?: () => void) => T;
 export const stateGS: (<T>(that: React.Component) => GetterSetter<T>) = (that) => {

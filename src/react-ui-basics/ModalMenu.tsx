@@ -5,10 +5,9 @@ import {PureComponent, stateGS, render} from "./ReactConstants";
 import {classNames} from "./Tools";
 import Animated from "./Animated";
 import Button from "./Button";
-import MaterialIcon, {MaterialIconType} from "./MaterialIcon";
+import MaterialIcon, {MaterialIconProps} from "./MaterialIcon";
 
-export interface ModalMenuItem {
-    icon: MaterialIconType,
+export interface ModalMenuItem extends MaterialIconProps {
     action: MouseEventHandler
 }
 
@@ -45,7 +44,7 @@ class ModalMenu extends PureComponent<ModalMenuProps> {
                                                    }}
                 >
                     <Button flat={true} round={true} onClick={it.action}>
-                        <MaterialIcon icon={it.icon}/>
+                        <MaterialIcon {...it}/>
                     </Button>
                 </Animated>)}
 

@@ -170,6 +170,7 @@ class AutocompleteSelect extends PureComponent {
         selectCustomOnClickOutside: true,
         withReset: false,
         scrollToValue: false,
+        disabled: false,
         mode: MODE_DEFAULT,
         selectedMode: 'full',
         listPortalPosition: 'left',
@@ -204,6 +205,7 @@ class AutocompleteSelect extends PureComponent {
             className,
             scrollToValue,
             scroll,
+            disabled,
             required,
             allowCustom,
             inlineSelected,
@@ -227,17 +229,21 @@ class AutocompleteSelect extends PureComponent {
         const selectedIds = Object.values(selected);
         const hasSelected = selectedIds.length !== 0;
         const setActive = (e) => {
-            stopPropagation(e);
-            this.setState({isActive: true}, () => {
-                scrollToValue && selectedIds.length > 0 && data.includes(selectedIds[0]) && this.list.selected(selectedIds[0]);
-            });
+            if (!disabled) {
+                stopPropagation(e);
+                this.setState({isActive: true}, () => {
+                    scrollToValue && selectedIds.length > 0 && data.includes(selectedIds[0]) && this.list.selected(selectedIds[0]);
+                });
+            }
         };
         const toggle = (e) => {
-            if (!this.state.isActive) {
-                setActive(e);
-            } else {
-                stopPropagation(e);
-                this.setState({isActive: false});
+            if (!disabled) {
+                if (!this.state.isActive) {
+                    setActive(e);
+                } else {
+                    stopPropagation(e);
+                    this.setState({isActive: false});
+                }
             }
         };
 
@@ -278,6 +284,7 @@ class AutocompleteSelect extends PureComponent {
                      errored && 'errored',
                      inlineSelected && 'inlineSelected',
                      hasSelected && 'hasSelected',
+                     disabled && 'disabled',
                  )}
                  ref={ref('el', this)}>
                 {label && <label className={classNames(`label`, (hasSelected || filterValue) && 'active', hasSelected && 'hasSelected')}
@@ -297,6 +304,7 @@ class AutocompleteSelect extends PureComponent {
                     <div
                         className={classNames('selected',
                             !label && 'nolabel',
+                            disabled && 'disabled',
                             (mode === MODE_MULTIPLE_MINI || mode === MODE_MINI || mode === MODE_MULTIPLE_MINI_INLINE) && 'clickable',
                             selectedMode)}
                         onClick={toggle}>
@@ -305,8 +313,10 @@ class AutocompleteSelect extends PureComponent {
                             <div className="value" key={id}>
                                 {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
                                 <div className="button remove" onClick={e => {
-                                    stopPropagation(e);
-                                    this.remove(id);
+                                    if (!disabled) {
+                                        stopPropagation(e);
+                                        this.remove(id);
+                                    }
                                 }}>
                                     {removeIcon}
                                 </div>
@@ -319,7 +329,7 @@ class AutocompleteSelect extends PureComponent {
                             </React.Fragment>
                         )}
                         {!label && withArrow && <span className="arrow"/>}
-                        {withReset && <Button className="reset" raised={false} onClick={this.clean}>
+                        {withReset && <Button className="reset" disabled={disabled} raised={false} onClick={this.clean}>
                             {removeIcon}
                         </Button>}
                     </div>
@@ -330,8 +340,10 @@ class AutocompleteSelect extends PureComponent {
                         <div className="value" key={id}>
                             {React.createElement(selectedComponent, {...childProps, id, label: getLabel(labels, id), onClick: setActive})}
                             <div className="button remove" onClick={e => {
-                                stopPropagation(e);
-                                this.remove(id);
+                                if (!disabled) {
+                                    stopPropagation(e);
+                                    this.remove(id);
+                                }
                             }}>
                                 {removeIcon}
                             </div>
@@ -352,6 +364,7 @@ class AutocompleteSelect extends PureComponent {
                                                   focused={isActive}
                                                   value={filterValue}
                                                   label={inputLabel}
+                                                  disabled={disabled}
                                                   onChange={this.onChange}
                                                   onFocus={e => this.setState({isActive: true})}
                                                   check={this.props.filterCheck}

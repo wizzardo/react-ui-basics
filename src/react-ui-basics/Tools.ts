@@ -2,6 +2,9 @@ var global = global || window;
 export const WINDOW: Window = global as Window;
 export const DOCUMENT = WINDOW.document;
 
+export const UNDEFINED = undefined;
+export const isUndefined = a => a === UNDEFINED;
+
 export function classNames(...classes: Array<string | number | boolean | null | void>) {
     const filtered = [];
     const length = classes.length;
@@ -27,14 +30,14 @@ export const ref = (name, component) => {
 export const createRef = <T>(initialValue?: T) => {
     let v = initialValue;
     return (value?: any) => {
-        if (value != UNDEFINED)
+        if (!isUndefined(value))
             v = value
         return v;
     };
 };
 
 export const createAccessor = (field: string) => (o: any, value?: any) => {
-    return !o ? null : value != UNDEFINED ? o[field] = value : o[field]
+    return !o ? null : isUndefined(value) ? o[field] : o[field] = value
 }
 
 export const setOf = (list) => (list || []).reduce((map, key) => {
@@ -166,9 +169,6 @@ export const addEventListener = (el, type, listener, options?) => {
 export const removeEventListener = (el, type, listener, options?) => {
     el && el.removeEventListener(type, listener, options);
 };
-
-export const UNDEFINED = undefined;
-export const isUndefined = a => a === UNDEFINED;
 
 export type ComparatorFunction<T> = (a: T, b: T) => number;
 export interface Comparator<T> extends ComparatorFunction<T>{

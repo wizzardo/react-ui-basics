@@ -17,7 +17,7 @@ export interface FilteredListProps<T> {
     selectedProvider?: (cb: () => void) => void
     data: T[]
     labels?: Labels<T>
-    filter?: (item: T) => boolean
+    filter?: (item: any, id: T) => boolean
     className?: string
     selected?: T | { [key: string]: boolean } | { [key: number]: boolean }
     inline?: boolean
@@ -99,8 +99,8 @@ class FilteredList<T extends string|number> extends PureComponent<FilteredListPr
                     onMouseEnter={e => this.setState({selected: id})}
                     onMouseLeave={e => id === this.state.selected && this.setState({selected: null})}
                     className={classNames('child', this.state.selected === id && 'active', selected === id || (isObject(selected) && selected[id as (string | number)]) && 'selected')}
-                    classProvider={it => {
-                        const hidden = !filter(it);
+                    classProvider={(it, id) => {
+                        const hidden = !filter(it, id);
                         this.hidden.set(id, hidden)
                         return hidden && 'hidden';
                     }}
@@ -191,7 +191,7 @@ interface ItemWrapperProps {
     onMouseDown?: MouseEventHandler
     onMouseEnter?: MouseEventHandler
     onMouseLeave?: MouseEventHandler
-    classProvider?: (data) => string
+    classProvider?: (data, id) => string
     className?: string
     childComponent
     childProps
@@ -211,7 +211,7 @@ class ItemWrapper extends React.Component<ItemWrapperProps> {
             dataConsumer: (data) => this.data = data,
         });
 
-        const cssClass = orNoop(classProvider)(this.data);
+        const cssClass = orNoop(classProvider)(this.data, id);
         return (
             <div className={classNames('ItemWrapper', cssClass, className)}
                  onMouseEnter={onMouseEnter}

@@ -122,19 +122,28 @@ class AutocompleteSelect extends PureComponent {
     }
 
     updateListPosition = () => {
-        if (this.props.listPortal && this.state.isActive) {
-            var rect = this.el.getBoundingClientRect();
+        if (this.props.listPortal && this.state.isActive && this.el) {
+            const rect = this.el.getBoundingClientRect();
+            const listPortal = this.props.listPortal;
+            const portalRect = listPortal.getBoundingClientRect ? listPortal.getBoundingClientRect() : {left: 0, top: 0};
+            const scrollLeft = listPortal.scrollLeft || 0;
+            const scrollTop = listPortal.scrollTop || 0;
+
+            const list = this.list?.el?.el || this.list?.el || this.list;
+            const listRect = list?.getBoundingClientRect ? list.getBoundingClientRect() : null;
+            const listWidth = (listRect && listRect.width) || rect.width;
+
             let listPortalPosition = this.props.listPortalPosition;
             let listStyles = {
                 position: 'absolute',
-                top: rect.bottom + 'px',
+                top: (rect.bottom - portalRect.top + scrollTop) + 'px',
                 minWidth: rect.width + 'px',
                 maxHeight: '300px',
             };
             if (listPortalPosition === 'right')
-                listStyles.right = (window.innerWidth - rect.right) + 'px'
+                listStyles.left = (rect.right - portalRect.left + scrollLeft - listWidth) + 'px'
             else
-                listStyles.left = rect.left + 'px'
+                listStyles.left = (rect.left - portalRect.left + scrollLeft) + 'px'
 
             this.setState({
                 listStyles: listStyles

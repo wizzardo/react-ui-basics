@@ -184,7 +184,7 @@ export class Comparators {
     static SORT_ASC: SortOrder = 'ASC';
     static SORT_DESC: SortOrder = 'DESC';
 
-    static of = <T>(field: SortField<T> | SortField<T>[], order: SortOrder | SortOrder[], data?: T[]): Comparator<T> => {
+    static of = <T>(field: SortField<T> | SortField<T>[], order: SortOrder | SortOrder[] = Comparators.SORT_ASC, data?: T[]): Comparator<T> => {
         let comparator;
         if (Array.isArray(field)) {
             const isOrderArray = Array.isArray(order);

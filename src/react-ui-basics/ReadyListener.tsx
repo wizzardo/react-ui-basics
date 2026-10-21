@@ -5,8 +5,12 @@ import {orNoop} from "./Tools";
 
 export interface NotReadyIndicatorProps {
     onChange?: (ready: boolean) => void
-    render?: (ready: boolean) => JSX.Element | ReactNode
+    render?: (ready: boolean, notReadyElements: string[]) => JSX.Element | ReactNode
     children?: ReactNode
+}
+
+export interface NotReadyProps {
+    name?: string
 }
 
 interface NotReadyIndicatorState {
@@ -15,7 +19,8 @@ interface NotReadyIndicatorState {
 
 export const createReadyListener = () => {
     let indicator,
-        count = 0;
+        count = 0,
+        notReadyElements: string[] = [];
 
     class NotReadyIndicator extends PureComponent<NotReadyIndicatorProps, NotReadyIndicatorState> {
         constructor(properties) {
@@ -29,25 +34,30 @@ export const createReadyListener = () => {
                     ready = state(that).r;
 
                 if (renderer)
-                    return renderer(ready);
+                    return renderer(ready, notReadyElements);
                 else
                     return (!ready && _props[children]) || null;
             };
             that[componentDidMount] = that[componentDidUpdate] = () => {
-                orNoop(props(that).onChange)(state(that).r);
+                // console.log('NotReadyIndicator.update.mounted', state(that).r, count)
+                orNoop(props(that).onChange)(state(that).r && count === 0);
             }
         }
     }
 
-    class NotReady extends PureComponent {
-        constructor(props) {
+    class NotReady extends PureComponent<NotReadyProps> {
+        constructor(props: NotReadyProps) {
             super(props);
             const that = this;
+            count++;
+            // console.log('NotReady created')
             that[componentDidMount] = () => {
-                count++;
+                notReadyElements.push(that.props.name || 'unknown')
                 setState(indicator, {r: false});
             };
             that[componentWillUnmount] = () => {
+                let index = notReadyElements.indexOf(that.props.name || 'unknown')
+                notReadyElements.splice(index, 1)
                 setState(indicator, {r: --count === 0});
             };
             that[render] = () => null;

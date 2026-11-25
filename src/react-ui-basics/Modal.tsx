@@ -106,10 +106,10 @@ class Modal extends AbstractModal {
                 >
                     {React.Children.map(children, child => {
                         // @ts-ignore
-                        return React.cloneElement(child, {
+                        return React.cloneElement(child, child !== React.Fragment ? {
                             modalMenuConsumer: getMenu,
                             modalBeforeCloseConsumer: getBeforeClose
-                        });
+                        } : UNDEFINED);
                     })}
                     {menu}
                     <Button className="close" flat={true} round={true} onClick={beforeClose}>

@@ -2,7 +2,7 @@ import React, {ButtonHTMLAttributes, FocusEventHandler, MouseEventHandler, React
 import ReactCreateElement from './ReactCreateElement';
 import './Button.css'
 import {classNames, DOCUMENT, addEventListener, createRef, orNoop} from "./Tools";
-import {PureComponent, render, stateGS, props} from "./ReactConstants";
+import {PureComponent, render, componentDidMount, stateGS, props} from "./ReactConstants";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     flat?: boolean,
@@ -46,10 +46,6 @@ class Button extends PureComponent<ButtonProps> {
             style.left = (e.pageX - rect.left - rippleElement.offsetWidth / 2 - body.scrollLeft) + 'px';
 
             rippleClassName('show');
-
-            addEventListener(rippleElement, 'animationend', () => {
-                rippleClassName('showed');
-            });
         };
 
         const onFocus = e => {
@@ -66,6 +62,12 @@ class Button extends PureComponent<ButtonProps> {
             style.left = (rect.width / 2 - size / 2) + 'px';
 
             rippleClassName('focused');
+        }
+
+        that[componentDidMount] = () => {
+            addEventListener(ripple(), 'animationend', () => {
+                rippleClassName('showed');
+            });
         }
 
         that[render] = () => {
